@@ -10,7 +10,7 @@ services:
     container_name: acda_portal
     restart: always    
     environment:
-      - SECRET_KEY_BASE=59671dc4e3cdafa8f388602cc749b82799efc6b2f0c714c18d
+      - SECRET_KEY_BASE=%%secret_key_base%%
       - FEDORA_PROD_URL=http://fcrepo:8080/rest/
       - FEDORA_PASSWORD=fedoraAdmin
       - SOLR_PROD_URL=http://solr:8983/solr/hydra_prod/
