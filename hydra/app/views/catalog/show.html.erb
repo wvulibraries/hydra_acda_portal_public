@@ -1,0 +1,33 @@
+<%# Ruby Page Variables %>
+<% identifier = @document[:id] %>
+<% description = @document[:description_tesim] %>
+<% @page_title = t('blacklight.search.show.title', :document_title => document_show_html_title, :application_name => application_name).html_safe -%>
+<% content_for(:head) { render_link_rel_alternates } -%>
+
+<%# HTML Content for the catalog view pages. %>
+<div id="content" class="col-md-9 col-sm-8 show-document">
+  
+  <div class="row">
+   <div class="sharethis-inline-share-buttons"></div>  
+   <%= render 'previous_next_doc' %>
+  </div>
+
+		<% if @document[:dc_type_ssi] == "Image" || @document[:dc_type_ssi] == "Collection"%>
+			<%= render 'image' %>
+    <% elsif @document[:dc_type_ssi] == "Text" %>
+      <%= render 'pdf' %>
+		<% elsif @document[:dc_type_ssi] == "Sound" %>
+			<%= render 'audio' %>
+		<% elsif @document[:dc_type_ssi] == "Moving Image" %>
+			<%= render 'video' %>
+		<% end %>
+
+  <% if @document.respond_to?(:export_as_openurl_ctx_kev) %>
+      <span class="Z3988" title="<%= @document.export_as_openurl_ctx_kev(document_partial_name(@document)) %>"></span>
+  <% end %>
+
+</div>
+
+<div id="sidebar" class="col-md-3 col-sm-4">
+   <%= render_document_sidebar_partial %>
+</div>

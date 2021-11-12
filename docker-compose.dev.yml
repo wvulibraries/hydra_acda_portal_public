@@ -1,0 +1,79 @@
+version: '3.7'
+# used for local testing
+# note only have either mfcs_export or mnt not both for conversions or hydra.
+services:
+  hydra:
+    build: 
+      context: ./
+      dockerfile: Dockerfile
+    container_name: acda_portal
+    restart: always    
+    environment:
+      - SECRET_KEY_BASE=59671dc4e3cdafa8f388602cc749b82799efc6b2f0c714c18d
+      - FEDORA_DEV_URL=http://fcrepo:8080/rest/
+      - FEDORA_PASSWORD=fedoraAdmin
+      - SOLR_DEV_URL=http://solr:8983/solr/hydra_dev/
+      - MYSQL_PASSWORD="changeme"
+      - MYSQL_HOST=db
+      - MYSQL_PORT=3306
+      - TERM=xterm
+      - RAILS_ENV=development
+      - RACK_ENV=development            
+    depends_on:
+      - fcrepo
+      - db
+      - solr
+    ports:
+      - 3000:3000
+    volumes:
+      - ./hydra:/home/hydra
+      - ./mfcs_export:/mfcs_export  
+      #- ./mnt:/mnt                    
+
+  fcrepo:
+    image: ghcr.io/samvera/fcrepo4:4.7.5
+    container_name: fcrepo
+    restart: on-failure    
+    volumes:
+      - ./fedora/data:/data:cached
+    ports:
+      - "8080:8080"  
+      
+  solr:
+    image: solr:8.7
+    container_name: solr
+    restart: on-failure
+    ports:
+      - 8983:8983
+    command:
+      - sh
+      - "-c"
+      - "solr-precreate hydra_dev /opt/solr/server/configsets/hydraconf"
+    volumes:
+      - ./solr/data:/var/solr/data:cached
+      - ./solr/conf:/opt/solr/server/configsets/hydraconf    
+
+  db:
+    image: mysql:5.7.27
+    container_name: db
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=changeme
+    volumes:
+      - ./mysql:/var/lib/mysql
+
+  conversion:
+    build: 
+      context: ./conversion/
+      dockerfile: Dockerfile
+    container_name: acda_conversion
+    restart: always
+    environment:
+      - TERM=xterm
+    volumes:
+      - ./conversion/scripts:/convert/
+      - ./conversion/control:/control/
+      - ./mfcs_export:/mfcs_export
+      #- ./mnt:/mnt

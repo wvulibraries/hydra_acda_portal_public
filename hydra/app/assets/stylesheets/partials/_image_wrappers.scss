@@ -1,0 +1,47 @@
+@import "partials/mixins"; 
+
+.image_wrapper { 
+  padding:20px; 
+  margin:20px;
+    
+  &.tiny, &.medium, &.large { 
+    p,img { width:100%; max-width: unset; }
+  }
+
+  @include breakpoint(tablet){ 
+    &.tiny { 
+      p,img { max-width:200px;}
+    }
+    &.medium { 
+      p,img { max-width:400px;}
+    }
+    &.large { 
+      p,img { max-width:600px;}
+    }
+  }
+
+  @include breakpoint(desktop){ 
+    &.tiny { 
+      p, img { max-width:300px;}
+    }
+    &.medium { 
+      p, img { max-width:500px;}
+    }
+    &.large { 
+      p, img { max-width:700px;}
+    }
+  }
+}
+
+.full-size-responsive { 
+	width:100%; 
+	padding:20px; 
+	height:auto;
+	text-align: center;
+}
+
+.document-image { 
+  display:block; 
+  max-height:300px; 
+  overflow:hidden;
+}

@@ -1,0 +1,29 @@
+<% if params[:q].present? 
+     @page_title = t('blacklight.search.page_title.title', :constraints => render_search_to_page_title(params), :application_name => application_name)
+   else
+	 @page_title = "Browsing #{application_name}"
+   end 
+%>
+
+<% # container for a single doc -%>
+<div class="document <%= render_document_class document %>" itemscope itemtype="<%= document.itemtype %>">
+	<div class="document-wrap">
+        <% identifier = document[:id] %>
+		<% description = document[:description_tesim].to_s %>
+
+		<% if document[:dc_type_ssi] == "Sound" %>
+			<%= link_to_document document, render(:partial => 'audio_button'), class: "button audio-button" %>
+		<% else %>	
+            <%= link_to_document document, image_tag("/thumb/#{identifier}", title:"#{document[:title_ssi]}", alt:description) %>
+		<% end %>
+		
+		<div style="clear:both"></div>
+
+	    <%= render_document_partials(document, blacklight_config.view_config(document_index_view_type).partials, :document_counter => document_counter).html_safe %>
+
+		<div class="bookmark">
+			<% # bookmark functions for items/docs -%>
+			<%= render_index_doc_actions document, :wrapping_class => "index-document-functions col-sm-3 col-lg-2" %>
+		</div>
+	</div>
+</div>

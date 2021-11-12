@@ -1,0 +1,39 @@
+.partners {
+    text-align: center;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    background-color: #f7f7f7;
+}
+.partners ul {
+    display: inline-block;
+    margin: 10px 0;
+    padding: 5px;
+}
+.partners li {
+    display: inline-block;
+    margin: 0 6rem;
+}
+.partners li a {
+    display: inline-block;
+    background: #444;
+    color: #FFF;
+    margin: 10px 0;
+    padding: 5px;
+    text-decoration: none;
+
+}
+@media screen and (max-width: 768px) {
+    .partners {
+        display: none;
+    }
+}
+@media screen and (max-width: 1192px) {
+    .partners ul{
+        margin: 10px 0;
+        padding: 10px;
+    }
+    .partners li {
+        margin: 10px 
+    }
+}

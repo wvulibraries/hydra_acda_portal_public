@@ -1,0 +1,22 @@
+<%# Ruby Page Variables %>
+<% identifier = @document[:id] %>
+<% project = @document[:project_ssi] %>
+<% num_files = @document[:num_files_isi] %>
+<% description = @document[:description_tesim] %>
+
+<div class="row">
+  <div class="col-md-4">      
+      <a class="document-image-full" href="/video/<%="#{identifier}"%>">
+        <%= video_tag("/video/#{identifier}", autoplay: false, controls: true, title:"#{@document[:title_ssi]}", alt:description, class:"full-size-responsive") %> <br><br> 
+      </a>     
+  </div>
+  <div class="col-md-8">
+    <div id="document" class="document <%= render_document_class %>" itemscope  itemtype="<%= @document.itemtype %>">
+      <div id="doc_<%= @document.id.to_s.parameterize %>">
+        <% # bookmark/folder functions -%>
+        <%= render_document_partials @document, blacklight_config.view_config(:show).partials %>
+      </div>
+    </div>
+  </div>
+</div>
+<br><br>
