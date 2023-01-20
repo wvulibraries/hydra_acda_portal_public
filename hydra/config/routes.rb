@@ -11,9 +11,10 @@ Rails.application.routes.draw do
 
   # pages
   get '/about' => 'catalog#about'
-  get '/contact' => 'catalog#contact'
+  get '/contribute' => 'catalog#contribute'
   get '/partners' => 'catalog#partners'
   get '/policies' => 'catalog#policies'
+  get '/contributingcollections' => 'catalog#contributingcollections'
 
   # featured
   get '/featured' => 'featured#index'
@@ -41,6 +42,10 @@ Rails.application.routes.draw do
       delete 'clear'
     end
   end
+
+  require 'sidekiq/web'
+  require 'sidekiq/cron/web'
+  mount Sidekiq::Web => '/sidekiq'
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

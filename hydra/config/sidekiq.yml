@@ -1,0 +1,18 @@
+:verbose: true
+
+:timeout: 30
+
+:queues:
+  - [default, 4]
+  - [import, 1] # This is for bulkrax
+  - [export, 1] # This is for bulkrax  
+
+test: # n/a
+  :concurrency: 1
+
+development:
+  :concurrency: <%= ENV['SIDEKIQ_WORKERS'] || 1 %>
+  :logfile: ./log/sidekiq_development.log
+
+production:
+  :concurrency: <%= ENV['SIDEKIQ_WORKERS'] || 2 %>

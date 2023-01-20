@@ -42,7 +42,7 @@ class CatalogController < ApplicationController
 
     # QF Builder
     config.default_solr_params = {
-      qf: 'identifier_tei date_tesim contributing_institution_tesim subject_policy_tesim subject_names_tesim subject_topical_tesim coverage_congress_tesim coverage_spatial_tesim type_tesim rights_tesim language_tesim extent_tesim',
+      qf: 'identifier_tesim date_tesim contributing_institution_tesim subject_policy_tesim subject_names_tesim subject_topical_tesim coverage_congress_tesim coverage_spatial_tesim type_tesim rights_tesim language_tesim extent_tesim',
       qt: 'search',
       rows: 10,
       facet: true
@@ -119,21 +119,24 @@ class CatalogController < ApplicationController
     # add the search fields individually from solr 
     # use this as a template for creating new ones 
     # Search ---------------------------------------------
-    default_search_fields = ['identifier', 'alternate_identifier', 'date', 'contributing_institution', 'subject_policy', 'subject_names', 'subject_topical', 'coverage_congress', 'coverage_spatial', 'type', 'rights', 'language', 'extent']
+    default_search_fields = ['identifier', 'title', 'alternate_identifier', 'date', 'contributing_institution', 'subject_policy', 'subject_names', 'subject_topical', 'coverage_congress', 'coverage_spatial', 'type', 'rights', 'language', 'extent']
     default_search_fields.map! { |f| 
-      config.add_search_field(f) do |field|
+      config.add_search_field(f.to_s) do |field|
           field.solr_parameters = {
-           qf: solr_name(f, :stored_searchable, type: :string),
-           pf: solr_name(f, :stored_searchable, type: :string)
+           qf: solr_name(f.to_s, :stored_searchable, type: :string),
+           pf: solr_name(f.to_s, :stored_searchable, type: :string)
           }
        end  
     } 
 
     # sorting results should be custom to each collection
+    sort_date = Solrizer.solr_name('date', :stored_sortable, type: :string)    
     sort_title = Solrizer.solr_name('title', :stored_sortable, type: :string)
     sort_creator = Solrizer.solr_name('creator', :stored_sortable, type: :string)
     sort_identifier = Solrizer.solr_name('identifier', :stored_sortable, type: :string)
 
+    config.add_sort_field "#{sort_date} asc", :label => 'Date (asc)'
+    config.add_sort_field "#{sort_date} desc", :label => 'Date (desc)'    
     config.add_sort_field "#{sort_identifier} asc", :label => 'Identifier (asc)'
     config.add_sort_field "#{sort_identifier} desc", :label => 'Identifier (desc)'
     config.add_sort_field "#{sort_title} asc", :label => 'Title (A-Z)'
@@ -141,6 +144,7 @@ class CatalogController < ApplicationController
     config.add_sort_field "#{sort_creator} asc", :label => 'Creator (A-Z)'
     config.add_sort_field "#{sort_creator} desc", :label => 'Creator (Z-A)'
     config.add_sort_field "score desc, #{sort_identifier} asc", :label => 'Relevance'
+
 
     # If there are more than this many search results, no spelling ("did you
     # mean") suggestion is offered.
@@ -155,8 +159,8 @@ class CatalogController < ApplicationController
     render "about.html.erb"
   end
 
-  def contact
-    render "contact.html.erb"
+  def contribute
+    render "contribute.html.erb"
   end
 
   def partners
@@ -165,5 +169,9 @@ class CatalogController < ApplicationController
 
   def policies
     render "policies.html.erb"
+  end
+  
+  def contributingcollections
+    render "contributingcollections.html.erb"
   end
 end

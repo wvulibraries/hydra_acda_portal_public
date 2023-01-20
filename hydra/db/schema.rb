@@ -10,45 +10,48 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170217131638) do
+ActiveRecord::Schema.define(version: 2017_02_17_131638) do
 
-  create_table "bookmarks", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer  "user_id",                     null: false
-    t.string   "user_type"
-    t.string   "document_id"
-    t.string   "document_type"
-    t.binary   "title",         limit: 65535
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
-    t.index ["document_id"], name: "index_bookmarks_on_document_id", using: :btree
-    t.index ["user_id"], name: "index_bookmarks_on_user_id", using: :btree
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
+  create_table "bookmarks", id: :serial, force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "user_type"
+    t.string "document_id"
+    t.string "document_type"
+    t.binary "title"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["document_id"], name: "index_bookmarks_on_document_id"
+    t.index ["user_id"], name: "index_bookmarks_on_user_id"
   end
 
-  create_table "searches", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.binary   "query_params", limit: 65535
-    t.integer  "user_id"
-    t.string   "user_type"
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
-    t.index ["user_id"], name: "index_searches_on_user_id", using: :btree
+  create_table "searches", id: :serial, force: :cascade do |t|
+    t.binary "query_params"
+    t.integer "user_id"
+    t.string "user_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_searches_on_user_id"
   end
 
-  create_table "users", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.string   "email",                  default: "",    null: false
-    t.string   "encrypted_password",     default: "",    null: false
-    t.string   "reset_password_token"
+  create_table "users", id: :serial, force: :cascade do |t|
+    t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          default: 0,     null: false
+    t.integer "sign_in_count", default: 0, null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
-    t.string   "current_sign_in_ip"
-    t.string   "last_sign_in_ip"
-    t.datetime "created_at",                             null: false
-    t.datetime "updated_at",                             null: false
-    t.boolean  "guest",                  default: false
-    t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
-    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
+    t.string "current_sign_in_ip"
+    t.string "last_sign_in_ip"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "guest", default: false
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
 end

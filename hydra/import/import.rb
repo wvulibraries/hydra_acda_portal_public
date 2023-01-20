@@ -23,7 +23,7 @@ class Import
 
         # remove . in identifier
         id = record['idno'].gsub('.', '').to_s
-        puts "ID: #{id}"
+        puts "Processing #{id}"
 
         # record exists
         record_exists = Acda.where(identifier: id).first

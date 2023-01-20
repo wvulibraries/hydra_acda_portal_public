@@ -1,17 +1,20 @@
 /*********************************************************************
     480px or less
 **********************************************************************/
-html, body, form, nav, div {
+body {
+	display: block;
+	  margin: 0;
+	  padding: 0;
+	  text-align: center;
+	  font-family: "Helvetica Neue", "Helvetica","Roboto", Arial, sans-serif;
+	  min-height: 100vh;
+  }
+html, form, nav, div {
   display: block;
 	margin: 0;
 	padding: 0;
 	text-align: center;
 	font-family: "Helvetica Neue", "Helvetica","Roboto", Arial, sans-serif;
-}
-body {
-	min-height: 400px;
-	margin-bottom: 100px;
-	clear: both;
 }
  ul {
 	display: block;
@@ -102,6 +105,7 @@ body {
 					margin: 0 5% 5%;
 					dt {
 						font-weight: bold;
+						color: #2C2A29 !important;
 					}
 					dd {
 						margin-left: 0px;
@@ -429,6 +433,7 @@ body {
 			float: right;
 			width: auto;
 			padding-top: 60px;
+			margin-right: 50px;
 		}
 	}
 	.sticky-header {
@@ -442,7 +447,7 @@ body {
 		box-shadow: none;
 		padding: 10px 0;
 		.tabBar {
-			width: 100%;
+			width: auto;
 			a {
 				margin: 0;
 			}
@@ -511,6 +516,7 @@ body {
 		div { text-align: left; } 
 	}
 }
+
 /*********************************************************************
 	937px and up
 **********************************************************************/
@@ -528,12 +534,12 @@ body {
 	    height: 35px;
 
 	    .tabBar{
-		    width: 50%;
+		    width: auto;
         }
         .sticky-header-search {
 			.search-query-form {
-                float:right;
-                margin-left: 0px;
+                float:left;
+                margin-left: 10px;
             }
         }
     }

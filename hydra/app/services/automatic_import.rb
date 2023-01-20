@@ -34,12 +34,15 @@ class AutomaticImport
     @logger.debug log_message
   end 
 
-  # email details 
+  # email details
   def send_feedback
+    # send emails only if in production
+    return unless Rails.env.production?
+    
     emails = @control_file['contact_emails']
     subject = "Import for #{@project.capitalize} Completed"
     ImportMailer.email(emails, subject, @email_details).deliver_now
-  end 
+  end
 
   def parse_data(json_file)
     # parse the json file

@@ -1,18 +1,16 @@
 version: '3.4'	
-# used for local testing	
-# note only have either mfcs_export or mnt not both for conversions or hydra.	
 services:	
   app:	
     build: 	
       context: ./	
-      dockerfile: Dockerfile.dev	
+      dockerfile: Dockerfile
     env_file:	
-      - './env/.env.dev.hydra' 	
+      - './env/.env.prod.hydra' 	
     volumes:	
       - ./hydra:/home/hydra	
-      - ./scripts:/home/hydra/scripts	 	
+      - ./scripts:/home/hydra/scripts	  	
       - /mnt:/mnt  	
-      - ./home/hydra/tmp # don't mount tmp directory  	
+      - /home/hydra/tmp # don't mount tmp directory  	
     networks:	
       - hydra         	
 
@@ -74,7 +72,7 @@ services:
     volumes:	
       - fcrepo:/data:cached	
     ports:	
-      - "8080:8080"  	
+      - "8080"  	
     networks:	
       - hydra      	
 
@@ -83,7 +81,7 @@ services:
     container_name: solr	
     restart: on-failure	
     ports:	
-      - "127.0.0.1:8983:8983"	
+      - "8983"	
     command:	
       - sh	
       - "-c"	
@@ -91,10 +89,10 @@ services:
       - "&&"
       - "chown -R 8983:8983 /var/solr"
     volumes:	
-      - ./solr/conf:/opt/solr/server/configsets/hydraconf        	
-      - solr:/var/solr
+      - ./solr/conf:/opt/solr/server/configsets/hydraconf   	
+      - solr:/var/solr/data:cached  	
     networks:	
-      - hydra	   
+      - hydra	
 
   db:	
     container_name: db	
@@ -102,7 +100,7 @@ services:
     ports:	
       - "5432"	
     env_file:	
-      - './env/.env.dev.db'       	
+      - './env/.env.prod.db'       	
     volumes:	
       - postgres:/var/lib/postgresql/data	
     restart: unless-stopped	
@@ -124,8 +122,8 @@ services:
       - TERM=xterm	
     volumes:	
       - ./conversion/scripts:/convert/	
-      - ./conversion/control:/control/	
-      - ./mnt:/mnt	
+      - ./conversion/control:/control/		
+      - /mnt:/mnt	
     networks:	
       - hydra	
 
@@ -139,4 +137,4 @@ networks:
   hydra:	
     driver: bridge	
     driver_opts:	
-      com.docker.network.bridge.name: br-hydra
+      com.docker.network.bridge.name: br-hydra-bridge
