@@ -125,7 +125,7 @@ services:
     volumes:	
       - ./conversion/scripts:/convert/	
       - ./conversion/control:/control/	
-      - ./mnt:/mnt	
+      - /mnt:/mnt	
     networks:	
       - hydra	
 
