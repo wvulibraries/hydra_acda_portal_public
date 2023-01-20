@@ -12,7 +12,7 @@ services:
       - ./hydra:/home/hydra	
       - ./scripts:/home/hydra/scripts	 	
       - /mnt:/mnt  	
-      - ./home/hydra/tmp # don't mount tmp directory  	
+      - /home/hydra/tmp # don't mount tmp directory  	
     networks:	
       - hydra         	
 
