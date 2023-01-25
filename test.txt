@@ -1,3 +1,0 @@
-Testing push using ssh keys.
-
-Adding some text...
