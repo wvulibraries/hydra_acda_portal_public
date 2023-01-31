@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  mount Bulkrax::Engine, at: '/'
   concern :oai_provider, BlacklightOaiProvider::Routes.new
   
   # images

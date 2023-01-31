@@ -1,0 +1,24 @@
+<%# OVERRIDE Bulkrax 5.0.0 for debugging %>
+<div class='csv_fields'>
+
+  <%= fi.input :visibility,
+    collection: [
+      ['Public', 'open'],
+      ['Private', 'restricted']
+    ],
+    selected: importer.parser_fields['visibility'] || 'open',
+    input_html: { class: 'form-control' }
+  %>
+
+  <h4>Add CSV File to Import:</h4>
+  <%# accept a single file upload; data files and bags will need to be added another way %>
+  <%= fi.input :file_style, collection: ['Upload a File', 'Specify a Path on the Server'], as: :radio_buttons, label: false %>
+  <div id='file_upload'>
+    <%= fi.input 'file', as: :file, input_html: { accept: 'text/csv,application/zip' } %><br />
+  </div>
+  <div id='file_path'>
+    <%= fi.input :import_file_path, as: :string, input_html: { value: importer.parser_fields['import_file_path'] } %>
+  </div>
+  
+  <br />
+</div>
