@@ -11,7 +11,8 @@ services:
     volumes:	
       - ./hydra:/home/hydra	
       - ./solr:/home/hydra/solr      
-      - ./scripts:/home/hydra/scripts	 	
+      - ./scripts:/home/hydra/scripts
+      - /mnt:/mnt 	
       - /home/hydra/tmp # don't mount tmp directory  	
     networks:	
       - hydra         	
@@ -124,7 +125,8 @@ services:
       - TERM=xterm	
     volumes:	
       - ./conversion/scripts:/convert/	
-      - ./conversion/control:/control/	
+      - ./conversion/control:/control/
+      - /mnt:/mnt
     networks:	
       - hydra	
 
