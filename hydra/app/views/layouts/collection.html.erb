@@ -56,6 +56,13 @@
             <div class="alert alert-<%= key %>"><%= value %></div>
         <% end %>
         <div class="row">
+          <% if content_for?(:page_header) %>
+            <div class="row">
+              <div class="col-xs-12 main-header">
+                <%= yield(:page_header) %>
+              </div>
+            </div>
+          <% end %>
             <%= yield %>
         </div>
     </div>
