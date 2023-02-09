@@ -1,5 +1,3 @@
-<%# OVERRIDE Bulkrax 5.0.0 for debugging had to comment out some things that were erroring when viewing importers index %>
-
 <!-- Website Tab Bar -->
 <div class="sticky-header">
   <div class="tbwrap">
@@ -9,8 +7,7 @@
               <%= image_tag("x.svg", alt: "Search Close", id:
               "search-toggle2") %>
           </a>
-
-          <%#= render_search_bar  %>
+          <%= render_search_bar if controller.class == CatalogController  %>
       </div>
       <div class="sticky-header-nav tabBar">
           <a id="menu-toggle">
