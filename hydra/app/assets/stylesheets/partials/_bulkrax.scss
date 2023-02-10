@@ -1,0 +1,23 @@
+/*********************************************************************
+    Style overrides for Bulkrax pages
+**********************************************************************/
+
+.bulkrax-p-align {
+  text-align: left;
+}
+
+.importer-form,
+.exporter-form {
+  margin-bottom: 80px;
+  form {
+    .panel-body div {
+		  text-align: left;
+      .boolean.checkbox {
+      margin-left: 20px;
+      }
+    }
+    .panel-footer {
+      padding-bottom: 44px;
+    }
+  }
+}
