@@ -7,7 +7,7 @@ services:
       context: ./	
       dockerfile: Dockerfile
     env_file:	
-      - './env/.env.prod.hydra' 	
+      - './env/.env.prod.local.hydra' 	
     volumes:	
       - ./hydra:/home/hydra	
       - ./solr:/home/hydra/solr      

@@ -2,6 +2,10 @@ FROM ruby:2.7.7
 
 ENV BUNDLER_VERSION=2.2.27
 ENV RAILS_VERSION=5.2.6
+ENV NODE_VERSION=17
+ENV BUNDLE_PATH="/usr/local/bundle"
+
+USER root
 
 RUN mkdir -p /home/hydra
 WORKDIR /home/hydra
@@ -22,9 +26,6 @@ RUN \
   bundle install --jobs=4 --retry=3
 
 # Node.js
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \
+# -------------------------------------------------------------------------------------------------
+RUN curl -sL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - \
     && apt-get install -y nodejs
-
-ADD ./startup.sh /usr/bin/
-RUN chmod -v +x /usr/bin/startup.sh
-ENTRYPOINT ["/usr/bin/startup.sh"]
