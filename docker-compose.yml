@@ -87,7 +87,7 @@ services:
     command:	
       - sh	
       - "-c"	
-      - "solr-precreate hydra_dev /opt/solr/server/configsets/hydraconf"	
+      - "solr-precreate hydra_prod /opt/solr/server/configsets/hydraconf"	
       - "&&"
       - "chown -R 8983:8983 /var/solr"
     volumes:	
