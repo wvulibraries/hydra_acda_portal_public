@@ -1,3 +1,9 @@
+echo "Install Yarn Packages"
+yarn install
+
+echo "Install Gems"
+bundle install
+
 echo "Preparing Database"
 bin/rails db:drop db:create
 
@@ -10,4 +16,5 @@ else
 fi
 
 bin/rails db:seed
+
 
