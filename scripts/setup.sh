@@ -1,6 +1,3 @@
-echo "Install Yarn Packages"
-yarn install
-
 echo "Install Gems"
 bundle install
 
