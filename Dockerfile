@@ -7,7 +7,7 @@ RUN mkdir -p /home/hydra
 WORKDIR /home/hydra
 ADD ./hydra /home/hydra
 
-RUN apt-get update && apt-get -y install cron
+RUN apt-get update && apt-get -y install cron postgresql-client
 
 # Use JEMALLOC instead
 # JEMalloc is a faster garbage collection for Ruby.
