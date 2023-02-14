@@ -190,30 +190,26 @@ module ImportLibrary
       # modify each record
       {
         # insert fields here
-        identifier: HydraFormatting.valid_string(record['idno']),
+        identifier: HydraFormatting.valid_string(record['identifier']),
         contributing_institution: HydraFormatting.valid_string(record['contributing_institution']),
         title: HydraFormatting.valid_string(record['title']),
         date: HydraFormatting.valid_string(record['date']),
         edtf: HydraFormatting.valid_string(record['edtf']),
         creator: HydraFormatting.valid_string(record['creator']),
         rights: HydraFormatting.valid_string(record['rights']),
-        rights2: HydraFormatting.valid_string(record['rights2']),
-        alternate_identifier: HydraFormatting.valid_string(record['identifier']),
         language: HydraFormatting.split_subjects(record['language']),
         record_type: HydraFormatting.valid_string(record['record_type']),
         collection: HydraFormatting.valid_string(record['collection']),
         collection_finding_aid: HydraFormatting.valid_string(record['collection_finding_aid']),
         description: HydraFormatting.remove_special_chars(record['description'].to_s), 
-        subject_policy: HydraFormatting.split_subjects(record['subject_policy']),
-        subject_names: HydraFormatting.split_subjects(record['subject_names']), 
-        subject_topical: HydraFormatting.split_subjects(record['subject_topical']),
-        coverage_congress: HydraFormatting.valid_string(record['coverage_congress']),
-        coverage_spatial: HydraFormatting.split_subjects(record['coverage_spatial']),
+        policy_area: HydraFormatting.split_subjects(record['subject_policy']),
+        names: HydraFormatting.split_subjects(record['subject_names']), 
+        topic: HydraFormatting.split_subjects(record['subject_topical']),
+        congress: HydraFormatting.valid_string(record['coverage_congress']),
+        location_represented: HydraFormatting.split_subjects(record['coverage_spatial']),
         dc_type: HydraFormatting.valid_string(record['dc_type']),
         extent: HydraFormatting.valid_string(record['extent']), 
         publisher: HydraFormatting.split_subjects(record['publisher']),
-        viaf_ids: HydraFormatting.split_subjects(record['viaf_ids']),
-        full_text: HydraFormatting.remove_special_chars(record['full_text'].to_s),
 
         # end of insert fields
         

@@ -8,13 +8,10 @@ class Acda < ActiveFedora::Base
     identifier.gsub('.', '').to_s
   end  
 
-  # identifier
-  property :identifier, predicate: ::RDF::Vocab::DC.identifier, multiple: false do |index|
-    index.as :stored_searchable, :stored_sortable, :facetable
-  end
-
-  # contributing institution
-  property :contributing_institution, predicate: ::RDF::Vocab::DC.contributor, multiple: false do |index|
+  # DC provenance
+  # ==============================================================================================================
+  # contributing institution property
+  property :contributing_institution, predicate: ::RDF::Vocab::DC.provenance, multiple: false do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
   end  
 
@@ -32,8 +29,10 @@ class Acda < ActiveFedora::Base
     index.as :stored_searchable, :stored_sortable, :facetable
   end
 
-  # date
-  property :edtf, predicate: ::RDF::URI.intern('http://lib.wvu.edu/hydra/edtf'), multiple: false do |index|
+  # DC format
+  # ==============================================================================================================
+  # edtf property
+  property :edtf, predicate: ::RDF::Vocab::DC.created, multiple: false do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
   end
 
@@ -51,19 +50,6 @@ class Acda < ActiveFedora::Base
     index.as :stored_searchable, :stored_sortable, :facetable
   end
 
-  # DC rights
-  # ==============================================================================================================
-  # rights property
-  property :rights2, predicate: ::RDF::URI.intern('http://lib.wvu.edu/hydra/rights2'), multiple: false do |index|
-    index.as :stored_searchable, :stored_sortable, :facetable
-  end
-
-  # ==============================================================================================================
-  # alternate identifier
-  property :alternate_identifier, predicate: ::RDF::URI.intern('http://lib.wvu.edu/hydra/alternateIdentifier'), multiple: false do |index|
-    index.as :stored_searchable, :stored_sortable, :facetable
-  end
-
   # DC language
   # ==============================================================================================================
   # language property
@@ -71,18 +57,66 @@ class Acda < ActiveFedora::Base
     index.as :stored_searchable, :stored_sortable, :facetable
   end
 
-  # record_type
-  property :record_type, predicate: ::RDF::URI.intern('http://lib.wvu.edu/hydra/recordType'), multiple: false do |index|
+  # DC temporal
+  # ==============================================================================================================
+  # congress property  
+  property :congress, predicate: ::RDF::Vocab::DC.temporal, multiple: false do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
   end
 
-  # collection 
+  # DC isPartOf 
+  # ==============================================================================================================
+  # collection property   
   property :collection, predicate: ::RDF::URI.intern('http://lib.wvu.edu/hydra/collection'), multiple: false do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
   end
 
-  # collection finding aid
-  property :collection_finding_aid, predicate: ::RDF::URI.intern('http://lib.wvu.edu/hydra/collectionFindingAid'), multiple: false do |index|
+  # DC isPartOf 
+  # ==============================================================================================================
+  # physical location property   
+  property :physical_location, predicate: ::RDF::Vocab::DC.isPartOf, multiple: false do |index|
+    index.as :stored_searchable, :stored_sortable, :facetable
+  end  
+
+  # DC source
+  # ==============================================================================================================
+  # collection finding aid property     
+  property :collection_finding_aid, predicate: ::RDF::Vocab::DC.source, multiple: false do |index|
+    index.as :stored_searchable, :stored_sortable, :facetable
+  end  
+
+  # DC identifier
+  # ==============================================================================================================
+  # identifier property   
+  property :identifier, predicate: ::RDF::Vocab::DC.identifier, multiple: false do |index|
+    index.as :stored_searchable, :stored_sortable, :facetable
+  end
+
+  # EDM preview
+  # ==============================================================================================================
+  # preview property  
+  property :preview, predicate: ::RDF::Vocab::EDM.preview, multiple: false do |index|
+    index.as :stored_searchable, :stored_sortable, :facetable
+  end
+
+  # EDM isShownAt
+  # ==============================================================================================================
+  # Avaliable At Property   
+  property :available_at, predicate: ::RDF::Vocab::EDM.isShownAt, multiple: false do |index|
+    index.as :stored_searchable, :stored_sortable, :facetable
+  end  
+
+  # DC record type
+  # ==============================================================================================================
+  # Record Type property
+  property :record_type, predicate: ::RDF::URI.intern('http://lib.wvu.edu/hydra/recordType'), multiple: false do |index|
+    index.as :stored_searchable, :stored_sortable, :facetable
+  end
+
+  # DC subject
+  # ==============================================================================================================
+  # Policy Area property
+  property :policy_area, predicate: ::RDF::URI.intern('http://lib.wvu.edu/hydra/policyArea'), multiple: true do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
   end  
 
@@ -91,32 +125,28 @@ class Acda < ActiveFedora::Base
   # description property
   property :description, predicate: ::RDF::Vocab::DC.description, multiple: false do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
-  end
-
-  # subject policy
-  property :subject_policy, predicate: ::RDF::URI.intern('http://lib.wvu.edu/hydra/subjectPolicy'), multiple: true do |index|
-    index.as :stored_searchable, :stored_sortable, :facetable
-  end
-
-  # subject names
-  property :subject_names, predicate: ::RDF::URI.intern('http://lib.wvu.edu/hydra/subjectNames'), multiple: true do |index|
-    index.as :stored_searchable, :stored_sortable, :facetable
   end  
 
-  # subject topical
-  property :subject_topical, predicate: ::RDF::URI.intern('http://lib.wvu.edu/hydra/subjectTopical'), multiple: true do |index|
+  # DC subject
+  # ==============================================================================================================
+  # Topic property
+  property :topic, predicate: ::RDF::URI.intern('http://lib.wvu.edu/hydra/topic'), multiple: true do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
-  end
+  end   
 
-  # coverage congress
-  property :coverage_congress, predicate: ::RDF::URI.intern('http://lib.wvu.edu/hydra/subjectTemporal'), multiple: false do |index|
-    index.as :stored_searchable, :stored_sortable, :facetable
-  end
-
-  # coverage spatial
-  property :coverage_spatial, predicate: ::RDF::URI.intern('http://lib.wvu.edu/hydra/subjectSpatial'), multiple: true do |index|
+  # DC subject
+  # ==============================================================================================================
+  # Names property
+  property :names, predicate: ::RDF::Vocab::DC.subject, multiple: true do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
   end  
+  
+  # DC spatial
+  # ==============================================================================================================
+  # Location Represented property
+  property :location_represented, predicate: ::RDF::Vocab::DC.spatial, multiple: true do |index|
+    index.as :stored_searchable, :stored_sortable, :facetable
+  end 
 
   # DC type
   # ==============================================================================================================
@@ -125,10 +155,12 @@ class Acda < ActiveFedora::Base
     index.as :stored_searchable, :stored_sortable, :facetable
   end
 
+  # DC format
+  # ==============================================================================================================  
   # type extent
-  property :extent, predicate: ::RDF::URI.intern('http://lib.wvu.edu/hydra/extent'), multiple: false do |index|
+  property :extent, predicate: ::RDF::Vocab::DC.format, multiple: false do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
-  end
+  end  
 
   # DC publisher
   # ==============================================================================================================
@@ -136,17 +168,6 @@ class Acda < ActiveFedora::Base
   property :publisher, predicate: ::RDF::Vocab::DC.publisher, multiple: true do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
   end
-
-  # viaf_ids property
-  property :viaf_ids, predicate: ::RDF::URI.intern('http://lib.wvu.edu/hydra/viafIds'), multiple: true do |index|
-    index.as :stored_searchable, :stored_sortable, :facetable
-  end  
-
-  # full text
-  property :full_text, predicate: ::RDF::URI.intern('http://lib.wvu.edu/hydra/fullText'), multiple: false do |index|
-    index.type :text
-    index.as :stored_searchable
-  end 
 
   # PROJECT IDENTIFIER
   # ==============================================================================================================

@@ -53,34 +53,37 @@ class AutomaticImport
         # skip record if EXCLUDE is in title
         next if record['title'].include?("EXCLUDE")
 
-        puts "Processing #{record['idno']}"
+        puts "Processing #{record['identifier']}"
 
         # remove . in identifier
-        id = record['idno'].gsub('.', '').to_s
+        id = record['identifier'].gsub('.', '').to_s
         puts "ID: #{id}"
 
         # record exists
         record_exists = Acda.where(identifier: id).first
 
         if record_exists.nil?
-          log_text = "#{record['idno']} record created. \n"
-          error_text = "#{record['idno']} record failed to create. \n"
-          if ImportLibrary.import_record(id, ImportLibrary.modify_record(@export_path, record))
+          new_record = ImportLibrary.modify_record(@export_path, record)
+          puts new_record.inspect
+
+          if ImportLibrary.import_record(id, new_record)
+            log_text = "#{record['identifier']} record created. \n"
             @email_details.concat log_text 
           else
+            error_text = "#{record['identifier']} record failed to create. \n"
             @email_details.concat error_text 
           end            
-        else
-          log_text = "#{record['idno']} record updated. \n"
-          error_text = "#{record['idno']} record failed to update. \n"          
+        else                 
           if ImportLibrary.update_record(record_exists, ImportLibrary.modify_record(@export_path, record))
+            log_text = "#{record['identifier']} record updated. \n"
             @email_details.concat log_text 
           else
+            error_text = "#{record['identifier']} record failed to update. \n" 
             @email_details.concat error_text  
           end            
         end
       rescue RuntimeError => e
-        puts "Record (#{record['idno']})"
+        puts "Record (#{record['identifier']})"
         abort "Error (#{e})"
       end
     end
