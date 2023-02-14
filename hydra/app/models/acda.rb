@@ -109,7 +109,7 @@ class Acda < ActiveFedora::Base
   # DC record type
   # ==============================================================================================================
   # Record Type property
-  property :record_type, predicate: ::RDF::URI.intern('http://lib.wvu.edu/hydra/recordType'), multiple: false do |index|
+  property :record_type, predicate: ::RDF::URI.intern('http://lib.wvu.edu/hydra/recordType'), multiple: true do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
   end
 

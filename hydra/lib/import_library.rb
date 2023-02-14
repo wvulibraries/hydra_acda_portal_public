@@ -198,7 +198,7 @@ module ImportLibrary
         creator: HydraFormatting.valid_string(record['creator']),
         rights: HydraFormatting.valid_string(record['rights']),
         language: HydraFormatting.split_subjects(record['language']),
-        record_type: HydraFormatting.valid_string(record['record_type']),
+        record_type: HydraFormatting.split_subjects(record['record_type']),
         collection: HydraFormatting.valid_string(record['collection']),
         collection_finding_aid: HydraFormatting.valid_string(record['collection_finding_aid']),
         description: HydraFormatting.remove_special_chars(record['description'].to_s), 
