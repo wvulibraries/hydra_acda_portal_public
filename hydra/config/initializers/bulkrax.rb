@@ -8,10 +8,10 @@ Bulkrax.setup do |config|
 
   # WorkType to use as the default if none is specified in the import
   # Default is the first returned by Hyrax.config.curation_concerns
-  # config.default_work_type = MyWork
+  config.default_work_type = 'Acda'
 
   # Factory Class to use when generating and saving objects
-  config.object_factory = Bulkrax::ObjectFactory
+  config.object_factory = Bulkrax::AcdaFactory
 
   # Path to store pending imports
   # config.import_path = 'tmp/imports'
