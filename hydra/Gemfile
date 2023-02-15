@@ -34,7 +34,6 @@ gem 'whenever', require: false
 # Bulkrax Import
 # =====================================================
 gem 'bulkrax'
-gem 'simple_form'
 
 # background jobs
 # =====================================================

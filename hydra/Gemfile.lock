@@ -443,7 +443,6 @@ DEPENDENCIES
   sidekiq (< 7)
   sidekiq-cron
   sidekiq-failures
-  simple_form
   solr_wrapper (~> 2.0)
   solrizer
   spring
