@@ -10,7 +10,7 @@ module Bulkrax
 
     def initialize(attributes:, source_identifier_value:, work_identifier:, related_parents_parsed_mapping: nil, replace_files: false, user: nil, klass: nil, importer_run_id: nil, update_files: false)
       @attributes = ActiveSupport::HashWithIndifferentAccess.new(attributes)
-      @user = user || User.batch_user
+      @user = user || batch_user
       @importer_run_id = importer_run_id
       @work_identifier = work_identifier
       @source_identifier_value = source_identifier_value
@@ -51,6 +51,15 @@ module Bulkrax
       # in the multivalued field, so we have to go through them one at a time.
       match = klass.where(query).detect { |m| m.send(work_identifier).include?(source_identifier_value) }
       return match if match
+    end
+
+    # This method mimics the User.batch_user method in a Hyrax app.
+    # @see https://github.com/samvera/hyrax/blob/76176286b817c869a80b922ccacc6fecea3827e2/app/models/concerns/hyrax/user.rb#L154-L185
+    def batch_user
+      user_key = 'batchuser@example.com'
+
+      User.find_by_user_key(user_key) ||
+        User.create!(Hydra.config.user_key_field => user_key, password: Devise.friendly_token[0, 20])
     end
   end
 end
