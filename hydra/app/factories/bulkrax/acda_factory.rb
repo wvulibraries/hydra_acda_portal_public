@@ -57,8 +57,12 @@ module Bulkrax
       log_created(object)
     end
 
-    # TODO: implement
-    def update; end
+    def update
+      raise "Object doesn't exist" unless object
+
+      object.update(transform_attributes(update: true))
+      log_updated(object)
+    end
 
     def find
       return find_by_id if attributes[:id].present?
@@ -137,6 +141,11 @@ module Bulkrax
 
     def log_created(obj)
       msg = "Created #{obj.class} #{obj.id}"
+      Rails.logger.info("#{msg} (#{Array(attributes[work_identifier]).first})")
+    end
+
+    def log_updated(obj)
+      msg = "Updated #{obj.class} #{obj.id}"
       Rails.logger.info("#{msg} (#{Array(attributes[work_identifier]).first})")
     end
 
