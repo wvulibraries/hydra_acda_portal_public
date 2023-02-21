@@ -20,5 +20,6 @@ set :environment, ENV['RAILS_ENV']
 every 1.day do
   command "cd #{path} && bundle exec rake log:clear"
   command "cd #{path} && bin/rails tmp:clear"
+  command "cd #{path} && bin/rails tmp:create"  
   command "cd #{path} && bin/rails restart" # restart the server
 end

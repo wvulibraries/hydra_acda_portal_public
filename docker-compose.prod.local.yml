@@ -10,7 +10,8 @@ services:
       - './env/.env.prod.local.hydra' 	
     volumes:	
       - ./hydra:/home/hydra	
-      - ./solr:/home/hydra/solr      
+      - ./solr:/home/hydra/solr  
+      - ./data/logs:/home/hydra/log          
       - ./scripts:/home/hydra/scripts	 	
       - ./mnt:/mnt  	
       - /home/hydra/tmp # don't mount tmp directory  	
