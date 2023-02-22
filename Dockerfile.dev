@@ -25,9 +25,9 @@ RUN \
   gem update --system --quiet && \
   gem install bundler -v ${BUNDLER_VERSION} && \
   gem install rails -v ${RAILS_VERSION} && \
-  bundle install --jobs=4 --retry=3
+  bundle install --jobs=4 --retry=3 
 
 # Node.js
 # -------------------------------------------------------------------------------------------------
 RUN curl -sL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - \
-    && apt-get install -y nodejs
+	&& apt-get -y install nodejs
