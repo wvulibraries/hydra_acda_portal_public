@@ -1,19 +1,17 @@
 FROM ruby:2.7.7
 
-ENV BUNDLER_VERSION=2.2.27
+ENV BUNDLER_VERSION=2.4.7
 ENV NODE_VERSION=18
-ENV RAILS_VERSION=5.2.6
+ENV RAILS_VERSION=5.2.8.1
 # should match local folder of our application
 ENV PROJECT_PATH hydra
+ENV TZ="America/New_York"
 
 RUN mkdir -p /home/${PROJECT_PATH}/
 WORKDIR /home/${PROJECT_PATH}
 ADD ./${PROJECT_PATH} /home/${PROJECT_PATH}
 
 RUN apt-get update && apt-get -y install cron postgresql-client
-
-ENV TZ=America/New_York
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Use JEMALLOC instead
 # JEMalloc is a faster garbage collection for Ruby.

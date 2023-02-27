@@ -30,6 +30,7 @@ class Import
 
         if record_exists.nil?
           puts "Inserting Record (#{record['idno']})"
+          
           ImportLibrary.import_record(id, ImportLibrary.modify_record(@export_path, record))
         else          
           puts "Updating Record (#{record['idno']})"
@@ -44,7 +45,7 @@ class Import
 
   def parse_data
     # parse the json file  
-    @export_path = Dir.glob("/mfcs_export/*").last
+    @export_path = Dir.glob("/mnt/nfs-exports/mfcs-exports/acda_portal_public/export/*").last
     puts "Importing from #{@export_path}"
 
     # find the json file in the directory

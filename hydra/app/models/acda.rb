@@ -32,9 +32,10 @@ class Acda < ActiveFedora::Base
   # DC format
   # ==============================================================================================================
   # edtf property
+  # not shown in the UI
   property :edtf, predicate: ::RDF::Vocab::DC.created, multiple: false do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
-  end
+  end  
 
   # DC creator
   # ==============================================================================================================
@@ -62,12 +63,12 @@ class Acda < ActiveFedora::Base
   # congress property  
   property :congress, predicate: ::RDF::Vocab::DC.temporal, multiple: false do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
-  end
+  end  
 
-  # DC isPartOf 
+  # DC relation
   # ==============================================================================================================
   # collection property   
-  property :collection, predicate: ::RDF::URI.intern('http://lib.wvu.edu/hydra/collection'), multiple: false do |index|
+  property :collection, predicate: ::RDF::Vocab::DC.relation, multiple: false do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
   end
 
@@ -116,44 +117,30 @@ class Acda < ActiveFedora::Base
   # DC subject
   # ==============================================================================================================
   # Policy Area property
-  property :policy_area, predicate: ::RDF::URI.intern('http://lib.wvu.edu/hydra/policyArea'), multiple: true do |index|
-    index.as :stored_searchable, :stored_sortable, :facetable
-  end  
-
-  # DC description
-  # ==============================================================================================================
-  # description property
-  property :description, predicate: ::RDF::Vocab::DC.description, multiple: false do |index|
+  property :policy_area, predicate: ::RDF::Vocab::DC.subject, multiple: true do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
   end  
 
   # DC subject
   # ==============================================================================================================
   # Topic property
-  property :topic, predicate: ::RDF::URI.intern('http://lib.wvu.edu/hydra/topic'), multiple: true do |index|
+  property :topic, predicate: ::RDF::URI.intern('http://purl.org/dc/terms/subject'), multiple: true do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
-  end   
+  end
 
-  # DC subject
+  # DC contributor
   # ==============================================================================================================
   # Names property
-  property :names, predicate: ::RDF::Vocab::DC.subject, multiple: true do |index|
+  property :names, predicate: ::RDF::Vocab::DC.contributor, multiple: true do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
   end  
-  
+
   # DC spatial
   # ==============================================================================================================
   # Location Represented property
   property :location_represented, predicate: ::RDF::Vocab::DC.spatial, multiple: true do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
   end 
-
-  # DC type
-  # ==============================================================================================================
-  # type property
-  property :dc_type, predicate: ::RDF::Vocab::DC.type, multiple: false do |index|
-    index.as :stored_searchable, :stored_sortable, :facetable
-  end
 
   # DC format
   # ==============================================================================================================  
@@ -166,6 +153,22 @@ class Acda < ActiveFedora::Base
   # ==============================================================================================================
   # publisher property
   property :publisher, predicate: ::RDF::Vocab::DC.publisher, multiple: true do |index|
+    index.as :stored_searchable, :stored_sortable, :facetable
+  end
+
+  # DC description
+  # ==============================================================================================================
+  # description property
+  property :description, predicate: ::RDF::Vocab::DC.description, multiple: false do |index|
+    index.as :stored_searchable, :stored_sortable, :facetable
+  end  
+
+  # DC type 
+  # This not to be confused with record type this is required to identify the type of record Sound, Image, Text, etc.
+  # So we can render the correct viewer
+  # ==============================================================================================================
+  # type dc_type
+  property :dc_type, predicate: ::RDF::Vocab::DC.type, multiple: false do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
   end
 
