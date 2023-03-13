@@ -71,16 +71,17 @@ services:
     networks:	
       - hydra	
 
-  fcrepo:	
-    image: ghcr.io/samvera/fcrepo4:4.7.5	
-    container_name: fcrepo	
-    restart: on-failure    	
-    volumes:	
-      - fcrepo:/data:cached	
-    ports:	
-      - "8080:8080"  	
+  fcrepo:
+    image: ghcr.io/samvera/fcrepo4:4.7.5
+    container_name: fcrepo
+    depends_on:
+      - db        
+    env_file:
+      - './env/.env.dev.fedora' 
+    ports:
+      - "8080:8080"	
     networks:	
-      - hydra      	
+      - hydra        	
 
   solr:	
     image: solr:8.11.1	

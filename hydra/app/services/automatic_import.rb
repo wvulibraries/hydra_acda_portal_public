@@ -5,8 +5,6 @@
 # Date:: September 2021
 # The logic behind the background task for the automatic import.
 
-require "#{Rails.root}/lib/import_library.rb"
-
 class AutomaticImport
   include ImportLibrary
 

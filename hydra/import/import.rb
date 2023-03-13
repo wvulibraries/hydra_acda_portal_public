@@ -2,10 +2,25 @@
 
 require "#{Rails.root}/lib/import_library.rb"
 
+# Import Class
+# =====================================================
+# This class will import the current export into fedora and solr in your current environment
+# =====================================================
+# Usage:
+#   bin/rails r import/import.rb
+# =====================================================
+# Author: Tracy A. McCormick
+# Modified: 2023-03-13
+# =====================================================
+
 class Import
   include ImportLibrary
 
   def initialize
+    # init variables
+    @project_name = "acda_portal_public"
+    @export_path = "/mnt/nfs-exports/mfcs-exports/#{@project_name}/export"
+
     puts 'This will import the current export into fedora and solr in your current environment ... are you sure you want to do this? (Yes, No)'
     perform
   end
@@ -21,21 +36,8 @@ class Import
 
         puts "Processing #{record['idno']}"
 
-        # remove . in identifier
-        id = record['idno'].gsub('.', '').to_s
-        puts "Processing #{id}"
-
-        # record exists
-        record_exists = Acda.where(identifier: id).first
-
-        if record_exists.nil?
-          puts "Inserting Record (#{record['idno']})"
-          
-          ImportLibrary.import_record(id, ImportLibrary.modify_record(@export_path, record))
-        else          
-          puts "Updating Record (#{record['idno']})"
-          ImportLibrary.update_record(record_exists, ImportLibrary.modify_record(@export_path, record))
-        end
+        # add file to item job queue
+        ImportRecordJob.perform_later(@export_path, record)        
       rescue RuntimeError => e
         puts "Record (#{record['idno']})"
         abort "Error (#{e})"
@@ -45,11 +47,11 @@ class Import
 
   def parse_data
     # parse the json file  
-    @export_path = Dir.glob("/mnt/nfs-exports/mfcs-exports/acda_portal_public/export/*").last
-    puts "Importing from #{@export_path}"
+    @path = Dir.glob("#{@export_path}/*").last
+    puts "Importing from #{@path}"
 
     # find the json file in the directory
-    matched_files = Dir["#{@export_path}/data/*-data.json"]
+    matched_files = Dir["#{@path}/data/*-data.json"]
 
     if File.exist?(matched_files.first)
       # read and parse the json file
