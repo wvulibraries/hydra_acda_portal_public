@@ -3,18 +3,22 @@
 Bulkrax.setup do |config|
   # Add local parsers
   config.parsers = [
-    { name: "CSV - Comma Separated Values", class_name: "Bulkrax::CsvParser", partial: "wv_csv_fields" }
+    { name: 'CSV - Comma Separated Values', class_name: 'Bulkrax::CsvParser', partial: 'wv_csv_fields' }
   ]
 
   # WorkType to use as the default if none is specified in the import
   # Default is the first returned by Hyrax.config.curation_concerns
-  config.default_work_type = Acda
+  config.default_work_type = 'Acda'
 
   # Factory Class to use when generating and saving objects
   config.object_factory = Bulkrax::ObjectFactory
 
   # File model for file class
   config.file_model_name = AcdaFile
+
+  # curation_concerns, Default =  Hyrax.config.curation_concerns
+  config.curation_concerns = [Acda]
+
   config.qa_controlled_properties = []
 
   # Path to store pending imports
@@ -37,9 +41,30 @@ Bulkrax.setup do |config|
 
   # Field mappings
   # Create a completely new set of mappings by replacing the whole set as follows
-  #   config.field_mappings = {
-  #     "Bulkrax::OaiDcParser" => { **individual field mappings go here*** }
-  #   }
+  config.field_mappings = {
+    'Bulkrax::CsvParser' => {
+      'provenance' => { from: ['dcterms:provenance'] },
+      'title' => { from: ['dcterms:title'] },
+      'date' => { from: ['dcterms:date'] },
+      'created' => { from: ['dcterms:created'] },
+      'creator' => { from: ['dcterms:creator'] },
+      'rights' => { from: ['dcterms:rights'] },
+      'language' => { from: ['dcterms:language'] },
+      'temporal' => { from: ['dcterms:temporal'] },
+      'isPartOf' => { from: ['dcterms:isPartOf'] },
+      'source' => { from: ['dcterms:source'] },
+      'bulkrax_identifier' => { from: ['bulkrax_identifier'], source_identifier: true },
+      'identifier' => { from: ['dcterms:identifier'] },
+      'subject' => { from: ['dcterms:subject'] },
+      'preview' => { from: ['edm:preview'] },
+      'isShownAt' => { from: ['edm:isShownAt'] },
+      'description' => { from: ['dcterms:description'] },
+      'type' => { from: ['dcterms:type'] },
+      'spatial' => { from: ['dcterms:spatial'] },
+      'format' => { from: ['dcterms:format'] },
+      'publisher' => { from: ['dcterms:publisher'] }
+    }
+  }
 
   # Add to, or change existing mappings as follows
   #   e.g. to exclude date
@@ -61,8 +86,8 @@ Bulkrax.setup do |config|
   # Should Bulkrax make up source identifiers for you? This allow round tripping
   # and download errored entries to still work, but does mean if you upload the
   # same source record in two different files you WILL get duplicates.
-  # It is given two aruguments, self at the time of call and the index of the reocrd
-  #    config.fill_in_blank_source_identifiers = ->(parser, index) { "b-#{parser.importer.id}-#{index}"}
+  # It is given two aruguments, self at the time of call and the index of the record
+  config.fill_in_blank_source_identifiers = ->(parser, index) { "b-#{parser.importer.id}-#{index}"}
   # or use a uuid
   #    config.fill_in_blank_source_identifiers = ->(parser, index) { SecureRandom.uuid }
 
@@ -85,5 +110,5 @@ end
 
 # Sidebar for hyrax 3+ support
 if Object.const_defined?(:Hyrax) && ::Hyrax::DashboardController&.respond_to?(:sidebar_partials)
-  Hyrax::DashboardController.sidebar_partials[:repository_content] << "hyrax/dashboard/sidebar/bulkrax_sidebar_additions"
+  Hyrax::DashboardController.sidebar_partials[:repository_content] << 'hyrax/dashboard/sidebar/bulkrax_sidebar_additions'
 end
