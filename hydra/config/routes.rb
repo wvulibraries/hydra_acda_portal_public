@@ -36,6 +36,10 @@ Rails.application.routes.draw do
     concerns :exportable
   end
 
+  resources :acda, only: [:show], path: '/catalog', controller: 'catalog' do
+    concerns :exportable
+  end
+
   resources :bookmarks do
     concerns :exportable
 
