@@ -14,7 +14,7 @@ class ApplicationController < ActionController::Base
     # return true if Rails.env.test?
     if (controller_path.include?('bulkrax'))
       authenticate_or_request_with_http_basic do |username, password|
-        username == "wvu" && password == "hydra"
+        username == ENV['BULKRAX_USERNAME'] && password == ENV['BULKRAX_PW']
       end
     end
   end
