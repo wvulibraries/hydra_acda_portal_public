@@ -71,5 +71,7 @@ Rails.application.configure do
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
-  config.active_job.queue_adapter = :sidekiq  
+  config.active_job.queue_adapter = :sidekiq
+
+  config.web_console.whitelisted_ips = '172.27.0.1'
 end
