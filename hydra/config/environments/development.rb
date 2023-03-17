@@ -72,6 +72,7 @@ Rails.application.configure do
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
   config.active_job.queue_adapter = :sidekiq
-
+  
+  # developers can add their individual ips to this value. This configuration can also take an array
   config.web_console.whitelisted_ips = '172.27.0.1'
 end
