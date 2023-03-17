@@ -11,7 +11,7 @@ class ApplicationController < ActionController::Base
   # Extra authentication for bulkrax
   def authenticate_if_needed
     # Disable this extra authentication in test mode
-    # return true if Rails.env.test?
+    return true if Rails.env.test?
     if (controller_path.include?('bulkrax'))
       authenticate_or_request_with_http_basic do |username, password|
         username == ENV['BULKRAX_USERNAME'] && password == ENV['BULKRAX_PW']
