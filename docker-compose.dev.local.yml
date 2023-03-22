@@ -7,10 +7,10 @@ services:
       context: ./
       dockerfile: Dockerfile.dev
     env_file:
-      - './env/.env.dev.hydra'
+      - './env/.env.dev.local.hydra'
     volumes:
       - ./hydra:/home/hydra
-      - ./solr:/home/hydra/solr
+      - ./solr:/home/hydra/solr- ./data/logs:/home/hydra/log
       - ./scripts:/home/hydra/scripts
       - ./mnt:/mnt
       - /home/hydra/tmp # don't mount tmp directory
@@ -71,9 +71,10 @@ services:
   fcrepo:
     image: ghcr.io/samvera/fcrepo4:4.7.5
     container_name: fcrepo
-    restart: on-failure
-    volumes:
-      - fcrepo:/data:cached
+    depends_on:
+    - db
+      env_file:
+      - './env/.env.dev.fedora'
     ports:
       - "8080:8080"
     networks:
@@ -94,6 +95,7 @@ services:
     volumes:
       - ./solr/conf:/opt/solr/server/configsets/hydraconf
       - solr:/var/solr
+      - ./data/logs/solr_dev/:/var/solr/logs
     networks:
       - hydra
 
@@ -103,15 +105,16 @@ services:
     ports:
       - "5432"
     env_file:
-      - './env/.env.dev.db'
+      - './env/.env.dev.local.db'
     volumes:
       - postgres:/var/lib/postgresql/data
     restart: unless-stopped
     healthcheck:
-        test: pg_isready -U postgres -h postgres
+        test: ["CMD-SHELL", "pg_isready", "-d", "hyrax"]
         interval: 30s
-        timeout: 3s
-        retries: 3
+        timeout: 60s
+        retries: 5
+      start_period: 80s
     networks:
       - hydra
 
@@ -132,7 +135,7 @@ services:
 
 volumes:
   postgres:
-  fcrepo:
+
   redis:
   solr:
 

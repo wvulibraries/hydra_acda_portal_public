@@ -34,6 +34,8 @@ if Dir.entries(process_dir).length > 2
   exit 
 end 
 
+# open the control directory and sort the files
+puts "opening control directory #{control_dir}"
 Dir.open(control_dir).sort.each do |file|
   next if file == '.' || file == '..'
   control_file = YAML.load_file "#{control_dir}/#{file}"

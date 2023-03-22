@@ -11,6 +11,9 @@ module Hydra
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.2
 
+    # Autoload lib/ folder including all subdirectories
+    config.autoload_paths += Dir["#{config.root}/lib/**/"]
+
     # use SideKiq by default
     config.active_job.queue_adapter = :sidekiq
 
