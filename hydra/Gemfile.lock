@@ -340,7 +340,7 @@ GEM
       activesupport
       nokogiri
       xml-simple
-    spring (4.1.0)
+    spring (3.1.1)
     sprockets (3.7.2)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
@@ -402,9 +402,8 @@ DEPENDENCIES
   nokogiri
   pg (>= 0.18, < 2.0)
   puma (~> 4.3)
-  rails (~> 5.2.6)
+  rails (~> 5.2.8.1)
   rake (~> 12.3)
-  rdf (<= 3.1.13)
   redis (~> 4.0)
   rsolr
   rspec-rails
@@ -415,7 +414,7 @@ DEPENDENCIES
   sidekiq-failures
   solr_wrapper (~> 2.0)
   solrizer
-  spring
+  spring (< 4.0.0)
   uglifier (>= 1.3.0)
   web-console (~> 2.0)
   whenever
@@ -424,4 +423,4 @@ RUBY VERSION
    ruby 2.7.7p221
 
 BUNDLED WITH
-   2.2.27
+   2.4.7

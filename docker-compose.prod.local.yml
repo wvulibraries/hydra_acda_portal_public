@@ -5,9 +5,9 @@ services:
   app:	
     build: 	
       context: ./	
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     env_file:	
-      - './env/.env.dev.local.hydra' 	
+      - './env/.env.prod.local.hydra' 	
     volumes:	
       - ./hydra:/home/hydra	
       - ./solr:/home/hydra/solr  
@@ -69,15 +69,14 @@ services:
     networks:	
       - hydra	
 
-  fcrepo:
-    image: ghcr.io/samvera/fcrepo4:4.7.5
-    container_name: fcrepo
-    depends_on:
-      - db        
-    env_file:
-      - './env/.env.dev.fedora' 
-    ports:
-      - "8080:8080"	
+  fcrepo:	
+    image: ghcr.io/samvera/fcrepo4:4.7.5	
+    container_name: fcrepo	
+    restart: on-failure    	
+    volumes:	
+      - fcrepo:/data:cached	
+    ports:	
+      - "8080:8080"  	
     networks:	
       - hydra      	
 
@@ -90,13 +89,12 @@ services:
     command:	
       - sh	
       - "-c"	
-      - "solr-precreate hydra_dev /opt/solr/server/configsets/hydraconf"	
+      - "solr-precreate hydra_prod /opt/solr/server/configsets/hydraconf"	
       - "&&"
       - "chown -R 8983:8983 /var/solr"
     volumes:	
       - ./solr/conf:/opt/solr/server/configsets/hydraconf        	
       - solr:/var/solr
-      - ./data/logs/solr_dev/:/var/solr/logs       
     networks:	
       - hydra	   
 
@@ -106,7 +104,7 @@ services:
     ports:	
       - "5432"	
     env_file:	
-      - './env/.env.dev.local.db'       	
+      - './env/.env.prod.local.db'       	
     volumes:	
       - postgres:/var/lib/postgresql/data	
     restart: unless-stopped	
@@ -136,6 +134,7 @@ services:
 
 volumes:	
   postgres:	
+  fcrepo:	
   redis:  	
   solr:	
 
