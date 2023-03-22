@@ -14,7 +14,7 @@ Bulkrax.setup do |config|
   config.object_factory = Bulkrax::AcdaFactory
 
   # File model for file class
-  config.file_model_name = AcdaFile
+  config.file_model_class = AcdaFile
 
   # curation_concerns, Default =  Hyrax.config.curation_concerns
   config.curation_concerns = [Acda]
