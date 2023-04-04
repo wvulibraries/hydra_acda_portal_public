@@ -13,6 +13,7 @@ services:
       - ./solr:/home/hydra/solr
       - ./scripts:/home/hydra/scripts
       - ./mnt:/mnt
+      - ./tmp/imports:/home/hydra/tmp/imports
       - /home/hydra/tmp # don't mount tmp directory
     networks:
       - hydra
@@ -20,7 +21,7 @@ services:
   web:
     extends: app
     container_name: acda_portal
-    command: bash -c "bundle install; service cron start; gem install whenever; whenever --update-crontab; bundle exec rails s -p 3000 -b 0.0.0.0"
+    command: bash -c "bundle install; service cron start; gem install whenever; whenever --update-crontab; tail -f /dev/null"
     ports:
       - "3000:3000"
     depends_on:
@@ -33,7 +34,7 @@ services:
   workers:
     extends: app
     container_name: sidekiq
-    command: bundle exec sidekiq -C config/sidekiq.yml
+    command: bash -c "bundle install; bundle exec sidekiq -C config/sidekiq.yml"
     depends_on:
       - redis
       - solr
@@ -78,7 +79,6 @@ services:
       - "8080:8080"
     networks:
       - hydra
-
   solr:
     image: solr:8.11.1
     container_name: solr
