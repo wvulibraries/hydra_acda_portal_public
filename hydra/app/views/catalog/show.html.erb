@@ -12,13 +12,13 @@
    <%= render 'previous_next_doc' %>
   </div>
 
-		<% if @document[:dc_type_ssi] == "Image" || @document[:dc_type_ssi] == "Collection"%>
+		<% if @document[:dc_type_ssi] == "Image" || @document[:dc_type_ssi] == "Collection" || @document[:dc_type_ssi] == "StillImage"%>
 			<%= render 'image' %>
     <% elsif @document[:dc_type_ssi] == "Text" %>
       <%= render 'pdf' %>
 		<% elsif @document[:dc_type_ssi] == "Sound" %>
 			<%= render 'audio' %>
-		<% elsif @document[:dc_type_ssi] == "Moving Image" %>
+		<% elsif @document[:dc_type_ssi] == "Moving Image" || @document[:dc_type_ssi] == "MovingImage"%>
 			<%= render 'video' %>
 		<% end %>
 

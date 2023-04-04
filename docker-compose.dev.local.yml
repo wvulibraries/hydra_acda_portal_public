@@ -14,6 +14,7 @@ services:
       - ./data/logs:/home/hydra/log
       - ./scripts:/home/hydra/scripts
       - ./mnt:/mnt
+      - ./tmp/imports:/home/hydra/tmp/imports
       - /home/hydra/tmp # don't mount tmp directory
     networks:
       - hydra
@@ -34,7 +35,7 @@ services:
   workers:
     extends: app
     container_name: sidekiq
-    command: bundle exec sidekiq -C config/sidekiq.yml
+    command: bash -c "bundle install; bundle exec sidekiq -C config/sidekiq.yml"
     depends_on:
       - redis
       - solr
@@ -80,7 +81,6 @@ services:
       - "8080:8080"
     networks:
       - hydra
-
   solr:
     image: solr:8.11.1
     container_name: solr
