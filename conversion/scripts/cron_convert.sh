@@ -1,6 +1,6 @@
 #!/bin/bash
 
-project_name="acda_portal"
+project_name="acda_portal_public"
 
 # if automatic export folder present set correct paths
 if [ -d "/mnt/nfs-exports/mfcs-exports/${project_name}/export" ]; then
