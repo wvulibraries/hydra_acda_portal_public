@@ -10,4 +10,3 @@ else
 fi
 
 bin/rails db:seed
-

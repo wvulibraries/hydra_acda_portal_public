@@ -42,7 +42,7 @@ class CatalogController < ApplicationController
 
     # QF Builder
     config.default_solr_params = {
-      qf: 'identifier_tesim date_tesim contributing_institution_tesim subject_policy_tesim subject_names_tesim subject_topical_tesim coverage_congress_tesim coverage_spatial_tesim type_tesim rights_tesim language_tesim extent_tesim',
+      qf: 'identifier_tesim date_tesim contributing_institution_tesim policy_area_tesim names_tesim topic_tesim congress_tesim location_represented_tesim type_tesim rights_tesim language_tesim extent_tesim',
       qt: 'search',
       rows: 10,
       facet: true
@@ -55,12 +55,12 @@ class CatalogController < ApplicationController
     config.add_facet_field solr_name('contributing_institution', :facetable), label: 'Contributing Institution', link_to_search: :contributing_institution_ssi, limit: true, show: true, component: true
     config.add_facet_field solr_name('collection', :facetable), label: 'Collection', link_to_search: :collection_ssi, limit: true, show: true, component: true
     config.add_facet_field solr_name('publisher', :facetable), label: 'Publisher', link_to_search: :publisher_ssi, limit: true, show: true, component: true
-    config.add_facet_field solr_name('subject_policy', :facetable), label: 'Subject Policy', link_to_search: :subject_policy_ssi, limit: true, show: true, component: true
-    config.add_facet_field solr_name('subject_names', :facetable), label: 'Subject Names', link_to_search: :subject_names_ssi, limit: true, show: true, component: true    
-    config.add_facet_field solr_name('subject_topical', :facetable), label: 'Subject Topical', link_to_search: :subject_topical_ssi, limit: true, show: true, component: true
-    config.add_facet_field solr_name('coverage_congress', :facetable), label: 'Coverage Congress', link_to_search: :coverage_congress_ssi, limit: true, show: true, component: true
-    config.add_facet_field solr_name('coverage_spatial', :facetable), label: 'Coverage Spatial', link_to_search: :coverage_spatial_ssi, limit: true, show: true, component: true
-    config.add_facet_field solr_name('type', :facetable), label: 'Type', limit: true, show: true, component: true
+    config.add_facet_field solr_name('policy_area', :facetable), label: 'Policty Area', link_to_search: :policy_area_ssi, limit: true, show: true, component: true
+    config.add_facet_field solr_name('names', :facetable), label: 'Names', link_to_search: :names_ssi, limit: true, show: true, component: true    
+    config.add_facet_field solr_name('topic', :facetable), label: 'Topic', link_to_search: :topic_ssi, limit: true, show: true, component: true
+    config.add_facet_field solr_name('congress', :facetable), label: 'Congress', link_to_search: :coverage_congress_ssi, limit: true, show: true, component: true
+    config.add_facet_field solr_name('location_represented', :facetable), label: 'Location Represented', link_to_search: :coverage_spatial_ssi, limit: true, show: true, component: true
+    config.add_facet_field solr_name('record_type', :facetable), label: 'Record Type', limit: true, show: true, component: true
     config.add_facet_field solr_name('rights', :facetable), label: 'Rights', limit: true, show: true, component: true
     config.add_facet_field solr_name('language', :facetable), label: 'Language', limit: true, show: true, component: true
     config.add_facet_field solr_name('extent', :facetable), label: 'Extent', limit: true, show: true, component: true
@@ -72,18 +72,17 @@ class CatalogController < ApplicationController
     # Index ---------------------------------------------
     # The ordering of the field names is the order of the display
     config.add_index_field solr_name('identifier', :stored_searchable), label: 'Identifier'     
-    config.add_index_field solr_name('alternate_identifier', :stored_searchable, type: :string), label: 'Alternate Identifier'
     config.add_index_field solr_name('contributing_institution', :stored_searchable, type: :string), label: 'Contributing Institution', link_to_search: :contributing_institution_sim
     config.add_index_field solr_name('collection', :stored_searchable), label: 'Collection', link_to_search: :collection_sim
     config.add_index_field solr_name('title', :stored_searchable, type: :string), label: 'Title'
     config.add_index_field solr_name('date', :stored_searchable, type: :string), label: 'Date', link_to_search: :date_sim
     config.add_index_field solr_name('creator', :stored_searchable, type: :string), label: 'Creator', link_to_search: :creator_sim
     config.add_index_field solr_name('publisher', :stored_searchable, type: :string), label: 'Publisher', link_to_search: :publisher_sim
-    config.add_index_field solr_name('subject_policy', :stored_searchable, type: :string), label: 'Subject Policy', link_to_search: :subject_policy_sim
-    config.add_index_field solr_name('subject_names', :stored_searchable), label: 'Subject Names', link_to_search: :subject_names_sim
-    config.add_index_field solr_name('subject_topical', :stored_searchable, type: :string), label: 'Subject Topical', link_to_search: :subject_topical_sim
-    config.add_index_field solr_name('coverage_congress', :stored_searchable, type: :string), label: 'Coverage Congress', link_to_search: :coverage_congress_sim
-    config.add_index_field solr_name('coverage_spatial', :stored_searchable, type: :string), label: 'Coverage Spatial', link_to_search: :coverage_spatial_sim
+    config.add_index_field solr_name('policy_area', :stored_searchable, type: :string), label: 'Policy Area', link_to_search: :policy_area_sim
+    config.add_index_field solr_name('names', :stored_searchable), label: 'Names', link_to_search: :names_sim
+    config.add_index_field solr_name('topic', :stored_searchable, type: :string), label: 'Topic', link_to_search: :topic_sim
+    config.add_index_field solr_name('congress', :stored_searchable, type: :string), label: 'Congress', link_to_search: :congress_sim
+    config.add_index_field solr_name('location_respresented', :stored_searchable, type: :string), label: 'Location Respresented', link_to_search: :location_represented_sim
 
     # Show ---------------------------------------------
     # show fields in the objects 
@@ -94,24 +93,20 @@ class CatalogController < ApplicationController
     config.add_show_field solr_name('date', :stored_searchable, type: :string), label: 'Date Created', link_to_search: :date_sim
     config.add_show_field solr_name('edtf', :stored_searchable, type: :string), label: 'EDTF'
     config.add_show_field solr_name('creator', :stored_searchable, type: :string), label: 'Creator', link_to_search: :creator_sim
-    config.add_show_field solr_name('rights', :stored_searchable, type: :string), label: 'Rights Statement'
-    config.add_show_field solr_name('rights2', :stored_searchable, type: :string), label: 'Rights'
-    config.add_show_field solr_name('alternate_identifier', :stored_searchable, type: :string), label: 'Alternate Identifier'
+    config.add_show_field solr_name('rights', :stored_searchable, type: :string), label: 'Rights'
     config.add_show_field solr_name('language', :stored_searchable, type: :string), label: 'Language'
     config.add_show_field solr_name('record_type', :stored_searchable, type: :string), label: 'Record Type'
     config.add_show_field solr_name('collection', :stored_searchable, type: :string), label: 'Collection', link_to_search: :collection_sim
     config.add_show_field solr_name('collection_finding_aid', type: :string), label: 'Collection Finding Aid', helper_method: :render_html_safe_url
     config.add_show_field solr_name('description', :stored_searchable, type: :string), label: 'Description'
-    config.add_show_field solr_name('subject_policy', :stored_searchable, type: :string), label: 'Subject Policy', link_to_search: :subject_policy_sim
-    config.add_show_field solr_name('subject_names', :stored_searchable, type: :string), label: 'Subject Names', link_to_search: :subject_names_sim 
-    config.add_show_field solr_name('subject_topical', :stored_searchable, type: :string), label: 'Subject Topical', link_to_search: :subject_topical_sim
-    config.add_show_field solr_name('coverage_congress', :stored_searchable, type: :string), label: 'Coverage Congress', link_to_search: :coverage_congress_sim
-    config.add_show_field solr_name('coverage_spatial', :stored_searchable, type: :string), label: 'Coverage Spatial', link_to_search: :coverage_spatial_sim
+    config.add_show_field solr_name('policy_area', :stored_searchable, type: :string), label: 'Policy Area', link_to_search: :policy_area_sim
+    config.add_show_field solr_name('names', :stored_searchable, type: :string), label: 'Names', link_to_search: :names_sim 
+    config.add_show_field solr_name('topic', :stored_searchable, type: :string), label: 'Topic', link_to_search: :topic_sim
+    config.add_show_field solr_name('congress', :stored_searchable, type: :string), label: 'Congress', link_to_search: :congress_sim
+    config.add_show_field solr_name('location_represented', :stored_searchable, type: :string), label: 'Location Represented', link_to_search: :location_represented_sim
     config.add_show_field solr_name('type', :stored_searchable, type: :string), label: 'Type'
     config.add_show_field solr_name('extent', :stored_searchable, type: :string), label: 'Extent'
     config.add_show_field solr_name('publisher', :stored_searchable, type: :string), label: 'Publisher', link_to_search: :publisher_sim
-    config.add_show_field solr_name('viaf_ids', :stored_searchable, type: :string), label: "VIAF Id's", link_to_search: :viaf_ids_sim
-    config.add_show_field solr_name('full_text', :stored_searchable, type: :string), label: 'Full Text'
 
     # search fields  
     config.add_search_field 'all_fields', label: 'All Fields'
@@ -119,7 +114,7 @@ class CatalogController < ApplicationController
     # add the search fields individually from solr 
     # use this as a template for creating new ones 
     # Search ---------------------------------------------
-    default_search_fields = ['identifier', 'title', 'alternate_identifier', 'date', 'contributing_institution', 'subject_policy', 'subject_names', 'subject_topical', 'coverage_congress', 'coverage_spatial', 'type', 'rights', 'language', 'extent']
+    default_search_fields = ['identifier', 'title', 'date', 'contributing_institution', 'policy_area', 'names', 'topic', 'congress', 'location_represented', 'record_type', 'rights', 'language', 'extent']
     default_search_fields.map! { |f| 
       config.add_search_field(f.to_s) do |field|
           field.solr_parameters = {
