@@ -18,4 +18,9 @@ class ApplicationController < ActionController::Base
       end
     end
   end
+
+  # redefines authenticate_user! to do nothing, which disables devise authentication for all controller actions throughout the app
+  # removing the following 2 lines will re-enable devise auth
+  def authenticate_user!
+  end
 end
