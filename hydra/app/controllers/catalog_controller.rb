@@ -53,7 +53,7 @@ class CatalogController < ApplicationController
     config.add_facet_field solr_name('date', :facetable), label: 'Date', limit: true, show: true, component: true
     config.add_facet_field solr_name('creator', :facetable), label: 'Creator', limit: true, show: true, component: true
     config.add_facet_field solr_name('contributing_institution', :facetable), label: 'Contributing Institution', link_to_search: :contributing_institution_ssi, limit: true, show: true, component: true
-    config.add_facet_field solr_name('collection', :facetable), label: 'Collection', link_to_search: :collection_ssi, limit: true, show: true, component: true
+    config.add_facet_field solr_name('collection_title', :facetable), label: 'Collection', link_to_search: :collection_title_ssi, limit: true, show: true, component: true
     config.add_facet_field solr_name('publisher', :facetable), label: 'Publisher', link_to_search: :publisher_ssi, limit: true, show: true, component: true
     config.add_facet_field solr_name('policy_area', :facetable), label: 'Policty Area', link_to_search: :policy_area_ssi, limit: true, show: true, component: true
     config.add_facet_field solr_name('names', :facetable), label: 'Names', link_to_search: :names_ssi, limit: true, show: true, component: true    
@@ -73,7 +73,7 @@ class CatalogController < ApplicationController
     # The ordering of the field names is the order of the display
     config.add_index_field solr_name('identifier', :stored_searchable), label: 'Identifier'     
     config.add_index_field solr_name('contributing_institution', :stored_searchable, type: :string), label: 'Contributing Institution', link_to_search: :contributing_institution_sim
-    config.add_index_field solr_name('collection', :stored_searchable), label: 'Collection', link_to_search: :collection_sim
+    config.add_index_field solr_name('collection_title', :stored_searchable), label: 'Collection', link_to_search: :collection_title_sim
     config.add_index_field solr_name('title', :stored_searchable, type: :string), label: 'Title'
     config.add_index_field solr_name('date', :stored_searchable, type: :string), label: 'Date', link_to_search: :date_sim
     config.add_index_field solr_name('creator', :stored_searchable, type: :string), label: 'Creator', link_to_search: :creator_sim
@@ -96,7 +96,7 @@ class CatalogController < ApplicationController
     config.add_show_field solr_name('rights', :stored_searchable, type: :string), label: 'Rights'
     config.add_show_field solr_name('language', :stored_searchable, type: :string), label: 'Language'
     config.add_show_field solr_name('record_type', :stored_searchable, type: :string), label: 'Record Type'
-    config.add_show_field solr_name('collection', :stored_searchable, type: :string), label: 'Collection', link_to_search: :collection_sim
+    config.add_show_field solr_name('collection_title', :stored_searchable, type: :string), label: 'Collection', link_to_search: :collection_title_sim
     config.add_show_field solr_name('collection_finding_aid', type: :string), label: 'Collection Finding Aid', helper_method: :render_html_safe_url
     config.add_show_field solr_name('description', :stored_searchable, type: :string), label: 'Description'
     config.add_show_field solr_name('policy_area', :stored_searchable, type: :string), label: 'Policy Area', link_to_search: :policy_area_sim

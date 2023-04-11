@@ -51,7 +51,7 @@ Bulkrax.setup do |config|
       'rights' => { from: ['dcterms:rights'] },
       'language' => { from: ['dcterms:language'] },
       'congress' => { from: ['dcterms:temporal'] },
-      'collection' => { from: ['dcterms:relation'] },#
+      'collection_title' => { from: ['dcterms:relation'] },#
       'coverage_spatial' => { from: ['dcterms:isPartOf'] },
       'collection_finding_aid' => { from: ['dcterms:source'] },
       'bulkrax_identifier' => { from: ['bulkrax_identifier'], source_identifier: true },

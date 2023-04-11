@@ -68,7 +68,7 @@ class Acda < ActiveFedora::Base
   # DC relation
   # ==============================================================================================================
   # collection property   
-  property :collection, predicate: ::RDF::Vocab::DC.relation, multiple: false do |index|
+  property :collection_title, predicate: ::RDF::Vocab::DC.relation, multiple: false do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
   end
 
