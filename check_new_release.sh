@@ -54,4 +54,10 @@ else
 
   # Show the current checked-out tag
   echo "Now on tag: $(git describe --tags --abbrev=0)"
+
+  echo "Beginning build"
+  docker-compose -f docker-compose.$1.yml build
+
+  echo "Restarting processes"
+  docker-compose-f docker-compose.$1.yml up -d web workers conversion
 fi
