@@ -7,13 +7,28 @@ REPO_NAME="hydra_acda_portal_public"
 # GITHUB_USER="scientist-softserv"
 # REPO_NAME="west-virginia-university"
 
+if [ -z "$1" ] ; then
+  echo "Usage: ./check_new_release.sh (dev|prod). Argument not found"
+  exit 1
+fi
 
-# GitHub API endpoint for release tags
-API_URL="https://api.github.com/repos/$GITHUB_USER/$REPO_NAME/releases/latest"
+if [ "$1" == "dev" ] ; then
+  # GitHub API endpoint for all releases
+  API_URL="https://api.github.com/repos/$GITHUB_USER/$REPO_NAME/releases"
 
-# Get the latest release tag from the GitHub API
-LATEST_TAG=$(curl --silent $API_URL | grep -Po '"tag_name": "\K.*?(?=")')
-echo $LATEST_TAG
+  # Get the latest pre-release tag from the GitHub API
+  LATEST_TAG=$(curl --silent $API_URL | jq -r '.[] | select(.prerelease==true) | .tag_name' | head -1)
+elif [ "$1" == "prod" ] ; then
+  # GitHub API endpoint for release tags
+  API_URL="https://api.github.com/repos/$GITHUB_USER/$REPO_NAME/releases/latest"
+
+  # Get the latest release tag from the GitHub API
+  LATEST_TAG=$(curl --silent $API_URL | jq -r '.tag_name' | head -1)
+else
+  echo "Usage: ./check_new_release.sh (dev|prod). Argument not recognized"
+  exit 1
+fi
+
 # Check if the tag exists
 if [ -z "$LATEST_TAG" ]; then
   echo "Error: No release tags found."
@@ -32,7 +47,7 @@ else
   echo "Checking out the new tag..."
 
   # Fetch the latest tags from the remote repository
-  git fetch --tags
+  git fetch --tags origin
 
   # Check out the latest tag
   git checkout $LATEST_TAG
