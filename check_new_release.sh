@@ -59,5 +59,5 @@ else
   docker-compose -f docker-compose.$1.yml build
 
   echo "Restarting processes"
-  docker-compose-f docker-compose.$1.yml up -d web workers conversion
+  docker-compose -f docker-compose.$1.yml up -d web workers conversion
 fi
