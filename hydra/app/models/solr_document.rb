@@ -38,6 +38,7 @@ class SolrDocument
     extent: 'extent_tesim',
     project: 'project_tesim',
     #converage: 'published_location_tesim'
+    bulkrax_identifier: 'bulkrax_identifier_tesim'
   )
 
   # self.unique_key = 'id'

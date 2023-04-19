@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  mount Bulkrax::Engine, at: '/'
   concern :oai_provider, BlacklightOaiProvider::Routes.new
   
   # images
@@ -32,6 +33,10 @@ Rails.application.routes.draw do
   concern :exportable, Blacklight::Routes::Exportable.new
 
   resources :solr_documents, only: [:show], path: '/catalog', controller: 'catalog' do
+    concerns :exportable
+  end
+
+  resources :acda, only: [:show], path: '/catalog', controller: 'catalog' do
     concerns :exportable
   end
 
