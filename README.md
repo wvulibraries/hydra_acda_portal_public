@@ -51,7 +51,7 @@ Using the terminal change directory to wvu_setup directory.  From this directory
 - Setup the New Github Link
 
 ## Hydra Head Manual Setups
-There isn't any way to script all of this without lots of pre-planning and forcing hydra to adhear to a certain standard.
+There isn't any way to script all of this without lots of pre-planning and forcing hydra to adhere to a certain standard.
 
 ### Models
 There are three really important models in the new hydra setups.
