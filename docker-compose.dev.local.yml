@@ -36,7 +36,7 @@ services:
   workers:
     extends: app
     container_name: sidekiq
-    command: bundle exec sidekiq -C config/sidekiq.yml
+    command: bash -c "bundle install; bundle exec sidekiq -C config/sidekiq.yml"
     depends_on:
       - redis
       - solr
