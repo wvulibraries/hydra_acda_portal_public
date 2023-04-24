@@ -10,11 +10,12 @@ services:
       - './env/.env.dev.local.hydra'
     volumes:
       - ./hydra:/home/hydra
-      - ./solr:/home/hydra/solr-
+      - ./solr:/home/hydra/solr
       - ./data/logs:/home/hydra/log
       - ./scripts:/home/hydra/scripts
       - ./mnt:/mnt
       - ./tmp/imports:/home/hydra/tmp/imports
+      - ./tmp/exports:/home/hydra/tmp/exports
       - /home/hydra/tmp # don't mount tmp directory
     networks:
       - hydra
@@ -71,16 +72,17 @@ services:
       - hydra
 
   fcrepo:
-    image: ghcr.io/samvera/fcrepo4:4.7.5
+    image: ghcr.io/scientist-softserv/docker-fcrepo:4.7.6-SNAPSHOT2
     container_name: fcrepo
     depends_on:
-    - db
+      - db
     env_file:
       - './env/.env.dev.fedora'
     ports:
       - "8080:8080"
     networks:
       - hydra
+
   solr:
     image: solr:8.11.1
     container_name: solr
@@ -136,7 +138,6 @@ services:
 
 volumes:
   postgres:
-
   redis:
   solr:
 
