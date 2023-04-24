@@ -68,7 +68,7 @@ class Acda < ActiveFedora::Base
   # DC relation
   # ==============================================================================================================
   # collection property   
-  property :collection, predicate: ::RDF::Vocab::DC.relation, multiple: false do |index|
+  property :collection_title, predicate: ::RDF::Vocab::DC.relation, multiple: false do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
   end
 
@@ -177,7 +177,13 @@ class Acda < ActiveFedora::Base
   # used in the search builder to target only records from this collection
   property :project, predicate: ::RDF::URI.intern('http://lib.wvu.edu/hydra/project'), multiple: true do |index|
     index.as :stored_searchable, :facetable
-  end  
+  end
+
+  # PROJECT IDENTIFIER
+  # ==============================================================================================================
+  property :bulkrax_identifier, predicate: ::RDF::URI("https://hykucommons.org/terms/bulkrax_identifier"), multiple: false do |index|
+    index.as :stored_searchable
+  end
 
   directly_contains :files, has_member_relation: ::RDF::URI('http://pcdm.org/models#File'), class_name: 'AcdaFile'
 

@@ -10,10 +10,10 @@ services:
       - './env/.env.dev.hydra' 	
     volumes:	
       - ./hydra:/home/hydra	
-      - ./solr:/home/hydra/solr   
-      - ./data/logs:/home/hydra/log   
-      - ./scripts:/home/hydra/scripts	 	
-      - /mnt:/mnt  	
+      - ./solr:/home/hydra/solr
+      - ./data/logs:/home/hydra/log
+      - ./scripts:/home/hydra/scripts
+      - /mnt:/mnt
       - /home/hydra/tmp # don't mount tmp directory  	
     networks:	
       - hydra         	
@@ -60,7 +60,7 @@ services:
       - "6379"	
     env_file:
       - './env/.env.dev.redis'
-    volumes:	
+    volumes:
       - redis:/var/lib/redis/data	
     restart: unless-stopped  	
     healthcheck:	
@@ -75,13 +75,13 @@ services:
     image: ghcr.io/samvera/fcrepo4:4.7.5
     container_name: fcrepo
     depends_on:
-      - db        
+      - db
     env_file:
-      - './env/.env.dev.fedora' 
+      - './env/.env.dev.fedora'
     ports:
-      - "8080:8080"	
+      - "8080:8080"
     networks:	
-      - hydra        	
+      - hydra
 
   solr:	
     image: solr:8.11.1	
@@ -107,7 +107,7 @@ services:
     ports:	
       - "5432"	
     env_file:	
-      - './env/.env.dev.local.db'       	
+      - './env/.env.dev.local.db'
     volumes:	
       - postgres:/var/lib/postgresql/data	
     restart: unless-stopped	
@@ -116,7 +116,7 @@ services:
       interval: 30s
       timeout: 60s
       retries: 5
-      start_period: 80s  
+      start_period: 80s
     networks:	
       - hydra	
 
@@ -130,8 +130,8 @@ services:
       - TERM=xterm	
     volumes:	
       - ./conversion/scripts:/convert/	
-      - ./conversion/control:/control/	
-      - /mnt:/mnt	
+      - ./conversion/control:/control/
+      - /mnt:/mnt
     networks:	
       - hydra	
 

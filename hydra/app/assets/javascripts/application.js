@@ -20,6 +20,10 @@
 // -----------------------------------------------------
 //= require blacklight/blacklight
 
+// Required by Bulkrax
+// -----------------------------------------------------
+//= require bulkrax/application
+
 // CUSTOM COLLECTION JS 
 // -----------------------------------------------------
 //= require partials/equal_heights

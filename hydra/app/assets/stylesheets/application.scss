@@ -18,6 +18,7 @@
 // it is important that the order gets imported in a certain way so that variables are able to be used in other scss files
 @import "partials/variables";
 @import "blacklight";
+@import "bulkrax/application";
 @import "partials/wvu";
 @import "partials/wvrhc";
 @import "partials/helpmodal";
@@ -27,3 +28,4 @@
 @import "partials/alerts"; 
 @import "partials/partners";
 @import "partials/carousel";
+@import "partials/bulkrax";
