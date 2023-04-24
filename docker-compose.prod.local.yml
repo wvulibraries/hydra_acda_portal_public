@@ -111,7 +111,7 @@ services:
       - postgres:/var/lib/postgresql/data
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready", "-d", "hyrax"]
+      test: ["CMD-SHELL", "pg_isready", "-d", "fcrepo"]
       interval: 30s
       timeout: 60s
       retries: 5
@@ -139,9 +139,9 @@ volumes:
   fcrepo:
   redis:  
   solr:
-
-networks:
-  hydra:
-    driver: bridge
-    driver_opts:
+  
+networks:	
+  hydra:	
+    driver: bridge	
+    driver_opts:	
       com.docker.network.bridge.name: br-hydra
