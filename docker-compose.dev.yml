@@ -1,19 +1,17 @@
 version: '3.4'	
-# used for local testing	
-# note only have either mfcs_export or mnt not both for conversions or hydra.	
 services:	
   app:	
     build: 	
       context: ./	
       dockerfile: Dockerfile.dev
     env_file:	
-      - './env/.env.dev.hydra' 	
+      - './env/env.dev.hydra' 	
     volumes:	
       - ./hydra:/home/hydra	
       - ./solr:/home/hydra/solr   
       - ./data/logs:/home/hydra/log   
       - ./scripts:/home/hydra/scripts	 	
-      - /mnt:/mnt  	
+      - ./data/mfcs-exports:/mnt/nfs-exports/mfcs-exports  	 	 	
       - /home/hydra/tmp # don't mount tmp directory  	
     networks:	
       - hydra         	
@@ -24,23 +22,37 @@ services:
     command: bash -c "bundle install; service cron start; gem install whenever; whenever --update-crontab; bundle exec rails s -p 3000 -b 0.0.0.0"	
     ports:	
       - "3000:3000"	
-    depends_on:	
-      - redis	
-      - solr	
-      - fcrepo	
-      - db	
-      - workers	
+    depends_on:
+      redis:
+        condition: service_started
+      db:
+        condition: service_started
+      fcrepo:
+        condition: service_started
+      solr:
+        condition: service_started
+      workers:
+        condition: service_started
+      migrate:
+        condition: service_completed_successfully
 
   workers:	
     extends: app	
     container_name: sidekiq	
     command: bundle exec sidekiq -C config/sidekiq.yml	
-    depends_on:	
-      - redis	
-      - solr	
-      - fcrepo	
-      - memcached 	
-      - db	
+    depends_on:
+      redis:
+        condition: service_started
+      db:
+        condition: service_started
+      fcrepo:
+        condition: service_started
+      solr:
+        condition: service_started
+      workers:
+        condition: service_started
+      migrate:
+        condition: service_completed_successfully	
     stdin_open: true	
     tty: true             	
 
@@ -59,7 +71,7 @@ services:
     ports:	
       - "6379"	
     env_file:
-      - './env/.env.dev.redis'
+      - './env/env.dev.redis'
     volumes:	
       - redis:/var/lib/redis/data	
     restart: unless-stopped  	
@@ -77,11 +89,13 @@ services:
     depends_on:
       - db        
     env_file:
-      - './env/.env.dev.fedora' 
+      - './env/env.dev.fedora' 
     ports:
-      - "8080:8080"	
-    networks:	
-      - hydra        	
+      - "8080:8080"
+    volumes:
+      - fcrepo:/data:cached           
+    networks:
+      - hydra      	
 
   solr:	
     image: solr:8.11.1	
@@ -101,24 +115,24 @@ services:
     networks:	
       - hydra	   
 
-  db:	
-    container_name: db	
-    image: postgres:14-alpine	
-    ports:	
-      - "5432"	
-    env_file:	
-      - './env/.env.dev.local.db'       	
-    volumes:	
-      - postgres:/var/lib/postgresql/data	
-    restart: unless-stopped	
+  db:
+    container_name: db
+    image: postgres:14-alpine
+    expose:
+      - "5432"
+    env_file:
+      - './env/env.dev.db'       
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready", "-d", "fcrepo"]
       interval: 30s
       timeout: 60s
       retries: 5
       start_period: 80s  
-    networks:	
-      - hydra	
+    networks:
+      - hydra
 
   conversion:	
     build: 	
@@ -131,7 +145,7 @@ services:
     volumes:	
       - ./conversion/scripts:/convert/	
       - ./conversion/control:/control/	
-      - /mnt:/mnt	
+      - ./data/mfcs-exports:/mnt/nfs-exports/mfcs-exports  	 	
     networks:	
       - hydra	
 
