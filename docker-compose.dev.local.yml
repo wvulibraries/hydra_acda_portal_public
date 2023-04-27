@@ -141,8 +141,8 @@ volumes:
   redis:
   solr:
 
-networks:	
-  hydra:	
-    driver: bridge	
-    driver_opts:	
+networks:
+  hydra:
+    driver: bridge
+    driver_opts:
       com.docker.network.bridge.name: br-hydra
