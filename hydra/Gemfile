@@ -32,7 +32,7 @@ gem 'whenever', require: false
 
 # Bulkrax Import
 # =====================================================
-gem 'bulkrax'
+gem 'bulkrax', '~> 5.2.0'
 
 # background jobs
 # =====================================================

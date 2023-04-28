@@ -89,7 +89,7 @@ GEM
       autoprefixer-rails (>= 5.2.1)
       sassc (>= 2.0.0)
     builder (3.2.4)
-    bulkrax (5.0.0)
+    bulkrax (5.2.1)
       bagit (~> 0.4)
       coderay
       iso8601 (~> 0.9.0)
@@ -413,7 +413,7 @@ DEPENDENCIES
   blacklight
   blacklight_oai_provider
   bootsnap (>= 1.1.0)
-  bulkrax
+  bulkrax (~> 5.2.0)
   bundler
   byebug
   coffee-rails (~> 4.2)
