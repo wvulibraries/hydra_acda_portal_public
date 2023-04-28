@@ -23,7 +23,7 @@ services:
   migrate:
     extends: app
     container_name: migrate
-    command: bash -c "sh ./scripts/setup.sh"
+    command: bash -c "bundel install; sh ./scripts/setup.sh"
     depends_on:
       - redis
       - solr
