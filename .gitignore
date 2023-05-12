@@ -4,3 +4,5 @@
 conversion/control/finished/*
 /env/
 /env*
+/tmp/
+/tmp/*
