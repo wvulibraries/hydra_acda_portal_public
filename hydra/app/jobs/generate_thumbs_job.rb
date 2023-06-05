@@ -12,8 +12,9 @@ class GenerateThumbsJob < ApplicationJob
     if record.thumbnail_file.nil?
       if record.preview.include? 'pdf'
         GeneratePdfThumbsJob.perform_later(identifier)
-      else
-        GenerateImageThumbsJob.perform_later(identifier)
+      # tesing thumbnail generation for images from remote files
+      # else
+      #   GenerateImageThumbsJob.perform_later(identifier)
       end
     end
   end
