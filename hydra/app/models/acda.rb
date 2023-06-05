@@ -2,6 +2,15 @@
 class Acda < ActiveFedora::Base
   include Hydra::AccessControls::Permissions
 
+  include ImportLibrary
+
+  after_save :generate_thumbnail
+
+  def generate_thumbnail
+    # queue job to generate thumbnail
+    GenerateThumbsJob.perform_later(identifier)
+  end
+
   # Minting ID
   # Overriding Fedoras LONG URI NOT FRIENDLY ID
   def assign_id

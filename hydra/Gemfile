@@ -34,6 +34,11 @@ gem 'whenever', require: false
 # =====================================================
 gem 'bulkrax', '~> 5.2.0'
 
+# Dependices for Thumbnail Creation
+# =====================================================
+gem 'mini_magick'
+gem 'open-uri'
+
 # background jobs
 # =====================================================
 # sidekiq 7 is not compatible with rails 5.2

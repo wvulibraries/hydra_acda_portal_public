@@ -17,6 +17,9 @@ services:
       - ./data/seed_files:/home/hydra/db/data      
       - ./tmp/imports:/home/hydra/tmp/imports
       - ./tmp/exports:/home/hydra/tmp/exports
+      - ./data/downloads:/home/hydra/tmp/downloads
+      - ./data/thumbnails:/home/hydra/tmp/thumbnails
+      - ./data/images:/home/hydra/tmp/images
       - /home/hydra/tmp # don't mount tmp directory
     networks:
       - hydra

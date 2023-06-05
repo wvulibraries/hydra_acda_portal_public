@@ -12,6 +12,9 @@ module ImportLibrary
     end
 
     def self.set_file(file_obj, type, path)
+        # ensure the file exists in the path
+        return unless File.exist?(path.to_s)
+
         file_obj.mime_type = type
         file_obj.content = File.open(path)
         file_obj.original_name = path

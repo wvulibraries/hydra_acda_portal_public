@@ -11,13 +11,16 @@ RUN mkdir -p /home/${PROJECT_PATH}/
 WORKDIR /home/${PROJECT_PATH}
 ADD ./${PROJECT_PATH} /home/${PROJECT_PATH}
 
-RUN apt-get update && apt-get -y install cron postgresql-client
+RUN apt-get update && apt-get -y install cron postgresql-client ghostscript libgs-dev
 
 # Use JEMALLOC instead
 # JEMalloc is a faster garbage collection for Ruby.
 # -------------------------------------------------------------------------------------------------
 RUN apt-get install -y libjemalloc2 libjemalloc-dev
 ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so
+
+# Modifiy ImageMagick's security policy to allow reading and writing PDFs
+RUN sed -i 's/policy domain="coder" rights="none" pattern="PDF"/policy domain="coder" rights="read|write" pattern="PDF"/' /etc/ImageMagick-6/policy.xml
 
 RUN \
   gem update --system --quiet && \

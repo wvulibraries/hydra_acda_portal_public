@@ -3,10 +3,11 @@
 <% project = @document[:project_ssi] %>
 <% num_files = @document[:num_files_isi] %>
 <% description = @document[:description_tesim] %>
+<% preview = @document[:preview_ssi] %>
 
 <div class="row">
   <div class="col-md-4">      
-      <a class="document-image-full" href="/pdf/<%= identifier %>.pdf">
+      <a class="document-image-full" href="<%= preview %>">
         <%= image_tag("/image/#{identifier}", title:"#{@document[:title_ssi]}", alt:description, class:"full-size-responsive") %> <br><br> 
         <span class="fa fa-file-pdf-o"> Click on the image to view full PDF.</span>
       </a>
