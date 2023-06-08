@@ -70,8 +70,6 @@ html, form, nav, div {
 		font-size: 1.25em;
 		border-radius: 5px;
 		color: #f7f7f7;
-		float: left;
-		margin: 20px 10px 40px 0;
 	}
 	#documents {
 		text-align: left;
@@ -527,9 +525,9 @@ html, form, nav, div {
 }
 
 /*********************************************************************
-	1181px and up
+	1301px and up
 **********************************************************************/
-@media screen and (min-width: 1181px) {
+@media screen and (min-width: 1301px) {
     .sticky-header {
 	    height: 35px;
 
