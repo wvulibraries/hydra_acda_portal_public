@@ -4,7 +4,7 @@ class Acda < ActiveFedora::Base
 
   include ImportLibrary
 
-  after_save :generate_thumbnail
+  after_create :generate_thumbnail
 
   def generate_thumbnail
     # queue job to generate thumbnail
