@@ -55,7 +55,7 @@ class CatalogController < ApplicationController
     config.add_facet_field solr_name('contributing_institution', :facetable), label: 'Contributing Institution', link_to_search: :contributing_institution_ssi, limit: true, show: true, component: true
     config.add_facet_field solr_name('collection_title', :facetable), label: 'Collection', link_to_search: :collection_title_ssi, limit: true, show: true, component: true
     config.add_facet_field solr_name('publisher', :facetable), label: 'Publisher', link_to_search: :publisher_ssi, limit: true, show: true, component: true
-    config.add_facet_field solr_name('policy_area', :facetable), label: 'Policty Area', link_to_search: :policy_area_ssi, limit: true, show: true, component: true
+    config.add_facet_field solr_name('policy_area', :facetable), label: 'Policy Area', link_to_search: :policy_area_ssi, limit: true, show: true, component: true
     config.add_facet_field solr_name('names', :facetable), label: 'Names', link_to_search: :names_ssi, limit: true, show: true, component: true    
     config.add_facet_field solr_name('topic', :facetable), label: 'Topic', link_to_search: :topic_ssi, limit: true, show: true, component: true
     config.add_facet_field solr_name('congress', :facetable), label: 'Congress', link_to_search: :coverage_congress_ssi, limit: true, show: true, component: true
