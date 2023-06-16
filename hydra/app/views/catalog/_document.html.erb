@@ -20,7 +20,7 @@
 			<%= link_to_document document, image_tag("/thumb/#{identifier}", title:"#{document[:title_ssi]}", alt:description) %>
 		<% end %>
 		
-		<div style="clear:both"></div>
+		<div style="clear:both !important;"></div>
 
 	    <%= render_document_partials(document, blacklight_config.view_config(document_index_view_type).partials, :document_counter => document_counter).html_safe %>
 

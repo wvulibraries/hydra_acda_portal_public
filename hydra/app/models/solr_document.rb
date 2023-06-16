@@ -12,33 +12,36 @@ class SolrDocument
 
     @semantic_value_hash ||= {}
     idno = @semantic_value_hash[:identifier].first
-    @semantic_value_hash[:identifier] = "http://acda.lib.wvu.edu/record/#{idno}"
+    @semantic_value_hash[:identifier] = "http://congressarchivesdev.lib.wvu.edu/record/#{idno}"
     @semantic_value_hash
   end
 
   field_semantics.merge!(
-    identifier: 'identifier_tesim',
-    # item_number: 'item_number_tesim',
-    #oclc_number: 'oclc_number_tesim',
+    contributing_institution: 'contributing_institution_tesim',
     title: 'title_tesim',
     date: 'edtf_tesim',
+    edtf: 'edtf_tesim',
     creator: 'creator_tesim',
-    #contributor: 'contributor_tesim',
+    rights: 'rights_tesim',
+    language: 'language_tesim',
+    congress: 'congress_tesim',
+    collection_title: 'collection_title_tesim',
+    physical_location: 'physical_location_tesim',
+    collection_finding_aid: 'collection_finding_aid_tesim',
+    identifier: 'identifier_tesim',
+    preview: 'preview_tesim',
+    available_at: 'available_at_tesim',
+    record_type: 'record_type_tesim',
+    policy_area: 'policy_area_tesim',
+    topic: 'topic_tesim',
+    names: 'names_tesim',
+    location_represented: 'slocation_represented_tesim',
+    extent: 'extent_tesim',
     publisher: 'publisher_tesim',
     description: 'description_tesim',
-    subject: 'subject_tesim',
-    type: 'type_tesim',
-    #provenance: 'provenance_dpla_tesim',
-    rights: 'rights_tesim',
-    #location: 'location_tesim',
-    #temporal: 'time_period_tesim',
-    #format: 'format_tesim',
-    language: 'language_tesim',
-    #source: 'source_tesim',
-    extent: 'extent_tesim',
+    dc_type: 'dc_type_tesim',    
     project: 'project_tesim',
-    #converage: 'published_location_tesim'
-    bulkrax_identifier: 'bulkrax_identifier_tesim'
+    bulkrax_identifier: 'bulkrax_identifier_tesim'   
   )
 
   # self.unique_key = 'id'

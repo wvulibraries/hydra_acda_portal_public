@@ -16,8 +16,8 @@ class CatalogController < ApplicationController
     config.oai = {
       provider: {
         repository_name: 'American Congress Digital Archives Portal',
-        repository_url: 'https://acda.lib.wvu.edu/catalog/oai',
-        record_prefix: 'https://acda.lib.wvu.edu/catalog/',
+        repository_url: 'https://congressarvhicesdev.lib.wvu.edu/catalog/oai',
+        record_prefix: 'https://congressarvhicesdev.lib.wvu.edu/catalog/',
         admin_email: 'libsys@mail.wvu.edu'
       },
       document: {
@@ -149,6 +149,15 @@ class CatalogController < ApplicationController
 
     config.fetch_many_document_params = { fl: "*" }
   end
+
+  # def show
+  #   super
+  #   @metadata = []
+  #   # loop over each field and add it to the metadata
+  #   @document.each_pair do |k,v|
+  #     @metadata << [k, v] unless v.present?
+  #   end
+  # end
 
   # adds additional pages that will also use the searchbar from the navigation 
   # customizable behavior should be done in a module or static model 
