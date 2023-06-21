@@ -5,10 +5,33 @@ class Acda < ActiveFedora::Base
   include ImportLibrary
 
   after_create :generate_thumbnail
+  after_save :clear_empty_fields
 
   def generate_thumbnail
     # queue job to generate thumbnail
     GenerateThumbsJob.perform_later(identifier)
+  end
+
+  def clear_empty_fields
+    # temporary fix for bulkrax import setting some empty strings into the Relation
+    # reported issue to on slack on 6-20-2023 tam0013@mail.wvu.edu
+
+    # get keys
+    keys = self.attributes.keys
+    # loop over keys skipping id and visibility fields
+    keys.each do |key|
+      # skip id
+      next if key == 'id' || key == 'visibility'
+      # if value is a relation convert to array and reject blank values
+      if self[key].class == ActiveTriples::Relation && self[key].to_a.count == 1
+        temp_array = self[key].to_a
+        # delete first element if it is blank
+        if temp_array.to_a.first == ""
+          temp_array.delete_at(0)
+          self[key] = temp_array
+        end
+      end
+    end
   end
 
   # Minting ID
