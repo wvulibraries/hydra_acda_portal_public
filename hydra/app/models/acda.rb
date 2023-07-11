@@ -22,12 +22,14 @@ class Acda < ActiveFedora::Base
     keys.each do |key|
       # skip id
       next if key == 'id' || key == 'visibility'
-      # if value is a relation convert to array and reject blank values
+      # if class is a relation and has only one element and that element is blank
       if self[key].class == ActiveTriples::Relation && self[key].to_a.count == 1
+        # convert to array
         temp_array = self[key].to_a
         # delete first element if it is blank
         if temp_array.to_a.first == ""
           temp_array.delete_at(0)
+          # set array back to relation
           self[key] = temp_array
         end
       end

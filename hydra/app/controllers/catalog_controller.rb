@@ -16,8 +16,8 @@ class CatalogController < ApplicationController
     config.oai = {
       provider: {
         repository_name: 'American Congress Digital Archives Portal',
-        repository_url: 'https://congressarvhicesdev.lib.wvu.edu/catalog/oai',
-        record_prefix: 'https://congressarvhicesdev.lib.wvu.edu/catalog/',
+        repository_url: 'https://congressarchivesdev.lib.wvu.edu/catalog/oai',
+        record_prefix: 'https://congressarchivesdev.lib.wvu.edu/catalog/',
         admin_email: 'libsys@mail.wvu.edu'
       },
       document: {
@@ -82,7 +82,7 @@ class CatalogController < ApplicationController
     config.add_index_field solr_name('policy_area', :stored_searchable, type: :string), label: 'Policy Area', link_to_search: :policy_area_sim
     config.add_index_field solr_name('names', :stored_searchable), label: 'Names', link_to_search: :names_sim
     config.add_index_field solr_name('topic', :stored_searchable, type: :string), label: 'Topic', link_to_search: :topic_sim
-    config.add_index_field solr_name('congress', :stored_searchable, type: :string), label: 'Congress', link_to_search: :congress_sim
+    config.add_index_field solr_name('congress', :stored_searchable, type: :string), label: 'Congress', link_to_search: :congress_sim 
     config.add_index_field solr_name('location_respresented', :stored_searchable, type: :string), label: 'Location Respresented', link_to_search: :location_represented_sim
 
     # Show ---------------------------------------------
