@@ -2,7 +2,6 @@ class User < ApplicationRecord
   # Connects this user object to Hydra behaviors.
   include Hydra::User
 
-
   if Blacklight::Utils.needs_attr_accessible?
     attr_accessible :email, :password, :password_confirmation
   end
