@@ -19,11 +19,14 @@ RUN apt-get update && apt-get -y install cron postgresql-client vim
 RUN apt-get install -y libjemalloc2 libjemalloc-dev
 ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so
 
+# Uncomment if developing Bulkrax within this application
+# COPY ./hydra/vendor/engines/bulkrax /home/hydra/vendor/engines/bulkrax
+
 RUN \
   gem update --system --quiet && \
   gem install bundler -v ${BUNDLER_VERSION} && \
   gem install rails -v ${RAILS_VERSION} && \
-  bundle install --jobs=4 --retry=3 
+  bundle install --jobs=4 --retry=3
 
 # Node.js
 # -------------------------------------------------------------------------------------------------
