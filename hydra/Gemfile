@@ -22,7 +22,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 gem 'bootsnap', '>= 1.1.0', require: false
 
-# OAI-PMH 
+# OAI-PMH
 # =====================================================
 gem 'blacklight_oai_provider'
 
@@ -32,7 +32,9 @@ gem 'whenever', require: false
 
 # Bulkrax Import
 # =====================================================
-gem 'bulkrax', '~> 5.2.0'
+# Switch the comments on these two lines to work on Bulkrax locally
+gem 'bulkrax', git: 'https://github.com/samvera-labs/bulkrax.git', ref: '9330baa'
+# gem 'bulkrax', path: 'vendor/engines/bulkrax'
 
 # background jobs
 # =====================================================
