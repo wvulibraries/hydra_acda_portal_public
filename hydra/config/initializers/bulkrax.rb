@@ -49,7 +49,7 @@ Bulkrax.setup do |config|
       'edtf' => { from: ['dcterms:created'] },
       'creator' => { from: ['dcterms:creator'] },
       'rights' => { from: ['dcterms:rights'] },
-      'language' => { from: ['dcterms:language'] },
+      'language' => { from: ['dcterms:language'], split: true },
       'congress' => { from: ['dcterms:temporal'] },
       'collection_title' => { from: ['dcterms:relation'] },
       'physical_location' => { from: ['dcterms:isPartOf'] },
@@ -60,9 +60,9 @@ Bulkrax.setup do |config|
       'preview' => { from: ['edm:preview'] },
       'available_at' => { from: ['edm:isShownAt'] },
       'description' => { from: ['dcterms:description'] },
-      'names' => { from: ['dcterms:contributor'] },
+      'names' => { from: ['dcterms:contributor'], split: true },
       'dc_type' => { from: ['dcterms:type'] },
-      'record_type' => { from: ['dcterms:http://purl.org/dc/terms/type'] },
+      'record_type' => { from: ['dcterms:http://purl.org/dc/terms/type'], split: true },
       'format' => { from: ['dcterms:format'] },
       'publisher' => { from: ['dcterms:publisher'], split: true },
       'policy_area' => { from: ['dcterms:subject'], split: true }
@@ -104,7 +104,7 @@ Bulkrax.setup do |config|
   # config.qa_controlled_properties += ['my_field']
 
   # Specify the delimiter regular expression for splitting an attribute's values into a multi-value array.
-  # config.multi_value_element_split_on = //\s*[:;|]\s*/.freeze
+  # config.multi_value_element_split_on = /\s*[:;|]\s*/.freeze
 
   # Specify the delimiter for joining an attribute's multi-value array into a string.  Note: the
   # specific delimeter should likely be present in the multi_value_element_split_on expression.
