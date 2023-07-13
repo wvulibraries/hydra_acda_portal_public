@@ -56,7 +56,7 @@ Bulkrax.setup do |config|
       'collection_finding_aid' => { from: ['dcterms:source'] },
       'bulkrax_identifier' => { from: ['bulkrax_identifier'], source_identifier: true },
       'identifier' => { from: ['dcterms:identifier'] },
-      'topic' => { from: ['dcterms:subject'] },
+      'topic' => { from: ['dcterms:http://purl.org/dc/terms/subject'], split: true },
       'preview' => { from: ['edm:preview'] },
       'available_at' => { from: ['edm:isShownAt'] },
       'description' => { from: ['dcterms:description'] },
@@ -64,7 +64,8 @@ Bulkrax.setup do |config|
       'dc_type' => { from: ['dcterms:type'] },
       'record_type' => { from: ['dcterms:http://purl.org/dc/terms/type'] },
       'format' => { from: ['dcterms:format'] },
-      'publisher' => { from: ['dcterms:publisher'] }
+      'publisher' => { from: ['dcterms:publisher'], split: true },
+      'policy_area' => { from: ['dcterms:subject'], split: true }
     }
   }
 
