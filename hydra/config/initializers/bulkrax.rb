@@ -49,7 +49,7 @@ Bulkrax.setup do |config|
       'edtf' => { from: ['dcterms:created'] },
       'creator' => { from: ['dcterms:creator'] },
       'rights' => { from: ['dcterms:rights'] },
-      'language' => { from: ['dcterms:language'] },
+      'language' => { from: ['dcterms:language'], split: true },
       'congress' => { from: ['dcterms:temporal'] },
       'collection_title' => { from: ['dcterms:relation'] },
       'physical_location' => { from: ['dcterms:isPartOf'] },
@@ -64,7 +64,7 @@ Bulkrax.setup do |config|
       'dc_type' => { from: ['dcterms:type'] },
       'record_type' => { from: ['dcterms:http://purl.org/dc/terms/type'], split: true },
       'format' => { from: ['dcterms:format'] },
-      'publisher' => { from: ['dcterms:publisher'] }
+      'publisher' => { from: ['dcterms:publisher'], split: true }
     }
   }
 
