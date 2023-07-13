@@ -1,4 +1,4 @@
-# Generated Model for Metadata 
+# Generated Model for Metadata
 class Acda < ActiveFedora::Base
   include Hydra::AccessControls::Permissions
 
@@ -6,14 +6,14 @@ class Acda < ActiveFedora::Base
   # Overriding Fedoras LONG URI NOT FRIENDLY ID
   def assign_id
     identifier.gsub('.', '').to_s
-  end  
+  end
 
   # DC provenance
   # ==============================================================================================================
   # contributing institution property
   property :contributing_institution, predicate: ::RDF::Vocab::DC.provenance, multiple: false do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
-  end  
+  end
 
   # DC Title
   # ==============================================================================================================
@@ -35,7 +35,7 @@ class Acda < ActiveFedora::Base
   # not shown in the UI
   property :edtf, predicate: ::RDF::Vocab::DC.created, multiple: false do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
-  end  
+  end
 
   # DC creator
   # ==============================================================================================================
@@ -60,52 +60,52 @@ class Acda < ActiveFedora::Base
 
   # DC temporal
   # ==============================================================================================================
-  # congress property  
+  # congress property
   property :congress, predicate: ::RDF::Vocab::DC.temporal, multiple: false do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
-  end  
+  end
 
   # DC relation
   # ==============================================================================================================
-  # collection property   
+  # collection property
   property :collection_title, predicate: ::RDF::Vocab::DC.relation, multiple: false do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
   end
 
-  # DC isPartOf 
+  # DC isPartOf
   # ==============================================================================================================
-  # physical location property   
+  # physical location property
   property :physical_location, predicate: ::RDF::Vocab::DC.isPartOf, multiple: false do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
-  end  
+  end
 
   # DC source
   # ==============================================================================================================
-  # collection finding aid property     
+  # collection finding aid property
   property :collection_finding_aid, predicate: ::RDF::Vocab::DC.source, multiple: false do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
-  end  
+  end
 
   # DC identifier
   # ==============================================================================================================
-  # identifier property   
+  # identifier property
   property :identifier, predicate: ::RDF::Vocab::DC.identifier, multiple: false do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
   end
 
   # EDM preview
   # ==============================================================================================================
-  # preview property  
+  # preview property
   property :preview, predicate: ::RDF::Vocab::EDM.preview, multiple: false do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
   end
 
   # EDM isShownAt
   # ==============================================================================================================
-  # Avaliable At Property   
+  # Avaliable At Property
   property :available_at, predicate: ::RDF::Vocab::EDM.isShownAt, multiple: false do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
-  end  
+  end
 
   # DC record type
   # ==============================================================================================================
@@ -119,12 +119,12 @@ class Acda < ActiveFedora::Base
   # Policy Area property
   property :policy_area, predicate: ::RDF::Vocab::DC.subject, multiple: true do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
-  end  
+  end
 
   # DC subject
   # ==============================================================================================================
   # Topic property
-  property :topic, predicate: ::RDF::URI.intern('http://purl.org/dc/terms/subject'), multiple: true do |index|
+  property :topic, predicate: ::RDF::URI.intern('http://lib.wvu.edu/hydra/subject'), multiple: true do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
   end
 
@@ -133,21 +133,21 @@ class Acda < ActiveFedora::Base
   # Names property
   property :names, predicate: ::RDF::Vocab::DC.contributor, multiple: true do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
-  end  
+  end
 
   # DC spatial
   # ==============================================================================================================
   # Location Represented property
   property :location_represented, predicate: ::RDF::Vocab::DC.spatial, multiple: true do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
-  end 
+  end
 
   # DC format
-  # ==============================================================================================================  
+  # ==============================================================================================================
   # type extent
   property :extent, predicate: ::RDF::Vocab::DC.format, multiple: false do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
-  end  
+  end
 
   # DC publisher
   # ==============================================================================================================
@@ -161,9 +161,9 @@ class Acda < ActiveFedora::Base
   # description property
   property :description, predicate: ::RDF::Vocab::DC.description, multiple: false do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
-  end  
+  end
 
-  # DC type 
+  # DC type
   # This not to be confused with record type this is required to identify the type of record Sound, Image, Text, etc.
   # So we can render the correct viewer
   # ==============================================================================================================
@@ -205,5 +205,5 @@ class Acda < ActiveFedora::Base
 
   # video property
   directly_contains_one :video_file, through: :files, type: ::RDF::URI('http://pcdm.org/file-format-types#Video'),
-                                     class_name: 'AcdaFile'  
+                                     class_name: 'AcdaFile'
 end

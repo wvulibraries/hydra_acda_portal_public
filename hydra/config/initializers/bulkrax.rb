@@ -56,7 +56,7 @@ Bulkrax.setup do |config|
       'collection_finding_aid' => { from: ['dcterms:source'] },
       'bulkrax_identifier' => { from: ['bulkrax_identifier'], source_identifier: true },
       'identifier' => { from: ['dcterms:identifier'] },
-      'topic' => { from: ['dcterms:http://purl.org/dc/terms/subject'], split: true },
+      'topic' => { from: ['http://lib.wvu.edu/hydra/subject'], split: true },
       'preview' => { from: ['edm:preview'] },
       'available_at' => { from: ['edm:isShownAt'] },
       'description' => { from: ['dcterms:description'] },
