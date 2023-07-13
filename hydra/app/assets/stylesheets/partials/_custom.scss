@@ -383,8 +383,10 @@ html, form, nav, div {
 
 
 /* Bulkrax Forms */
-.importer-form .form-control {
-  color: rgb(51, 51, 51)
+.importer-form, .exporter-form {
+  .form-control {
+    color: rgb(51, 51, 51)
+  }
 }
 
 /*********************************************************************
