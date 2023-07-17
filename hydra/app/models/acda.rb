@@ -2,6 +2,40 @@
 class Acda < ActiveFedora::Base
   include Hydra::AccessControls::Permissions
 
+  include ImportLibrary
+
+  after_create :generate_thumbnail
+  after_save :clear_empty_fields
+
+  def generate_thumbnail
+    # queue job to generate thumbnail
+    GenerateThumbsJob.perform_later(identifier)
+  end
+
+  def clear_empty_fields
+    # temporary fix for bulkrax import setting some empty strings into the Relation
+    # reported issue to on slack on 6-20-2023 tam0013@mail.wvu.edu
+
+    # get keys
+    keys = self.attributes.keys
+    # loop over keys skipping id and visibility fields
+    keys.each do |key|
+      # skip id
+      next if key == 'id' || key == 'visibility'
+      # if class is a relation and has only one element and that element is blank
+      if self[key].class == ActiveTriples::Relation && self[key].to_a.count == 1
+        # convert to array
+        temp_array = self[key].to_a
+        # delete first element if it is blank
+        if temp_array.to_a.first == ""
+          temp_array.delete_at(0)
+          # set array back to relation
+          self[key] = temp_array
+        end
+      end
+    end
+  end
+
   # Minting ID
   # Overriding Fedoras LONG URI NOT FRIENDLY ID
   def assign_id

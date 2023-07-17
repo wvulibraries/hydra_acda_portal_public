@@ -13,6 +13,8 @@ services:
       - ./data/logs:/home/hydra/log
       - ./scripts:/home/hydra/scripts
       - ./data/mfcs-exports:/mnt/nfs-exports/mfcs-exports
+      - ./tmp/imports:/home/hydra/tmp/imports
+      - ./tmp/exports:/home/hydra/tmp/exports
       - /home/hydra/tmp # don't mount tmp directory
     networks:
       - hydra
@@ -75,7 +77,7 @@ services:
     container_name: fcrepo
     restart: on-failure
     volumes:
-      - fcrepo:/data:cached
+      - ./data/fcrepo:/data:cached
     ports:
       - "8080"
     networks:

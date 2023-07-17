@@ -102,6 +102,9 @@ To import files use the following commands
 - `RAILS_ENV=development ruby import/import.rb` to run an import into the fedora and solr dev sections
 - `RAILS_ENV=development ruby import/explode_fcrepo_solr.rb` to clear the development databases **ONLY DO IN DEVELOPMENT NEVER PROD** This should be **primarily used for testing import scripts**.
 
+# Bulkrax Imports
+To Access Bulkrax on a dev setup go to 'http:/localhost:3000/importers?locale=en' use the Username and Password that you have setup in the env file.
+
 # Releases
 
 To release code to the dev server, create a pre-release tag in the WVU Github repo for the application. The dev server will pick up the code in 5 or so minutes and pull, build, deploy it for you. The same can be done on production by editing your release and marking the release latest instead of pre-release.

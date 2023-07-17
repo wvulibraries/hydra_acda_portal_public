@@ -12,15 +12,15 @@
    <%= render 'previous_next_doc' %>
   </div>
 
-		<% if @document[:dc_type_ssi] == "Image" || @document[:dc_type_ssi] == "Collection" || @document[:dc_type_ssi] == "StillImage"%>
-			<%= render 'image' %>
-    <% elsif @document[:dc_type_ssi] == "Text" %>
-      <%= render 'pdf' %>
-		<% elsif @document[:dc_type_ssi] == "Sound" %>
-			<%= render 'audio' %>
-		<% elsif @document[:dc_type_ssi] == "Moving Image" || @document[:dc_type_ssi] == "MovingImage"%>
-			<%= render 'video' %>
-		<% end %>
+  <% if @document[:dc_type_ssi] == "Image" || @document[:dc_type_ssi] == "Collection" || @document[:dc_type_ssi] == "StillImage"%>
+    <%= render 'image' %>
+  <% elsif @document[:dc_type_ssi] == "Text" %>
+    <%= render 'pdf' %>
+  <% elsif @document[:dc_type_ssi] == "Sound" %>
+    <%= render 'audio' %>
+  <% elsif @document[:dc_type_ssi] == "Moving Image" || @document[:dc_type_ssi] == "MovingImage"%>
+    <%= render 'video' %>
+  <% end %>
 
   <% if @document.respond_to?(:export_as_openurl_ctx_kev) %>
       <span class="Z3988" title="<%= @document.export_as_openurl_ctx_kev(document_partial_name(@document)) %>"></span>

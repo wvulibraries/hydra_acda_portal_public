@@ -10,14 +10,17 @@
 	<div class="document-wrap">
         <% identifier = document[:id] %>
 		<% description = document[:description_tesim].to_s %>
-
 		<% if document[:dc_type_ssi] == "Sound" %>
 			<%= link_to_document document, render(:partial => 'audio_button'), class: "button audio-button" %>
-		<% else %>	
-            <%= link_to_document document, image_tag("/thumb/#{identifier}", title:"#{document[:title_ssi]}", alt:description) %>
+		<% elsif "Moving".in? document[:dc_type_ssi] %>
+			<%= link_to_document document, render(:partial => 'video_button'), class: "button video-button" %>
+		<% elsif Acda.where(identifier: identifier).first.image_file.nil? && document[:dc_type_ssi] == "Text" %>
+			<%= link_to_document document, render(:partial => 'pdf_button'), class: "button pdf-button" %>
+		<% else %>   
+			<%= link_to_document document, image_tag("/thumb/#{identifier}", title:"#{document[:title_ssi]}", alt:description) %>
 		<% end %>
 		
-		<div style="clear:both"></div>
+		<div style="clear:both !important;"></div>
 
 	    <%= render_document_partials(document, blacklight_config.view_config(document_index_view_type).partials, :document_counter => document_counter).html_safe %>
 

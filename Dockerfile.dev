@@ -11,7 +11,7 @@ RUN mkdir -p /home/${PROJECT_PATH}/
 WORKDIR /home/${PROJECT_PATH}
 ADD ./${PROJECT_PATH} /home/${PROJECT_PATH}
 
-RUN apt-get update && apt-get -y install cron postgresql-client vim
+RUN apt-get update && apt-get -y install cron postgresql-client ghostscript libgs-dev vim
 
 # Use JEMALLOC instead
 # JEMalloc is a faster garbage collection for Ruby.
@@ -19,8 +19,15 @@ RUN apt-get update && apt-get -y install cron postgresql-client vim
 RUN apt-get install -y libjemalloc2 libjemalloc-dev
 ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so
 
+
 # Uncomment if developing Bulkrax within this application
 # COPY ./hydra/vendor/engines/bulkrax /home/hydra/vendor/engines/bulkrax
+
+# increase ImageMagick's memory limit
+RUN sed -i -E 's/name="disk" value=".+"/name="disk" value="4GiB"/g' /etc/ImageMagick-6/policy.xml
+# Modifiy ImageMagick's security policy to allow reading and writing PDFs
+RUN sed -i 's/policy domain="coder" rights="none" pattern="PDF"/policy domain="coder" rights="read|write" pattern="PDF"/' /etc/ImageMagick-6/policy.xml
+
 
 RUN \
   gem update --system --quiet && \

@@ -125,6 +125,7 @@ GEM
     concurrent-ruby (1.1.10)
     connection_pool (2.3.0)
     crass (1.0.6)
+    date (3.3.3)
     deprecation (1.1.0)
       activesupport
     devise (4.8.1)
@@ -249,6 +250,7 @@ GEM
       mini_mime (>= 0.1.1)
     marcel (1.0.2)
     method_source (1.0.0)
+    mini_magick (4.12.0)
     mini_mime (1.1.2)
     minitest (5.16.3)
     msgpack (1.6.0)
@@ -263,6 +265,10 @@ GEM
       builder (>= 3.1.0)
       faraday
       faraday_middleware
+    open-uri (0.3.0)
+      stringio
+      time
+      uri
     orm_adapter (0.5.0)
     pg (1.4.5)
     puma (4.3.12)
@@ -386,11 +392,14 @@ GEM
       actionpack (>= 5.2)
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
+    stringio (3.0.6)
     sxp (1.1.0)
       rdf (~> 3.1)
     thor (1.2.1)
     thread_safe (0.3.6)
     tilt (2.0.11)
+    time (0.2.2)
+      date
     twitter-typeahead-rails (0.11.1.pre.corejavascript)
       actionpack (>= 3.1)
       jquery-rails
@@ -400,6 +409,7 @@ GEM
     uglifier (4.2.0)
       execjs (>= 0.3.0, < 3)
     unicode-types (1.8.0)
+    uri (0.12.1)
     validatable (1.6.7)
     warden (1.2.9)
       rack (>= 2.0.9)
@@ -441,7 +451,9 @@ DEPENDENCIES
   jquery-rails
   ldp
   listen
+  mini_magick
   nokogiri
+  open-uri
   pg (>= 0.18, < 2.0)
   puma (~> 4.3)
   rails (~> 5.2.8.1)

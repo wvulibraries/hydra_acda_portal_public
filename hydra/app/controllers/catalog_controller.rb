@@ -16,8 +16,8 @@ class CatalogController < ApplicationController
     config.oai = {
       provider: {
         repository_name: 'American Congress Digital Archives Portal',
-        repository_url: 'https://acda.lib.wvu.edu/catalog/oai',
-        record_prefix: 'https://acda.lib.wvu.edu/catalog/',
+        repository_url: 'https://congressarchivesdev.lib.wvu.edu/catalog/oai',
+        record_prefix: 'https://congressarchivesdev.lib.wvu.edu/catalog/',
         admin_email: 'libsys@mail.wvu.edu'
       },
       document: {
@@ -42,7 +42,7 @@ class CatalogController < ApplicationController
 
     # QF Builder
     config.default_solr_params = {
-      qf: 'identifier_tesim date_tesim contributing_institution_tesim policy_area_tesim names_tesim topic_tesim congress_tesim location_represented_tesim type_tesim rights_tesim language_tesim extent_tesim',
+      qf: 'identifier_tesim date_tesim contributing_institution_tesim policy_area_tesim names_tesim topic_tesim congress_tesim physical_location_ssi location_represented_tesim type_tesim rights_tesim language_tesim extent_tesim',
       qt: 'search',
       rows: 10,
       facet: true
@@ -55,10 +55,11 @@ class CatalogController < ApplicationController
     config.add_facet_field solr_name('contributing_institution', :facetable), label: 'Contributing Institution', link_to_search: :contributing_institution_ssi, limit: true, show: true, component: true
     config.add_facet_field solr_name('collection_title', :facetable), label: 'Collection', link_to_search: :collection_title_ssi, limit: true, show: true, component: true
     config.add_facet_field solr_name('publisher', :facetable), label: 'Publisher', link_to_search: :publisher_ssi, limit: true, show: true, component: true
-    config.add_facet_field solr_name('policy_area', :facetable), label: 'Policty Area', link_to_search: :policy_area_ssi, limit: true, show: true, component: true
+    config.add_facet_field solr_name('policy_area', :facetable), label: 'Policy Area', link_to_search: :policy_area_ssi, limit: true, show: true, component: true
     config.add_facet_field solr_name('names', :facetable), label: 'Names', link_to_search: :names_ssi, limit: true, show: true, component: true    
     config.add_facet_field solr_name('topic', :facetable), label: 'Topic', link_to_search: :topic_ssi, limit: true, show: true, component: true
     config.add_facet_field solr_name('congress', :facetable), label: 'Congress', link_to_search: :coverage_congress_ssi, limit: true, show: true, component: true
+    config.add_facet_field solr_name('physical_location', :facetable), label: 'Physical Location', link_to_search: :physical_location_ssi, limit: true, show: true, component: true
     config.add_facet_field solr_name('location_represented', :facetable), label: 'Location Represented', link_to_search: :coverage_spatial_ssi, limit: true, show: true, component: true
     config.add_facet_field solr_name('record_type', :facetable), label: 'Record Type', limit: true, show: true, component: true
     config.add_facet_field solr_name('rights', :facetable), label: 'Rights', limit: true, show: true, component: true
@@ -81,7 +82,7 @@ class CatalogController < ApplicationController
     config.add_index_field solr_name('policy_area', :stored_searchable, type: :string), label: 'Policy Area', link_to_search: :policy_area_sim
     config.add_index_field solr_name('names', :stored_searchable), label: 'Names', link_to_search: :names_sim
     config.add_index_field solr_name('topic', :stored_searchable, type: :string), label: 'Topic', link_to_search: :topic_sim
-    config.add_index_field solr_name('congress', :stored_searchable, type: :string), label: 'Congress', link_to_search: :congress_sim
+    config.add_index_field solr_name('congress', :stored_searchable, type: :string), label: 'Congress', link_to_search: :congress_sim 
     config.add_index_field solr_name('location_respresented', :stored_searchable, type: :string), label: 'Location Respresented', link_to_search: :location_represented_sim
 
     # Show ---------------------------------------------
@@ -103,6 +104,7 @@ class CatalogController < ApplicationController
     config.add_show_field solr_name('names', :stored_searchable, type: :string), label: 'Names', link_to_search: :names_sim 
     config.add_show_field solr_name('topic', :stored_searchable, type: :string), label: 'Topic', link_to_search: :topic_sim
     config.add_show_field solr_name('congress', :stored_searchable, type: :string), label: 'Congress', link_to_search: :congress_sim
+    config.add_show_field solr_name('physical_location', :stored_searchable, type: :string), label: 'Physical Location', link_to_search: :physical_location_ssi
     config.add_show_field solr_name('location_represented', :stored_searchable, type: :string), label: 'Location Represented', link_to_search: :location_represented_sim
     config.add_show_field solr_name('dc_type', :stored_searchable, type: :string), label: 'Type'
     config.add_show_field solr_name('extent', :stored_searchable, type: :string), label: 'Extent'
@@ -114,7 +116,7 @@ class CatalogController < ApplicationController
     # add the search fields individually from solr 
     # use this as a template for creating new ones 
     # Search ---------------------------------------------
-    default_search_fields = ['identifier', 'title', 'date', 'contributing_institution', 'policy_area', 'names', 'topic', 'congress', 'location_represented', 'record_type', 'rights', 'language', 'extent']
+    default_search_fields = ['identifier', 'title', 'date', 'contributing_institution', 'policy_area', 'names', 'topic', 'congress', 'physical_location', 'location_represented', 'record_type', 'rights', 'language', 'extent']
     default_search_fields.map! { |f| 
       config.add_search_field(f.to_s) do |field|
           field.solr_parameters = {
@@ -147,6 +149,15 @@ class CatalogController < ApplicationController
 
     config.fetch_many_document_params = { fl: "*" }
   end
+
+  # def show
+  #   super
+  #   @metadata = []
+  #   # loop over each field and add it to the metadata
+  #   @document.each_pair do |k,v|
+  #     @metadata << [k, v] unless v.present?
+  #   end
+  # end
 
   # adds additional pages that will also use the searchbar from the navigation 
   # customizable behavior should be done in a module or static model 
