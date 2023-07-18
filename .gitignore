@@ -4,5 +4,9 @@
 conversion/control/finished/*
 /env/
 /env*
+
+# ignore local version of bulkrax
+hydra/vendor/engines
+tmp
 /tmp/
 /tmp/*

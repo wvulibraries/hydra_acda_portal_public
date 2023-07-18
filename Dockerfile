@@ -11,7 +11,7 @@ RUN mkdir -p /home/${PROJECT_PATH}/
 WORKDIR /home/${PROJECT_PATH}
 ADD ./${PROJECT_PATH} /home/${PROJECT_PATH}
 
-RUN apt-get update && apt-get -y install cron postgresql-client
+RUN apt-get update && apt-get -y install cron postgresql-client vim
 
 # Use JEMALLOC instead
 # JEMalloc is a faster garbage collection for Ruby.

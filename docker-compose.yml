@@ -135,12 +135,6 @@ services:
     networks:
       - hydra
 
-volumes:
-  postgres:
-  fcrepo:
-  redis:
-  solr:
-
 networks:
   hydra:
     driver: bridge

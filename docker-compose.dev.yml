@@ -1,6 +1,4 @@
 version: '3.4'
-# used for local testing
-# note only have either mfcs_export or mnt not both for conversions or hydra.
 services:
   app:
     build:
@@ -14,7 +12,7 @@ services:
       - ./data/logs:/home/hydra/log
       - ./scripts:/home/hydra/scripts
       - ./data/mfcs-exports:/mnt/nfs-exports/mfcs-exports
-      - ./data/seed_files:/home/hydra/db/data      
+      - ./data/seed_files:/home/hydra/db/data
       - ./tmp/imports:/home/hydra/tmp/imports
       - ./tmp/exports:/home/hydra/tmp/exports
       - ./data/downloads:/home/hydra/tmp/downloads
@@ -23,16 +21,6 @@ services:
       - /home/hydra/tmp # don't mount tmp directory
     networks:
       - hydra
-
-  migrate:
-    extends: app
-    container_name: migrate
-    command: bash -c "bundle install; sh ./scripts/setup.sh"
-    depends_on:
-      - redis
-      - solr
-      - fcrepo
-      - db
 
   web:
     extends: app
@@ -51,8 +39,6 @@ services:
         condition: service_started
       workers:
         condition: service_started
-      migrate:
-        condition: service_completed_successfully
 
   workers:
     extends: app
@@ -67,10 +53,6 @@ services:
         condition: service_started
       solr:
         condition: service_started
-      memcached:
-        condition: service_started
-      migrate:
-        condition: service_completed_successfully
     stdin_open: true
     tty: true
 
@@ -111,7 +93,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - fcrepo:/data:cached      
+      - fcrepo:/data:cached
     networks:
       - hydra
 
@@ -136,7 +118,7 @@ services:
   db:
     container_name: db
     image: postgres:14-alpine
-    ports:
+    expose:
       - "5432"
     env_file:
       - './env/env.dev.db'
