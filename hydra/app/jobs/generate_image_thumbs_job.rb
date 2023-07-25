@@ -51,14 +51,14 @@ class GenerateImageThumbsJob < ApplicationJob
     # cleanup section
 
     # delete thumbnails with identifer
-    Dir.glob("#{image_path}/#{identifier}*").each do |file|
-      File.delete(file)
-    end
+    # Dir.glob("#{image_path}/#{identifier}*").each do |file|
+    #   File.delete(file)
+    # end
 
-    # delete thumbnails with identifer
-    Dir.glob("#{thumbnail_path}/#{identifier}*").each do |file|
-      File.delete(file)
-    end
+    # # delete thumbnails with identifer
+    # Dir.glob("#{thumbnail_path}/#{identifier}*").each do |file|
+    #   File.delete(file)
+    # end
   end
 
 end

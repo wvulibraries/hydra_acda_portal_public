@@ -72,14 +72,14 @@ class GeneratePdfThumbsJob < ApplicationJob
     pdftempfile.unlink
 
     # delete all images with identifier
-    Dir.glob("#{image_path}/#{identifier}*").each do |file|  
-      File.delete(file)
-    end
+    # Dir.glob("#{image_path}/#{identifier}*").each do |file|  
+    #   File.delete(file)
+    # end
 
-    # delete thumbnails with identifier
-    Dir.glob("#{thumbnail_path}/#{identifier}*").each do |file|
-      File.delete(file)
-    end
+    # # delete thumbnails with identifier
+    # Dir.glob("#{thumbnail_path}/#{identifier}*").each do |file|
+    #   File.delete(file)
+    # end
   end
 
 end
