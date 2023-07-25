@@ -12,10 +12,9 @@ services:
       - ./data/logs:/home/hydra/log
       - ./scripts:/home/hydra/scripts
       - ./data/mfcs-exports:/mnt/nfs-exports/mfcs-exports
-      - ./data/seed_files:/home/hydra/db/data
       - ./tmp/imports:/home/hydra/tmp/imports
       - ./tmp/exports:/home/hydra/tmp/exports
-      - ./data/downloads:/home/hydra/tmp/downloads
+      - ./data/pdf:/home/hydra/tmp/pdf
       - ./data/thumbnails:/home/hydra/tmp/thumbnails
       - ./data/images:/home/hydra/tmp/images
       - /home/hydra/tmp # don't mount tmp directory
@@ -134,20 +133,20 @@ services:
     networks:
       - hydra
 
-  conversion:
-    build:
-      context: ./conversion/
-      dockerfile: Dockerfile
-    container_name: acda_conversion
-    restart: always
-    environment:
-      - TERM=xterm
-    volumes:
-      - ./conversion/scripts:/convert/
-      - ./conversion/control:/control/
-      - ./data/mfcs-exports:/mnt/nfs-exports/mfcs-exports
-    networks:
-      - hydra
+  # conversion:
+  #   build:
+  #     context: ./conversion/
+  #     dockerfile: Dockerfile
+  #   container_name: acda_conversion
+  #   restart: always
+  #   environment:
+  #     - TERM=xterm
+  #   volumes:
+  #     - ./conversion/scripts:/convert/
+  #     - ./conversion/control:/control/
+  #     - ./data/mfcs-exports:/mnt/nfs-exports/mfcs-exports
+  #   networks:
+  #     - hydra
 
 volumes:
   postgres:

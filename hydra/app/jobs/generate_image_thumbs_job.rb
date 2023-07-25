@@ -7,8 +7,15 @@ class GenerateImageThumbsJob < ApplicationJob
     # find record
     record = Acda.where(identifier: identifier).first
 
-    # set image file
-    image_path = "/home/hydra/tmp/images/#{identifier}.jpg"
+    # temp folder to store images
+    image_path = "/home/hydra/tmp/images"
+
+    # make folder if it doesn't exist
+    FileUtils.mkdir_p(image_path) unless File.exist?(image_path)
+
+    # add identifier and extension to image path so we have 
+    # full path and file name to image file.
+    image_path = "#{image_path}/#{identifier}.jpg"
 
     # download image file from preview url
     image_file = URI.open(record.preview)
@@ -48,17 +55,21 @@ class GenerateImageThumbsJob < ApplicationJob
     
     record.save!
 
-    # cleanup section
+    # delete temp files
+    # imagefile.unlink
+
+    # delete downloaded image file
+    File.delete(image_path) if File.exist?(image_path)
 
     # delete thumbnails with identifer
-    # Dir.glob("#{image_path}/#{identifier}*").each do |file|
-    #   File.delete(file)
-    # end
+    Dir.glob("#{image_path}/#{identifier}*").each do |file|
+      File.delete(file)
+    end
 
-    # # delete thumbnails with identifer
-    # Dir.glob("#{thumbnail_path}/#{identifier}*").each do |file|
-    #   File.delete(file)
-    # end
+    # delete thumbnails with identifer
+    Dir.glob("#{thumbnail_path}/#{identifier}*").each do |file|
+      File.delete(file)
+    end
   end
 
 end
