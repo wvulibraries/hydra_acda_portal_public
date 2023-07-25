@@ -33,7 +33,7 @@ gem 'whenever', require: false
 # Bulkrax Import
 # =====================================================
 # Switch the comments on these two lines to work on Bulkrax locally
-gem 'bulkrax', git: 'https://github.com/samvera-labs/bulkrax.git', ref: '32dace9'
+gem 'bulkrax', git: 'https://github.com/samvera-labs/bulkrax.git', ref: '6c67f16'
 # gem 'bulkrax', path: 'vendor/engines/bulkrax'
 
 # Dependices for Thumbnail Creation

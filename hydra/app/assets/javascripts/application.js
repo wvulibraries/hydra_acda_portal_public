@@ -11,10 +11,11 @@
 // about supported directives.
 //
 
-// Rails or Hydra Requirements 
+// Rails or Hydra Requirements
 // -----------------------------------------------------
 //= require jquery
 //= require jquery_ujs
+//= require bootstrap
 
 // Required by Blacklight
 // -----------------------------------------------------
@@ -24,7 +25,7 @@
 // -----------------------------------------------------
 //= require bulkrax/application
 
-// CUSTOM COLLECTION JS 
+// CUSTOM COLLECTION JS
 // -----------------------------------------------------
 //= require partials/equal_heights
 //= require partials/facets
