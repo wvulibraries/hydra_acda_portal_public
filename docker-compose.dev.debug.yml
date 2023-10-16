@@ -1,0 +1,14 @@
+##
+# The purpose of this override is to allow for you bring up all but the workers
+# and web container.  You can then shell into those containers to start the
+# underlying services (as defined in the other docker-compose files).
+#
+# Example:
+#
+# $ docker compose -f docker-compose.dev.yml -f docker-compose.dev.debug.yml up
+version: '3.4'
+services:
+  web:
+    command: tail -f /dev/null
+  workers:
+    command: tail -f /dev/null
