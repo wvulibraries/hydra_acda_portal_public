@@ -21,6 +21,8 @@ Rails.application.routes.draw do
   get '/featured' => 'featured#index'
   
   mount Blacklight::Engine => '/'
+  mount BlacklightAdvancedSearch::Engine => '/'
+
   root to: 'catalog#index'
     concern :searchable, Blacklight::Routes::Searchable.new
 

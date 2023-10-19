@@ -14,6 +14,9 @@
 // Rails or Hydra Requirements
 // -----------------------------------------------------
 //= require jquery
+//= require 'blacklight_advanced_search'
+
+
 //= require jquery_ujs
 //= require bootstrap
 
