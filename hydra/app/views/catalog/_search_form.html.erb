@@ -18,12 +18,7 @@
         <span class="submit-search-text"><%= t('blacklight.search.form.submit') %></span>
         <span class="glyphicon glyphicon-search"></span>
       </button>
+      <%= link_to 'More options', blacklight_advanced_search_engine.advanced_search_path(search_state.to_h), class: 'advanced_search btn btn-default'%>
     </span>
   </div>
 <% end %>
-
-
-
-<div class="navbar-form">
-  <%= link_to 'More options', blacklight_advanced_search_engine.advanced_search_path(search_state.to_h), class: 'advanced_search btn btn-default'%>
-</div>
