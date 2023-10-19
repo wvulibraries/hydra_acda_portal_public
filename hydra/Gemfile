@@ -53,6 +53,7 @@ gem 'sidekiq-failures'
 gem 'active-fedora'
 gem 'active-triples'
 gem 'blacklight'
+gem 'blacklight_advanced_search'
 
 gem 'hydra-head'
 gem 'ldp'
