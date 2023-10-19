@@ -50,21 +50,22 @@ class CatalogController < ApplicationController
 
     # facet creator
     # Facets ---------------------------------------------
-    config.add_facet_field solr_name('date', :facetable), label: 'Date', limit: true, show: true, component: true
-    config.add_facet_field solr_name('creator', :facetable), label: 'Creator', limit: true, show: true, component: true
-    config.add_facet_field solr_name('contributing_institution', :facetable), label: 'Contributing Institution', link_to_search: :contributing_institution_ssi, limit: true, show: true, component: true
+    # Organized alphabetically - the ordering of the field names is the order of the display
     config.add_facet_field solr_name('collection_title', :facetable), label: 'Collection', link_to_search: :collection_title_ssi, limit: true, show: true, component: true
-    config.add_facet_field solr_name('publisher', :facetable), label: 'Publisher', link_to_search: :publisher_ssi, limit: true, show: true, component: true
-    config.add_facet_field solr_name('policy_area', :facetable), label: 'Policy Area', link_to_search: :policy_area_ssi, limit: true, show: true, component: true
-    config.add_facet_field solr_name('names', :facetable), label: 'Names', link_to_search: :names_ssi, limit: true, show: true, component: true    
-    config.add_facet_field solr_name('topic', :facetable), label: 'Topic', link_to_search: :topic_ssi, limit: true, show: true, component: true
     config.add_facet_field solr_name('congress', :facetable), label: 'Congress', link_to_search: :coverage_congress_ssi, limit: true, show: true, component: true
-    config.add_facet_field solr_name('physical_location', :facetable), label: 'Physical Location', link_to_search: :physical_location_ssi, limit: true, show: true, component: true
+    config.add_facet_field solr_name('contributing_institution', :facetable), label: 'Contributing Institution', link_to_search: :contributing_institution_ssi, limit: true, show: true, component: true
+    config.add_facet_field solr_name('creator', :facetable), label: 'Creator', limit: true, show: true, component: true
+    config.add_facet_field solr_name('date', :facetable), label: 'Date', limit: true, show: true, component: true
+    config.add_facet_field solr_name('extent', :facetable), label: 'Extent', limit: true, show: true, component: true
+    config.add_facet_field solr_name('language', :facetable), label: 'Language', limit: true, show: true, component: true
     config.add_facet_field solr_name('location_represented', :facetable), label: 'Location Represented', link_to_search: :coverage_spatial_ssi, limit: true, show: true, component: true
+    config.add_facet_field solr_name('names', :facetable), label: 'Names', link_to_search: :names_ssi, limit: true, show: true, component: true
+    config.add_facet_field solr_name('physical_location', :facetable), label: 'Physical Location', link_to_search: :physical_location_ssi, limit: true, show: true, component: true
+    config.add_facet_field solr_name('policy_area', :facetable), label: 'Policy Area', link_to_search: :policy_area_ssi, limit: true, show: true, component: true
+    config.add_facet_field solr_name('publisher', :facetable), label: 'Publisher', link_to_search: :publisher_ssi, limit: true, show: true, component: true
     config.add_facet_field solr_name('record_type', :facetable), label: 'Record Type', limit: true, show: true, component: true
     config.add_facet_field solr_name('rights', :facetable), label: 'Rights', limit: true, show: true, component: true
-    config.add_facet_field solr_name('language', :facetable), label: 'Language', limit: true, show: true, component: true
-    config.add_facet_field solr_name('extent', :facetable), label: 'Extent', limit: true, show: true, component: true
+    config.add_facet_field solr_name('topic', :facetable), label: 'Topic', link_to_search: :topic_ssi, limit: true, show: true, component: true
 
     # uses the above facets in blacklight
     #config.default_solr_params['facet.field'] = config.facet_fields.keys
