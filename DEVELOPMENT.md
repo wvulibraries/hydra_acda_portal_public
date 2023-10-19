@@ -47,7 +47,7 @@ You need to start branches from `softserv-dev` and submit PRs to SoftServ's Gith
 
 ## Procedure: Adding Changes to WVU's softserv-dev
 
-At this point, we do local QA against SoftServ's `softserv-dev` branch.  When it passes internal QA, we can move the ticket. 
+At this point, we do local QA against SoftServ's `softserv-dev` branch.  When it passes internal QA, we can move the ticket.
 
 **_Note_**: There might be WVU changes on the WVU `softserv-dev` branch.
 
@@ -57,15 +57,15 @@ We then need to send that code to WVU for review.  We also will submit PRs from 
   - When WVU's is ahead check the "Sync Fork" and then select merge changes into SoftServ.
 - Check the commits to review what will be sent to WVU.
 - Review the Pull Request Message
-  - You can use https://github.com/jeremyf/dotzshrc/blob/main/bin/git-pull-request-message to generate a pull request message: `git pull-request-message wvu/softserv-dev | pbcopy` 
-- Ping the developers at WVU to have them review and ultimately spin up a staging environment. 
+  - You can use https://github.com/jeremyf/dotzshrc/blob/main/bin/git-pull-request-message to generate a pull request message: `git pull-request-message wvu/softserv-dev | pbcopy`
+- Ping the developers at WVU to have them review and ultimately spin up a staging environment.
 
 **_Note_**: When there is an open PR to WVU's `softserv-dev` branch, and commits made to SoftServ's `softserv-dev` branch will show up in that pull request.
 
 
 ## Procedure: Adding Changes to SoftServ's main and softserv-dev branches
 
-When you need to add changes to both `main` and `softserv-dev`, follow the above process to get code into `softserv-dev`. 
+When you need to add changes to both `main` and `softserv-dev`, follow the above process to get code into `softserv-dev`.
 
 Then:
 
@@ -101,5 +101,5 @@ To get data into the app:
 - Navigate to http://localhost:3000/importers?locale-en to import via bulkrax csv
 - Sample csv files are on the roundtripping ticket:
   - https://github.com/scientist-softserv/west-virginia-university/issues/104
-- You will have to log into the popup.  The username is in `ENV['BULKRAX_USERNAME']` and the password is in `ENV['BULKRAX_PW']`.  For local development, see [./env/env.dev.hydra](./env/env.dev.hydra).    
+- You will have to log into the popup.  The username is in `ENV['BULKRAX_USERNAME']` and the password is in `ENV['BULKRAX_PW']`.  For local development, see [./env/env.dev.hydra](./env/env.dev.hydra).
   - Barring that, shell into the web container (e.g. `docker compose -f docker-compose.dev.yml exec web bash`) and run `echo "$BULKRAX_USERNAME:$BULKRAX_PW"`.
