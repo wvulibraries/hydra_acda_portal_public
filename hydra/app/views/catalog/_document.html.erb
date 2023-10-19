@@ -14,7 +14,7 @@
 			<%= link_to_document document, render(:partial => 'audio_button'), class: "button audio-button" %>
 		<% elsif "Moving".in? document[:dc_type_ssi] %>
 			<%= link_to_document document, render(:partial => 'video_button'), class: "button video-button" %>
-		<% elsif Acda.where(identifier: identifier).first.image_file.nil? && document[:dc_type_ssi] == "Text" %>
+		<% elsif Acda.where(identifier: identifier).first&.image_file.nil? && document[:dc_type_ssi] == "Text" %>
 			<%= link_to_document document, render(:partial => 'pdf_button'), class: "button pdf-button" %>
 		<% else %>   
 			<%= link_to_document document, image_tag("/thumb/#{identifier}", title:"#{document[:title_ssi]}", alt:description) %>

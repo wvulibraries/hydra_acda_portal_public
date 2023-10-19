@@ -20,6 +20,8 @@
 //= require jquery_ujs
 //= require bootstrap
 
+
+//= require tether
 // Required by Blacklight
 // -----------------------------------------------------
 //= require blacklight/blacklight
@@ -35,3 +37,9 @@
 //= require partials/toggles
 //= require partials/smooth_scroll
 //= require partials/cookie_modal
+
+
+// For blacklight_range_limit built-in JS, if you don't want it you don't need
+// this:
+//= require 'blacklight_range_limit'
+
