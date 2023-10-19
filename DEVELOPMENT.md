@@ -68,6 +68,20 @@ When you're ready to build the pull request message: `./bin/git-prm | pbcopy` wi
 
 **_Note_**: `./bin/git-prm` has no error handling.
 
+### Procedure: Sync Fork Says Merge Conflicts
+
+Depending on how the code is merged in WVU, we may experience code conflicts that the Sync Fork will not resolve.  There are some instructions from Github that can be followed, however, based on the above assumptions we can do the following:
+
+1. Checkout SoftServ's `softserv-dev` branch.
+2. Pull down SoftServ's `softserv-dev` changes.
+3. Fetch WVU's changes (e.g. `git fetch wvu`).
+4. Then run a merge manually; `git merge wvu/softserv-dev --no-ff`.
+5. Resolve the merge conflicts via your tools.
+6. Push SoftServ's `softserv-dev` branch.
+
+**_Note_**: If you are uncomfortable with merge conflict resolution, pair up with a team mate to help review the changes.  Because we'll be pushing directly to SoftServ dev branch.
+
+**_Note_**: We're going to see that SoftServ's branch is out of sync with WVU's because a squash and merge breaks that synchronicity.  Jeremy is working on tooling to help refine pull request messages. (see above for `git-pull-request-message`).
 
 ## Procedure: Adding Changes to SoftServ's main and softserv-dev branches
 
