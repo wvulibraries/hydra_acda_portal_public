@@ -17,5 +17,3 @@ test:
 production:
   <<: *default
   database: hydra_production
-  username: hydra_user
-  password: <%= ENV['DATABASE_PASSWORD'] %>
