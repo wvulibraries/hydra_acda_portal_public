@@ -11,6 +11,28 @@ In SoftServ there are two important branches: `main` and `softserv-dev`.  The `m
 
 The SoftServ `main` has changes necessary for building your local docker instance.  Those changes should not be merged into `softserv-dev` nor into any of WVU's branches.
 
+## Procedure: Working with two Remotes
+
+Due to most of our developer tooling, we want to set SoftServ's repository as the `origin` remote.  (That is the default when you clone https://github.com/scientist-softserv/west-virginia-university)
+
+You will want to add the https://github.com/wvulibraries/hydra_acda_portal_public as another remote.  Convention says it would be `upstream` however our developer tooling starts having opinions about what that means.  Our recommendation is to call the remote `wvu`.  Further notes will assume the remote is named `wvu`.
+
+```shell
+git remote add wvu https://github.com/wvulibraries/hydra_acda_portal_public.git
+```
+
+Then review your remotes via the following:
+
+```shell
+❯ git remote -v
+origin	https://github.com/scientist-softserv/west-virginia-university.git (fetch)
+origin	https://github.com/scientist-softserv/west-virginia-university.git (push)
+wvu	https://github.com/wvulibraries/hydra_acda_portal_public.git (fetch)
+wvu	https://github.com/wvulibraries/hydra_acda_portal_public.git (push)
+```
+
+You can reference remote branches with the `<remote_name>/<branch_name>`.  Which means you can run `git log wvu/softserv-dev` to the activity on WVU's `softserv-dev` branch.
+
 ## Procedure: Workflow
 
 - Clone SoftServ's repository
@@ -21,16 +43,25 @@ The SoftServ `main` has changes necessary for building your local docker instanc
 
 You need to start branches from `softserv-dev` and submit PRs to SoftServ's Github repository; the SoftServ team will review the changes and we then merge those changes into SoftServ's `softserv-dev` branch.
 
- **_Note_**: There is no automated deploy for SoftServ; nor do we have a staging environment.  SoftServ QA is handled on a local instance; and WVU QA is handled by them spinning up a staging environment.
+**_Note_**: There is no automated deploy for SoftServ; nor do we have a staging environment.  SoftServ QA is handled on a local instance; and WVU QA is handled by them spinning up a staging environment.
+
+## Procedure: Adding Changes to WVU's softserv-dev
 
 At this point, we do local QA against SoftServ's `softserv-dev` branch.  When it passes internal QA, we can move the ticket. 
 
+**_Note_**: There might be WVU changes on the WVU `softserv-dev` branch.
+
 We then need to send that code to WVU for review.  We also will submit PRs from SoftServ's `softserv-dev` branch to WVU's `softserv-dev` branch.  When we submit those PRs:
 
-- Check the commits to review what will be sent to WVU
+- Review https://github.com/scientist-softserv/west-virginia-university/tree/softserv-dev; see if WVU's branch is ahead of SoftServ's
+  - When WVU's is ahead check the "Sync Fork" and then select merge changes into SoftServ.
+- Check the commits to review what will be sent to WVU.
+- Review the Pull Request Message
+  - You can use https://github.com/jeremyf/dotzshrc/blob/main/bin/git-pull-request-message to generate a pull request message: `git pull-request-message wvu/softserv-dev | pbcopy` 
 - Ping the developers at WVU to have them review and ultimately spin up a staging environment. 
 
-I suspect that the flow of changes will be uni-directional; code will likely only be going into WVU `softserv-dev`.  If that suspicion is not the case, we'll determine the best approach to bring changes for WVU's `softserv-dev` branch into SoftServ's branch.  Likewise for changes added to `main`; though I suspect those are unlikely.
+**_Note_**: When there is an open PR to WVU's `softserv-dev` branch, and commits made to SoftServ's `softserv-dev` branch will show up in that pull request.
+
 
 ## Procedure: Adding Changes to SoftServ's main and softserv-dev branches
 
