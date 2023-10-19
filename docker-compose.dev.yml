@@ -11,7 +11,6 @@ services:
       - ./solr:/home/hydra/solr
       - ./data/logs:/home/hydra/log
       - ./scripts:/home/hydra/scripts
-      - ./data/mfcs-exports:/mnt/nfs-exports/mfcs-exports
       - ./tmp/imports:/home/hydra/tmp/imports
       - ./tmp/exports:/home/hydra/tmp/exports
       - ./data/pdf:/home/hydra/tmp/pdf
