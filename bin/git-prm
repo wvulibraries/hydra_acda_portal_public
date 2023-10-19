@@ -1,0 +1,33 @@
+#!/usr/bin/env ruby
+
+# Derived from https://github.com/jeremyf/dotzshrc/blob/main/bin/git-pull-request-message
+
+# This will generate a reasonable pull request message for contributing changes to WVU's `softserv-dev` branch.
+
+# The following SHAs are not in WVU softserv-dev but in SoftServ softserv-dev.  The changes from the commits in SoftServ branch have been merged into WVU, but were merged via a squash, thus obliterating the SHA.
+SHAS_TO_SKIP_FOR_PULL_REQUEST_MESSAGE = %w[
+  16a1b157a848fc67fc7a6b7b92105b2bdfc5459f
+  221cccf82b255405a867cbc83ad42b900f5101e6
+  3a16941bab929ac5d0e8f22ae6436acc736adab8
+  408de6105850639607ffd74c02d87116814a2c07
+  4eda070fe5f7a4771c8eff9e2f41c10af99237c2
+  7125b382de6ff2f3f0c4ecbecf4aec77762e34f5
+  8275b1813f1b10e3ba2add3755a599a6528f83cd
+  8a885b95e820260aeae4b0c665eab7dab0bcddcc
+  963e964a32f53dbdfbc526e5aae6b6ce9473bd76
+  b3b41743547ede879ce8242aa61cf77de86aaf4e
+  b44587b101958af204e83c25c18d5a8a5467ea21
+  c1d5a4ed8c6bc72fcf1aaff0af534c7c99fcf85a
+  d3ff006987501187659013e7d2470614f8810607
+  f5f3ef29c54c10b2b79c79a227b726f640d54db7
+  fbb244d55195e58a0cfb863a84229f3e3c8515cc
+  e52a0788684ee3803ce8b0c4ad4671d715d6ce8c]
+$stderr.puts `git checkout softserv-dev`
+$stderr.puts `git fetch origin`
+$stderr.puts `git fetch wvu`
+
+`git log --reverse --pretty="%H" wvu/softserv-dev..softserv-dev`.split("\n").each do |sha|
+  next if SHAS_TO_SKIP_FOR_PULL_REQUEST_MESSAGE.include?(sha)
+  puts `git log --pretty="format:## %s%n%n%H%n%n%b" #{sha}~..#{sha}`
+  $stdout.puts ""
+end

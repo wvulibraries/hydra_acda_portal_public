@@ -62,6 +62,12 @@ We then need to send that code to WVU for review.  We also will submit PRs from 
 
 **_Note_**: When there is an open PR to WVU's `softserv-dev` branch, and commits made to SoftServ's `softserv-dev` branch will show up in that pull request.
 
+Assuming you have configured your remotes as per the document, and followed the procedures, you can leverage [bin/git-prm](./bin/git-prm) to generate the pull request message.
+
+When you're ready to build the pull request message: `./bin/git-prm | pbcopy` will copy the commit messages into your paste buffer.
+
+**_Note_**: `./bin/git-prm` has no error handling.
+
 
 ## Procedure: Adding Changes to SoftServ's main and softserv-dev branches
 
