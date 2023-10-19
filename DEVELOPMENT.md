@@ -9,3 +9,13 @@ docker compose -f docker-compose.dev.yml -f docker-compose.dev.debug.yml up
 ```
 
 You'll then need to shell into the containers to start the services.
+
+## Adding Content
+
+To get data into the app:
+
+- Navigate to http://localhost:3000/importers?locale-en to import via bulkrax csv
+- Sample csv files are on the roundtripping ticket:
+  - https://github.com/scientist-softserv/west-virginia-university/issues/104
+- You will have to log into the popup.  The username is in `ENV['BULKRAX_USERNAME']` and the password is in `ENV['BULKRAX_PW']`.  For local development, see [./env/env.dev.hydra](./env/env.dev.hydra).    
+  - Barring that, shell into the web container (e.g. `docker compose -f docker-compose.dev.yml exec web bash`) and run `echo "$BULKRAX_USERNAME:$BULKRAX_PW"`.
