@@ -65,13 +65,13 @@ class CatalogController < ApplicationController
     config.add_facet_field solr_name('congress', :facetable), label: 'Congress', link_to_search: :coverage_congress_ssi, limit: true, show: true, component: true
     config.add_facet_field solr_name('contributing_institution', :facetable), label: 'Contributing Institution', link_to_search: :contributing_institution_ssi, limit: true, show: true, component: true
     config.add_facet_field solr_name('creator', :facetable), label: 'Creator', limit: true, show: true, component: true
-    config.add_facet_field solr_name('date', :facetable), label: 'Date', limit: true, show: true, component: true, range: {
+    config.add_facet_field solr_name('date', :facetable), include_in_advanced_search: false, label: 'Date', limit: true, show: true, component: true, range: {
       facet_field_label: 'Date Range',
       num_segments: 10,
       assumed_boundaries: [1100, Time.zone.now.year + 2],
       segments: false,
       slider_js: false,
-      maxlength: 4
+      maxlength: 10
     }
     config.add_facet_field solr_name('extent', :facetable), label: 'Extent', limit: true, show: true, component: true
     config.add_facet_field solr_name('language', :facetable), label: 'Language', limit: true, show: true, component: true
