@@ -26,7 +26,7 @@ $stderr.puts `git checkout softserv-dev`
 $stderr.puts `git fetch origin`
 $stderr.puts `git fetch wvu`
 
-`git log --reverse --pretty="%H" wvu/softserv-dev..softserv-dev`.split("\n").each do |sha|
+`git log --reverse --pretty="%H" wvu/softserv-dev..softserv-dev --no-merges`.split("\n").each do |sha|
   next if SHAS_TO_SKIP_FOR_PULL_REQUEST_MESSAGE.include?(sha)
   puts `git log --pretty="format:## %s%n%n%H%n%n%b" #{sha}~..#{sha}`
   $stdout.puts ""
