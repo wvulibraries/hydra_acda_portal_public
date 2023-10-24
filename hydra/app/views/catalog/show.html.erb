@@ -6,10 +6,10 @@
 
 <%# HTML Content for the catalog view pages. %>
 <div id="content" class="col-md-9 col-sm-8 show-document">
-  
+
   <div class="row">
-   <div class="sharethis-inline-share-buttons"></div>  
-   <%= render 'previous_next_doc' %>
+    <div class="sharethis-inline-share-buttons"></div>
+    <%= render 'previous_next_doc' %>
   </div>
 
   <% if @document[:dc_type_ssi] == "Image" || @document[:dc_type_ssi] == "Collection" || @document[:dc_type_ssi] == "StillImage"%>
@@ -32,14 +32,11 @@
    <%= render_document_sidebar_partial %>
   <div id="csl-citation">
       <h4>Chicago citation style</h4>
-    <span class="chicago-citation"><%= ChicagoCitationService.new.format(@document, request.original_url) %></span>
-    <br /><br />
-
+    <p><%= ChicagoCitationService.format(document: @document, original_url: request.original_url) %></p>
+    <br />
     <p>
       <strong>Note:</strong>
       These citations are programmatically generated and may be incomplete.
     </p>
   </div>
 </div>
-
-         

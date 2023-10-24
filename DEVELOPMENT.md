@@ -123,3 +123,17 @@ To get data into the app:
   - https://github.com/scientist-softserv/west-virginia-university/issues/104
 - You will have to log into the popup.  The username is in `ENV['BULKRAX_USERNAME']` and the password is in `ENV['BULKRAX_PW']`.  For local development, see [./env/env.dev.hydra](./env/env.dev.hydra).
   - Barring that, shell into the web container (e.g. `docker compose -f docker-compose.dev.yml exec web bash`) and run `echo "$BULKRAX_USERNAME:$BULKRAX_PW"`.
+
+### Specs
+
+To run specs, bash into your `web` or `workers` container and run `rspec`.
+
+Ex:
+```sh
+docker compose exec web bash
+```
+
+Then run the specs:
+```sh
+rspec spec/services/chicago_citation_service_spec.rb
+```
