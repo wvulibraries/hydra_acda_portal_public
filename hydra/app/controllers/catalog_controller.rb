@@ -1,5 +1,6 @@
 # -*- encoding : utf-8 -*-
 require 'blacklight/catalog'
+require 'csv'
 
 class CatalogController < ApplicationController
 
@@ -167,6 +168,9 @@ class CatalogController < ApplicationController
     config.add_sort_field "#{sort_creator} desc", :label => 'Creator (Z-A)'
     config.add_sort_field "score desc, #{sort_identifier} asc", :label => 'Relevance'
 
+    # add config for exporting as csv
+    config.add_results_collection_tool :export_search_results
+    config.index.respond_to.csv = :export_csv
 
     # If there are more than this many search results, no spelling ("did you
     # mean") suggestion is offered.
@@ -183,6 +187,11 @@ class CatalogController < ApplicationController
   #     @metadata << [k, v] unless v.present?
   #   end
   # end
+
+  def export_csv
+    full_search_response_data = ExportCsvPresenter.new(@response).to_csv
+    send_data full_search_response_data, layout: false, filename: "search-results-#{Time.now}.csv"
+  end
 
   # adds additional pages that will also use the searchbar from the navigation
   # customizable behavior should be done in a module or static model
