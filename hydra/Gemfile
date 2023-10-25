@@ -18,7 +18,7 @@ gem 'jbuilder', '~> 2.5'
 
 # Use Redis adapter to run Action Cable in production
 gem 'redis', '~> 4.0'
-gem 'sdoc', '~> 0.4.0', group: :doc
+# gem 'sdoc', '~> 0.4.0', group: :doc
 
 gem 'bootsnap', '>= 1.1.0', require: false
 
@@ -50,9 +50,9 @@ gem 'sidekiq-failures'
 
 # Hydra Dependencies
 # =====================================================
-gem 'active-fedora'
+gem 'active-fedora', '~> 13.3.0'
 gem 'active-triples'
-gem 'blacklight'
+gem 'blacklight', '~> 6.25.0'
 gem 'blacklight_advanced_search'
 
 gem 'hydra-head'
