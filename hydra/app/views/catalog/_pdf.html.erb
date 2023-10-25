@@ -8,7 +8,7 @@
 <div class="row">
   <div class="col-md-4">      
       <a class="document-image-full" href="<%= preview %>">
-        <% if Acda.where(identifier: identifier).first.thumbnail_file.nil? %>
+        <% if Acda.where(identifier: identifier).first&.thumbnail_file.nil? %>
           <span class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></span>
         <% else %>
           <%= image_tag("/image/#{identifier}", title:"#{@document[:title_ssi]}", alt:description, class:"full-size-responsive") %> 
