@@ -142,7 +142,24 @@ class CatalogController < ApplicationController
     # add the search fields individually from solr
     # use this as a template for creating new ones
     # Search ---------------------------------------------
-    default_search_fields = ['identifier', 'title', 'date', 'contributing_institution', 'policy_area', 'names', 'topic', 'congress', 'physical_location', 'location_represented', 'record_type', 'rights', 'language', 'extent']
+    default_search_fields = %w[
+      creator
+      date
+      names
+      title
+      collection_title
+      congress
+      contributing_institution
+      description
+      identifier
+      language
+      location_represented
+      policy_area
+      publisher
+      record_type
+      rights
+      topic
+    ]
     default_search_fields.map! { |f|
       config.add_search_field(f.to_s) do |field|
           field.solr_parameters = {
