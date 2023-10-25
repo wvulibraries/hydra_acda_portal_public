@@ -191,11 +191,11 @@ class CatalogController < ApplicationController
 
     respond_to do |format|
       format.csv {
-        send_data ExportCsvPresenter.new(@response).to_csv, layout: false, filename: "search-results-#{Time.now.strftime('%Y-%m-%d_%H:%M:%S')}.csv"
+        send_data ExportResultsPresenter.new(@response).to_csv, layout: false, filename: "search-results-#{Time.now.strftime('%Y-%m-%d_%H:%M:%S')}.csv"
       }
 
       format.xml {
-        send_data ExportXmlPresenter.new(@response).to_xml, layout: false, filename: "search-results-#{Time.now.strftime('%Y-%m-%d_%H:%M:%S')}.xml"
+        send_data ExportResultsPresenter.new(@response).to_xml, layout: false, filename: "search-results-#{Time.now.strftime('%Y-%m-%d_%H:%M:%S')}.xml"
       }
     end
   end
