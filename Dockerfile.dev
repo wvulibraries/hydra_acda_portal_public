@@ -6,6 +6,8 @@ ENV RACK_ENV development
 WORKDIR /home/hydra
 ADD ./hydra /home/hydra
 
+RUN apt-get update && apt-get -y install ghostscript
+
 # Use JEMALLOC instead
 # JEMalloc is a faster garbage collection for Ruby.
 # -------------------------------------------------------------------------------------------------
