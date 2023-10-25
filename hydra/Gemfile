@@ -26,6 +26,10 @@ gem 'bootsnap', '>= 1.1.0', require: false
 # =====================================================
 gem 'blacklight_oai_provider'
 
+# Blacklight Range Limit for date searches
+# =====================================================
+gem 'blacklight_range_limit'
+
 # Automatic Import
 # =====================================================
 gem 'whenever', require: false

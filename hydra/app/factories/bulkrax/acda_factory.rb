@@ -43,9 +43,9 @@ module Bulkrax
 
     def run!
       @object = find
-
+      
       object.present? ? update : create
-      raise ActiveFedora::RecordInvalid, object if !object.persisted? || object.changed?
+      raise ActiveFedora::RecordInvalid, object unless object.persisted? || object.changed?
 
       object
     end
