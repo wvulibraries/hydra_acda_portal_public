@@ -11,6 +11,28 @@ In SoftServ there are two important branches: `main` and `softserv-dev`.  The `m
 
 The SoftServ `main` has changes necessary for building your local docker instance.  Those changes should not be merged into `softserv-dev` nor into any of WVU's branches.
 
+## Procedure: Working with two Remotes
+
+Due to most of our developer tooling, we want to set SoftServ's repository as the `origin` remote.  (That is the default when you clone https://github.com/scientist-softserv/west-virginia-university)
+
+You will want to add the https://github.com/wvulibraries/hydra_acda_portal_public as another remote.  Convention says it would be `upstream` however our developer tooling starts having opinions about what that means.  Our recommendation is to call the remote `wvu`.  Further notes will assume the remote is named `wvu`.
+
+```shell
+git remote add wvu https://github.com/wvulibraries/hydra_acda_portal_public.git
+```
+
+Then review your remotes via the following:
+
+```shell
+❯ git remote -v
+origin	https://github.com/scientist-softserv/west-virginia-university.git (fetch)
+origin	https://github.com/scientist-softserv/west-virginia-university.git (push)
+wvu	https://github.com/wvulibraries/hydra_acda_portal_public.git (fetch)
+wvu	https://github.com/wvulibraries/hydra_acda_portal_public.git (push)
+```
+
+You can reference remote branches with the `<remote_name>/<branch_name>`.  Which means you can run `git log wvu/softserv-dev` to the activity on WVU's `softserv-dev` branch.
+
 ## Procedure: Workflow
 
 - Clone SoftServ's repository
@@ -21,20 +43,49 @@ The SoftServ `main` has changes necessary for building your local docker instanc
 
 You need to start branches from `softserv-dev` and submit PRs to SoftServ's Github repository; the SoftServ team will review the changes and we then merge those changes into SoftServ's `softserv-dev` branch.
 
- **_Note_**: There is no automated deploy for SoftServ; nor do we have a staging environment.  SoftServ QA is handled on a local instance; and WVU QA is handled by them spinning up a staging environment.
+**_Note_**: There is no automated deploy for SoftServ; nor do we have a staging environment.  SoftServ QA is handled on a local instance; and WVU QA is handled by them spinning up a staging environment.
 
-At this point, we do local QA against SoftServ's `softserv-dev` branch.  When it passes internal QA, we can move the ticket. 
+## Procedure: Adding Changes to WVU's softserv-dev
+
+At this point, we do local QA against SoftServ's `softserv-dev` branch.  When it passes internal QA, we can move the ticket.
+
+**_Note_**: There might be WVU changes on the WVU `softserv-dev` branch.
 
 We then need to send that code to WVU for review.  We also will submit PRs from SoftServ's `softserv-dev` branch to WVU's `softserv-dev` branch.  When we submit those PRs:
 
-- Check the commits to review what will be sent to WVU
-- Ping the developers at WVU to have them review and ultimately spin up a staging environment. 
+- Review https://github.com/scientist-softserv/west-virginia-university/tree/softserv-dev; see if WVU's branch is ahead of SoftServ's
+  - When WVU's is ahead check the "Sync Fork" and then select merge changes into SoftServ.
+- Check the commits to review what will be sent to WVU.
+- Review the Pull Request Message
+  - You can use https://github.com/jeremyf/dotzshrc/blob/main/bin/git-pull-request-message to generate a pull request message: `git pull-request-message wvu/softserv-dev | pbcopy`
+- Ping the developers at WVU to have them review and ultimately spin up a staging environment.
 
-I suspect that the flow of changes will be uni-directional; code will likely only be going into WVU `softserv-dev`.  If that suspicion is not the case, we'll determine the best approach to bring changes for WVU's `softserv-dev` branch into SoftServ's branch.  Likewise for changes added to `main`; though I suspect those are unlikely.
+**_Note_**: When there is an open PR to WVU's `softserv-dev` branch, and commits made to SoftServ's `softserv-dev` branch will show up in that pull request.
+
+Assuming you have configured your remotes as per the document, and followed the procedures, you can leverage [bin/git-prm](./bin/git-prm) to generate the pull request message.
+
+When you're ready to build the pull request message: `./bin/git-prm | pbcopy` will copy the commit messages into your paste buffer.
+
+**_Note_**: `./bin/git-prm` has no error handling.
+
+### Procedure: Sync Fork Says Merge Conflicts
+
+Depending on how the code is merged in WVU, we may experience code conflicts that the Sync Fork will not resolve.  There are some instructions from Github that can be followed, however, based on the above assumptions we can do the following:
+
+1. Checkout SoftServ's `softserv-dev` branch.
+2. Pull down SoftServ's `softserv-dev` changes.
+3. Fetch WVU's changes (e.g. `git fetch wvu`).
+4. Then run a merge manually; `git merge wvu/softserv-dev --no-ff`.
+5. Resolve the merge conflicts via your tools.
+6. Push SoftServ's `softserv-dev` branch.
+
+**_Note_**: If you are uncomfortable with merge conflict resolution, pair up with a team mate to help review the changes.  Because we'll be pushing directly to SoftServ dev branch.
+
+**_Note_**: We're going to see that SoftServ's branch is out of sync with WVU's because a squash and merge breaks that synchronicity.  Jeremy is working on tooling to help refine pull request messages. (see above for `git-pull-request-message`).
 
 ## Procedure: Adding Changes to SoftServ's main and softserv-dev branches
 
-When you need to add changes to both `main` and `softserv-dev`, follow the above process to get code into `softserv-dev`. 
+When you need to add changes to both `main` and `softserv-dev`, follow the above process to get code into `softserv-dev`.
 
 Then:
 
@@ -70,5 +121,19 @@ To get data into the app:
 - Navigate to http://localhost:3000/importers?locale-en to import via bulkrax csv
 - Sample csv files are on the roundtripping ticket:
   - https://github.com/scientist-softserv/west-virginia-university/issues/104
-- You will have to log into the popup.  The username is in `ENV['BULKRAX_USERNAME']` and the password is in `ENV['BULKRAX_PW']`.  For local development, see [./env/env.dev.hydra](./env/env.dev.hydra).    
+- You will have to log into the popup.  The username is in `ENV['BULKRAX_USERNAME']` and the password is in `ENV['BULKRAX_PW']`.  For local development, see [./env/env.dev.hydra](./env/env.dev.hydra).
   - Barring that, shell into the web container (e.g. `docker compose -f docker-compose.dev.yml exec web bash`) and run `echo "$BULKRAX_USERNAME:$BULKRAX_PW"`.
+
+### Specs
+
+To run specs, bash into your `web` or `workers` container and run `rspec`.
+
+Ex:
+```sh
+docker compose exec web bash
+```
+
+Then run the specs:
+```sh
+rspec spec/services/chicago_citation_service_spec.rb
+```

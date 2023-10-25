@@ -1,0 +1,14 @@
+/*********************************************************************
+    Style overrides for Blacklight Advanced Search page
+**********************************************************************/
+
+#advanced_search > div > div > input.form-control {
+  color: black;
+}
+
+div > ul > li > span.label-and-count > label {
+  display: inherit;
+  span.facet-count {
+    display: contents
+  }
+}

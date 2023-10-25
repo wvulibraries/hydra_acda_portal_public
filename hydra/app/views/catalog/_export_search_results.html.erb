@@ -1,0 +1,8 @@
+<!-- Single button -->
+<div class="btn-group">
+  <% params.permit! %>
+  <% params.delete('page') %>
+
+  <%= link_to "Export to CSV", url_for(params.merge(rows: @response.total, format: :csv)), class: 'btn btn-default
+ pull-right' %> 
+</div>
