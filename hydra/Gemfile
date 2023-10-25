@@ -68,6 +68,10 @@ gem 'rsolr'
 gem 'devise'
 gem 'devise-guests', '~> 0.5'
 
+# Questioning Authority
+# =====================================================
+gem 'qa'
+
 # Capistrano
 # =====================================================
 # gem 'capistrano-rails'

@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  mount Qa::Engine => '/qa'
+
   concern :range_searchable, BlacklightRangeLimit::Routes::RangeSearchable.new
   mount Bulkrax::Engine, at: '/'
   concern :oai_provider, BlacklightOaiProvider::Routes.new
