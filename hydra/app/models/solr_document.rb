@@ -19,7 +19,7 @@ class SolrDocument
   field_semantics.merge!(
     contributing_institution: 'contributing_institution_tesim',
     title: 'title_tesim',
-    date: 'edtf_tesim',
+    date: 'date_tesim',
     edtf: 'edtf_tesim',
     creator: 'creator_tesim',
     rights: 'rights_tesim',

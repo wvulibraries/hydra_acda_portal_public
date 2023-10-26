@@ -45,12 +45,12 @@ Bulkrax.setup do |config|
     'Bulkrax::CsvParser' => {
       'contributing_institution' => { from: ['dcterms:provenance'] },
       'title' => { from: ['dcterms:title'] },
-      'date' => { from: ['dcterms:date'] },
+      'date' => { from: ['dcterms:date'], split: true },
       'edtf' => { from: ['dcterms:created'] },
-      'creator' => { from: ['dcterms:creator'] },
+      'creator' => { from: ['dcterms:creator'], split: true },
       'rights' => { from: ['dcterms:rights'] },
       'language' => { from: ['dcterms:language'], split: true },
-      'congress' => { from: ['dcterms:temporal'] },
+      'congress' => { from: ['dcterms:temporal'], split: true },
       'collection_title' => { from: ['dcterms:relation'] },
       'physical_location' => { from: ['dcterms:isPartOf'] },
       'collection_finding_aid' => { from: ['dcterms:source'] },
@@ -63,7 +63,8 @@ Bulkrax.setup do |config|
       'names' => { from: ['dcterms:contributor'], split: true },
       'dc_type' => { from: ['dcterms:type'] },
       'record_type' => { from: ['dcterms:http://purl.org/dc/terms/type'], split: true },
-      'format' => { from: ['dcterms:format'] },
+      'location_represented' => { from: ['dcterms:spatial'], split: true },
+      'extent' => { from: ['dcterms:format'] },
       'publisher' => { from: ['dcterms:publisher'], split: true },
       'policy_area' => { from: ['dcterms:subject'], split: true }
     }
