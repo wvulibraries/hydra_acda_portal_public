@@ -21,8 +21,6 @@
 //= require advanced_search_additional_fields
 
 //= require jquery_ujs
-//= require bootstrap
-
 
 //= require tether
 // Required by Blacklight
