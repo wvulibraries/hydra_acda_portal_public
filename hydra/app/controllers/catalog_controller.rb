@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 require 'blacklight/catalog'
-require 'csv'
 
 class CatalogController < ApplicationController
 
@@ -187,7 +186,6 @@ class CatalogController < ApplicationController
 
     # add config for exporting as csv
     config.add_results_collection_tool :export_search_results
-    config.index.respond_to.csv = :export_csv
 
     # If there are more than this many search results, no spelling ("did you
     # mean") suggestion is offered.
@@ -205,9 +203,18 @@ class CatalogController < ApplicationController
   #   end
   # end
 
-  def export_csv
-    full_search_response_data = ExportCsvPresenter.new(@response).to_csv
-    send_data full_search_response_data, layout: false, filename: "search-results-#{Time.now}.csv"
+  def export
+    @response = search_results(params)[0]
+
+    respond_to do |format|
+      format.csv {
+        send_data ExportResultsPresenter.new(@response).to_csv, layout: false, filename: "search-results-#{Time.now.strftime('%Y-%m-%d_%H:%M:%S')}.csv"
+      }
+
+      format.xml {
+        send_data ExportResultsPresenter.new(@response).to_xml, layout: false, filename: "search-results-#{Time.now.strftime('%Y-%m-%d_%H:%M:%S')}.xml"
+      }
+    end
   end
 
   # adds additional pages that will also use the searchbar from the navigation

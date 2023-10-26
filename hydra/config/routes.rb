@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   concern :range_searchable, BlacklightRangeLimit::Routes::RangeSearchable.new
   mount Bulkrax::Engine, at: '/'
   concern :oai_provider, BlacklightOaiProvider::Routes.new
-  
+
   # images
   get 'image/:id'  => 'image_viewer#index'
   get 'thumb/:id'  => 'image_viewer#thumb'
@@ -20,7 +20,10 @@ Rails.application.routes.draw do
 
   # featured
   get '/featured' => 'featured#index'
-  
+
+  # export search results
+  get 'catalog_export', to: 'catalog#export'
+
   mount Blacklight::Engine => '/'
   mount BlacklightAdvancedSearch::Engine => '/'
 
