@@ -8,15 +8,19 @@ class ExportResultsPresenter
     @items_array = raw_response.fetch('response').fetch('docs')
   end
 
-  # @return [Array]
+  # @return [String]
   def to_csv
     csv_data = solr_docs.map(&:to_semantic_values)
     headers = csv_data.flat_map(&:keys).uniq
+    headers.delete(:bulkrax_identifier)
+
+    # convert headers (which are the keys of the semantic values) to the metadata terms
+    mapped_headers = headers.map { |header| metadata_term_mapping[header.to_s] || header }
 
     CSV.generate(headers: true) do |csv|
-      csv << headers
+      csv << mapped_headers
       csv_data.each do |item|
-         csv << headers.map { |header| flatten(item[header]) }
+        csv << headers.map { |header| flatten(item[header]) }
       end
     end
   end
@@ -24,12 +28,18 @@ class ExportResultsPresenter
   # @return [String]
   def to_xml
     builder = Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
-      xml.items {
+      xml.items(
+        'xmlns:dcterms' => 'http://purl.org/dc/terms/',
+        'xmlns:dc' => 'http://purl.org/dc/elements/1.1/',
+        'xmlns:edm' => 'http://www.europeana.eu/schemas/edm/'
+        ) {
         solr_docs.each do |doc|
           semantic_values = doc.to_semantic_values
+          semantic_values.delete(:bulkrax_identifier)
           xml.item {
             semantic_values.each do |key, value|
-              xml.send(key.to_sym, flatten(value))
+              sanitized_key = sanitize(metadata_term_mapping[key.to_s] || key)
+              xml.send(sanitized_key, flatten(value))
             end
           }
         end
@@ -49,5 +59,34 @@ class ExportResultsPresenter
 
     def solr_docs
       items_array.map { |item_hash| SolrDocument.new(item_hash) }
+    end
+
+    # Looks up the Bulkrax field mappings to get the metadata term for a given property
+    def metadata_term_mapping
+      mappings_hash = Bulkrax.config.field_mappings['Bulkrax::CsvParser'].each_with_object({}) do |(k, v), hash|
+        hash[k] = v[:from].first
+      end
+      mappings_hash.delete('bulkrax_identifier')
+      mappings_hash
+    end
+
+    def sanitize(key)
+      return special_xml_mappings[key] if special_xml_mappings.key?(key)
+
+      if key.count(':') > 1
+        prefix = key.split(':', 2).first
+        term = key.split('/').last
+        return "#{prefix}:#{term}"
+      end
+
+      key
+    end
+
+    # These mappings are special cases that don't follow the normal pattern
+    def special_xml_mappings
+      {
+        'http://lib.wvu.edu/hydra/subject' => 'dc:subject',
+        'dcterms:http://purl.org/dc/terms/type' => 'dc:type'
+      }
     end
 end
