@@ -37,7 +37,7 @@ gem 'whenever', require: false
 # Bulkrax Import
 # =====================================================
 # Switch the comments on these two lines to work on Bulkrax locally
-gem 'bulkrax', git: 'https://github.com/samvera-labs/bulkrax.git', ref: '6c67f16'
+gem 'bulkrax', git: 'https://github.com/samvera-labs/bulkrax.git', ref: 'b689afa'
 # gem 'bulkrax', path: 'vendor/engines/bulkrax'
 
 # Dependices for Thumbnail Creation
@@ -67,6 +67,10 @@ gem 'solrizer'
 gem 'rsolr'
 gem 'devise'
 gem 'devise-guests', '~> 0.5'
+
+# Questioning Authority
+# =====================================================
+gem 'qa'
 
 # Capistrano
 # =====================================================
