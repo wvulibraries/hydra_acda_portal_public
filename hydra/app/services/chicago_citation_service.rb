@@ -4,10 +4,10 @@ module ChicagoCitationService
       # format is based off of https://www.loc.gov/programs/teachers/getting-started-with-primary-sources/citing/chicago/
       text = ""
 
-      title = sanitize_value(document['title_ssi'] || document['description_ssi'])
-      date = sanitize_value(document['date_ssi'])
-      location = sanitize_value(document['physical_location_ssi'])
-      contributing_institution = sanitize_value(document['contributing_institution_ssi'])
+      title = sanitize_value(document['title_tesim']&.first || document['description_tesim']&.first)
+      date = sanitize_value(document['date_tesim']&.first)
+      location = sanitize_value(document['physical_location_tesim']&.first)
+      contributing_institution = sanitize_value(document['contributing_institution_tesim']&.first)
       url = original_url
       access_date = Date.today.strftime("%B %d, %Y")
 
