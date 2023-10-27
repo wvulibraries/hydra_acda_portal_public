@@ -12,7 +12,16 @@ class SolrDocument
 
     @semantic_value_hash ||= {}
     idno = @semantic_value_hash[:identifier].first
-    @semantic_value_hash[:identifier] = "http://congressarchivesdev.lib.wvu.edu/record/#{idno}"
+
+    # Check if the identifier is a URL
+    if url?(idno)
+      # accounts for something like http://hdl.handle.net/123/123 being the identifier
+      # we wouldn't want to prepend our URL in that case
+      @semantic_value_hash[:identifier] = idno
+    else
+      @semantic_value_hash[:identifier] = "http://congressarchivesdev.lib.wvu.edu/record/#{idno}"
+    end
+
     @semantic_value_hash
   end
 
@@ -39,9 +48,9 @@ class SolrDocument
     extent: 'extent_tesim',
     publisher: 'publisher_tesim',
     description: 'description_tesim',
-    dc_type: 'dc_type_tesim',    
+    dc_type: 'dc_type_tesim',
     project: 'project_tesim',
-    bulkrax_identifier: 'bulkrax_identifier_tesim'   
+    bulkrax_identifier: 'bulkrax_identifier_tesim'
   )
 
   # self.unique_key = 'id'
@@ -59,11 +68,18 @@ class SolrDocument
   # Recommendation: Use field names from Dublin Core
   use_extension(Blacklight::Document::DublinCore)
 
-  # Do content negotiation for AF models. 
+  # Do content negotiation for AF models.
   use_extension( Hydra::ContentNegotiation )
 
-  # Sets 
+  # Sets
   def sets
     fetch('language', []).map { |l| BlacklightOaiProvider::Set.new("language:#{l}") }
   end
+
+  private
+
+    # Check if a given string is a URL
+    def url?(str)
+      str =~ /\A#{URI::DEFAULT_PARSER.make_regexp(['http', 'https'])}\z/
+    end
 end
