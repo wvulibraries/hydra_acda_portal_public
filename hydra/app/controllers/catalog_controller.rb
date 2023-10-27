@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 require 'blacklight/catalog'
-require 'csv'
 
 class CatalogController < ApplicationController
 
@@ -142,7 +141,24 @@ class CatalogController < ApplicationController
     # add the search fields individually from solr
     # use this as a template for creating new ones
     # Search ---------------------------------------------
-    default_search_fields = ['identifier', 'title', 'date', 'contributing_institution', 'policy_area', 'names', 'topic', 'congress', 'physical_location', 'location_represented', 'record_type', 'rights', 'language', 'extent']
+    default_search_fields = %w[
+      creator
+      date
+      names
+      title
+      collection_title
+      congress
+      contributing_institution
+      description
+      identifier
+      language
+      location_represented
+      policy_area
+      publisher
+      record_type
+      rights
+      topic
+    ]
     default_search_fields.map! { |f|
       config.add_search_field(f.to_s) do |field|
           field.solr_parameters = {
@@ -170,7 +186,6 @@ class CatalogController < ApplicationController
 
     # add config for exporting as csv
     config.add_results_collection_tool :export_search_results
-    config.index.respond_to.csv = :export_csv
 
     # If there are more than this many search results, no spelling ("did you
     # mean") suggestion is offered.
@@ -188,9 +203,18 @@ class CatalogController < ApplicationController
   #   end
   # end
 
-  def export_csv
-    full_search_response_data = ExportCsvPresenter.new(@response).to_csv
-    send_data full_search_response_data, layout: false, filename: "search-results-#{Time.now}.csv"
+  def export
+    @response = search_results(params)[0]
+
+    respond_to do |format|
+      format.csv {
+        send_data ExportResultsPresenter.new(@response).to_csv, layout: false, filename: "search-results-#{Time.now.strftime('%Y-%m-%d_%H:%M:%S')}.csv"
+      }
+
+      format.xml {
+        send_data ExportResultsPresenter.new(@response).to_xml, layout: false, filename: "search-results-#{Time.now.strftime('%Y-%m-%d_%H:%M:%S')}.xml"
+      }
+    end
   end
 
   # adds additional pages that will also use the searchbar from the navigation

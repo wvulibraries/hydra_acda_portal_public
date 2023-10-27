@@ -1,9 +1,9 @@
 GIT
   remote: https://github.com/samvera-labs/bulkrax.git
-  revision: 6c67f16fb922e22dc11552e670f4b90bc5379e4a
-  ref: 6c67f16
+  revision: b689afa637142437d802d2c137fcf2386bcb21c7
+  ref: b689afa
   specs:
-    bulkrax (5.2.1)
+    bulkrax (5.4.1)
       bagit (~> 0.4)
       coderay
       dry-monads (~> 1.4.0)
@@ -69,6 +69,8 @@ GEM
       activemodel (= 5.2.8.1)
       activesupport (= 5.2.8.1)
       arel (>= 9.0)
+    activerecord-import (1.5.0)
+      activerecord (>= 4.2)
     activestorage (5.2.8.1)
       actionpack (= 5.2.8.1)
       activerecord (= 5.2.8.1)
@@ -82,7 +84,7 @@ GEM
     arel (9.0.0)
     autoprefixer-rails (10.4.7.0)
       execjs (~> 2)
-    bagit (0.4.5)
+    bagit (0.4.6)
       docopt (~> 0.5.0)
       validatable (~> 1.6)
     bcrypt (3.1.18)
@@ -180,6 +182,7 @@ GEM
     fugit (1.7.2)
       et-orbi (~> 1, >= 1.2.7)
       raabro (~> 1.4)
+    geocoder (1.8.2)
     globalid (1.0.0)
       activesupport (>= 5.0)
     hamster (3.0.0)
@@ -246,6 +249,11 @@ GEM
       rdf-turtle
       rdf-vocab (>= 0.8)
       slop
+    ldpath (1.2.0)
+      nokogiri (~> 1.8)
+      parslet
+      rdf (~> 3.0)
+      rdf-vocab (~> 3.0)
     libxml-ruby (3.2.4)
     link_header (0.0.8)
     listen (3.7.1)
@@ -282,6 +290,15 @@ GEM
     pg (1.4.5)
     puma (4.3.12)
       nio4r (~> 2.0)
+    qa (5.10.0)
+      activerecord-import
+      deprecation
+      faraday (< 3.0, != 2.0.0)
+      geocoder
+      ldpath
+      nokogiri (~> 1.6)
+      rails (>= 5.0, < 7.1)
+      rdf
     raabro (1.4.0)
     racc (1.6.0)
     rack (2.2.4)
@@ -380,7 +397,7 @@ GEM
       sidekiq (>= 4.2.1)
     sidekiq-failures (1.0.4)
       sidekiq (>= 4.0.0)
-    simple_form (5.2.0)
+    simple_form (5.3.0)
       actionpack (>= 5.2)
       activemodel (>= 5.2)
     slop (4.9.3)
@@ -436,7 +453,7 @@ GEM
       chronic (>= 0.6.3)
     xml-simple (1.1.9)
       rexml
-    zeitwerk (2.6.9)
+    zeitwerk (2.6.12)
 
 PLATFORMS
   aarch64-linux
@@ -469,6 +486,7 @@ DEPENDENCIES
   open-uri
   pg (>= 0.18, < 2.0)
   puma (~> 4.3)
+  qa
   rails (~> 5.2.8.1)
   rake (~> 12.3)
   redis (~> 4.0)

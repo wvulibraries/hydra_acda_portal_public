@@ -59,7 +59,7 @@ class Acda < ActiveFedora::Base
   # DC date
   # ==============================================================================================================
   # date property
-  property :date, predicate: ::RDF::Vocab::DC.date, multiple: false do |index|
+  property :date, predicate: ::RDF::Vocab::DC.date, multiple: true do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
   end
 
@@ -74,7 +74,7 @@ class Acda < ActiveFedora::Base
   # DC creator
   # ==============================================================================================================
   # creator property
-  property :creator, predicate: ::RDF::Vocab::DC.creator, multiple: false do |index|
+  property :creator, predicate: ::RDF::Vocab::DC.creator, multiple: true do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
   end
 
@@ -95,7 +95,7 @@ class Acda < ActiveFedora::Base
   # DC temporal
   # ==============================================================================================================
   # congress property
-  property :congress, predicate: ::RDF::Vocab::DC.temporal, multiple: false do |index|
+  property :congress, predicate: ::RDF::Vocab::DC.temporal, multiple: true do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
   end
 
