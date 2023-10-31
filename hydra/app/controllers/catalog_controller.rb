@@ -194,6 +194,21 @@ class CatalogController < ApplicationController
     config.fetch_many_document_params = { fl: "*" }
   end
 
+  def index
+    return super if params[:range].nil?
+
+    start_date = params[:range]["date_ssi"]["begin"]
+    end_date = params[:range]["date_ssi"]["end"]
+
+    if start_date.present? && end_date.present? && (start_date.to_i > end_date.to_i)
+      flash[:error] = "The min date must be before the max date"
+      redirect_to request.referrer
+      return
+    end
+
+    super
+  end
+
   # def show
   #   super
   #   @metadata = []
