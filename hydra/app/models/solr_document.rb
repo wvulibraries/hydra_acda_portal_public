@@ -4,6 +4,8 @@ class SolrDocument
   include BlacklightOaiProvider::SolrDocument
   use_extension Blacklight::Document::DublinCore
 
+  ACDA_URL = 'http://congressarchivesdev.lib.wvu.edu/record/'
+
   def to_semantic_values
     @semantic_value_hash ||= self.class.field_semantics.each_with_object(Hash.new([])) do |(key, field_names), hash|
       value = Array.wrap(field_names).map { |field_name| self[field_name] }.flatten.compact
@@ -19,7 +21,7 @@ class SolrDocument
       # we wouldn't want to prepend our URL in that case
       @semantic_value_hash[:identifier] = idno
     else
-      @semantic_value_hash[:identifier] = "http://congressarchivesdev.lib.wvu.edu/record/#{idno}"
+      @semantic_value_hash[:identifier] = ACDA_URL + idno
     end
 
     @semantic_value_hash
