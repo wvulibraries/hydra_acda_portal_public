@@ -7,6 +7,8 @@ class Acda < ActiveFedora::Base
   after_create :generate_thumbnail
   after_save :clear_empty_fields
 
+  self.indexer = Indexer
+
   def generate_thumbnail
     # queue job to generate thumbnail
     GenerateThumbsJob.perform_later(identifier)
@@ -39,7 +41,14 @@ class Acda < ActiveFedora::Base
   # Minting ID
   # Overriding Fedoras LONG URI NOT FRIENDLY ID
   def assign_id
-    identifier.gsub('.', '').to_s
+    # Removes the protocol (http or https) and domain part of the url
+    cleaned_identifier = identifier.gsub(/https?:\/\/[^\/]+\//, '')
+
+    # Removes special characters typically found in urls
+    cleaned_identifier = cleaned_identifier.gsub(/[\/:?%&=#+_]/, '_')
+
+    # Replaces periods with empty strings to maintain the original functionality
+    cleaned_identifier.gsub('.', '').to_s
   end
 
   # DC provenance
