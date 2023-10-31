@@ -11,10 +11,10 @@ RSpec.describe ChicagoCitationService do
     context 'when all fields are present' do
       let(:attributes) do
         {
-          'title_ssi' => 'Title',
-          'date_ssi' => 'Date',
-          'physical_location_ssi' => 'Physical Location',
-          'contributing_institution_ssi' => 'Contributing Institution'
+          'title_tesim' => ['Title'],
+          'date_tesim' => ['Date'],
+          'physical_location_tesim' => ['Physical Location'],
+          'contributing_institution_tesim' => ['Contributing Institution']
         }
       end
 
@@ -28,10 +28,10 @@ RSpec.describe ChicagoCitationService do
     context 'when url is not present' do
       let(:attributes) do
         {
-          'title_ssi' => 'Title',
-          'date_ssi' => 'Date',
-          'physical_location_ssi' => 'Physical Location',
-          'contributing_institution_ssi' => 'Contributing Institution'
+          'title_tesim' => ['Title'],
+          'date_tesim' => ['Date'],
+          'physical_location_tesim' => ['Physical Location'],
+          'contributing_institution_tesim' => ['Contributing Institution']
         }
       end
 

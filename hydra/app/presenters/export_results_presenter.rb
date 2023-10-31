@@ -20,6 +20,8 @@ class ExportResultsPresenter
     CSV.generate(headers: true) do |csv|
       csv << mapped_headers
       csv_data.each do |item|
+        # remove the acda url from the identifier
+        remove_acda_url(item)
         csv << headers.map { |header| flatten(item[header]) }
       end
     end
@@ -36,6 +38,7 @@ class ExportResultsPresenter
         solr_docs.each do |doc|
           semantic_values = doc.to_semantic_values
           semantic_values.delete(:bulkrax_identifier)
+          remove_acda_url(semantic_values)
           xml.item {
             semantic_values.each do |key, value|
               sanitized_key = sanitize(metadata_term_mapping[key.to_s] || key)
@@ -88,5 +91,9 @@ class ExportResultsPresenter
         'http://lib.wvu.edu/hydra/subject' => 'dc:subject',
         'dcterms:http://purl.org/dc/terms/type' => 'dc:type'
       }
+    end
+
+    def remove_acda_url(hash)
+      hash[:identifier].gsub!(SolrDocument::ACDA_URL, '')
     end
 end
