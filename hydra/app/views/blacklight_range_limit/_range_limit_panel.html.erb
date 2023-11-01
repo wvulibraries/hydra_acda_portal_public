@@ -65,10 +65,10 @@
           <!-- No stats information found for field  in search response -->
         <% end %>
 
-        <% if (min = range_results_endpoint(field_name, :min)) &&
-              (max = range_results_endpoint(field_name, :max)) %>
+        <% if (min = extract_year(range_results_endpoint(field_name, :min))) &&
+              (max = extract_year(range_results_endpoint(field_name, :max))) %>
           <p class="range subsection <%= "slider_js" unless field_config[:slider_js] == false  %>">
-            Current results range from <span class="min"><%= range_results_endpoint(field_name, :min) %></span> to <span class="max"><%= range_results_endpoint(field_name, :max) %></span>
+            Current results range from <span class="min"><%= min %></span> to <span class="max"><%= max %></span>
           </p>
 
           <% if field_config[:segments] != false %>
