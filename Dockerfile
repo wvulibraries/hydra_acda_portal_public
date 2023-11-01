@@ -6,7 +6,7 @@ ENV RACK_ENV production
 WORKDIR /home/hydra
 ADD ./hydra /home/hydra
 
-RUN apt-get update && apt-get -y install ghostscript
+RUN apt-get update && apt-get -y install imagemagick ghostscript
 
 # Use JEMALLOC instead
 # JEMalloc is a faster garbage collection for Ruby.
