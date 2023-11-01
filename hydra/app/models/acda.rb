@@ -7,7 +7,7 @@ class Acda < ActiveFedora::Base
   after_create :generate_thumbnail
   after_save :clear_empty_fields
 
-  self.indexer = Indexer
+  self.indexer = ::Indexer
 
   def generate_thumbnail
     # queue job to generate thumbnail
