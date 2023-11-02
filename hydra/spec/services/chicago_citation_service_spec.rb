@@ -14,13 +14,14 @@ RSpec.describe ChicagoCitationService do
           'title_tesim' => ['Title'],
           'date_tesim' => ['Date'],
           'physical_location_tesim' => ['Physical Location'],
+          'collection_title_tesim' => ['Collection Title'],
           'contributing_institution_tesim' => ['Contributing Institution']
         }
       end
 
       it 'returns a formatted citation' do
         expect(service.format(document: doc, original_url: url)).to eq(
-          "<i>Title</i>, Date, Physical Location, Contributing Institution. https://www.wvu.edu/catalog/1234 (accessed #{access_date})."
+          "<i>Title</i>, Date, Physical Location, Collection Title, Contributing Institution. https://www.wvu.edu/catalog/1234 (accessed #{access_date})."
         )
       end
     end
