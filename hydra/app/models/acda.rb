@@ -6,6 +6,11 @@ class Acda < ActiveFedora::Base
 
   after_create :generate_thumbnail
   after_save :clear_empty_fields
+  after_save :generate_thumbnail, if: :saved_change_to_preview?
+
+  def saved_change_to_preview?
+    previous_changes['preview'].present?
+  end
 
   self.indexer = ::Indexer
 
