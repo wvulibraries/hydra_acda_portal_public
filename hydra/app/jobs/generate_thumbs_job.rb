@@ -6,6 +6,7 @@ class GenerateThumbsJob < ApplicationJob
     record = Acda.where(identifier: identifier).first
 
     # Ignore if record type is sound or moving image
+    return if record.dc_type.nil?
     return if ((record.dc_type == 'Sound') || (record.dc_type.include? 'Moving'))
     return record.thumbnail_file = nil if record.preview.blank?
 
