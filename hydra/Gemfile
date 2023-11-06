@@ -38,11 +38,11 @@ gem 'sidekiq-failures'
 
 # Hydra Dependencies
 # =====================================================
-gem 'active-fedora'
-gem 'active-triples'
+gem 'active-fedora', '>= 14.0.0'
+gem 'active-triples', '>= 1.2.0'
 gem 'blacklight'
 
-gem 'hydra-head'
+gem 'hydra-head', '>= 12.1.0'
 gem 'ldp'
 gem 'nokogiri'
 gem 'solrizer'
