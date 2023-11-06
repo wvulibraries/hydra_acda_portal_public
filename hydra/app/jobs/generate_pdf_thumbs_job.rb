@@ -22,7 +22,9 @@ class GeneratePdfThumbsJob < ApplicationJob
       pdf_file = URI.open(record.preview)
     rescue Errno::ENOENT => e
       Rails.logger.error "Error: edm:preview for #{identifier} is not a valid pdf url. #{e.message}"
-      return record.thumbnail_file = nil
+      record.thumbnail_file = nil
+      record.image_file = nil
+      return
     end
 
     tempfile = File.new(pdf_path, "w+")
@@ -32,8 +34,13 @@ class GeneratePdfThumbsJob < ApplicationJob
     # check if the tempfile is indeed a pdf
     mime_type = `file --brief --mime-type #{Shellwords.escape(pdf_path)}`.strip
 
-    # sets thumbnail_file to nil if mime_type is not a pdf so, we don't retain the previous thumbnail
-    return record.thumbnail_file = nil unless mime_type.include?('pdf')
+    # sets thumbnail_file and image_file to nil if mime_type is not an image
+    # so we don't retain the previous thumbnail and image
+    unless mime_type.include?('pdf')
+      record.thumbnail_file = nil
+      record.image_file = nil
+      return
+    end
 
     record.files.build unless record.files.present?
 

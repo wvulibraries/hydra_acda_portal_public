@@ -32,8 +32,13 @@ class GenerateImageThumbsJob < ApplicationJob
     # check if the tempfile is indeed an image
     mime_type = `file --brief --mime-type #{Shellwords.escape(image_path)}`.strip
 
-    # sets thumbnail_file to nil if mime_type is not an image, so we don't retain the previous thumbnail
-    return record.thumbnail_file = nil unless mime_type.include?('image')
+    # sets thumbnail_file and image_file to nil if mime_type is not an image
+    # so we don't retain the previous thumbnail and image
+    unless mime_type.include?('image')
+      record.thumbnail_file = nil
+      record.image_file = nil
+      return
+    end
 
     record.files.build unless record.files.present?
 

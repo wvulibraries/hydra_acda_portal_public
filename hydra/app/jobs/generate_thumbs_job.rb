@@ -8,7 +8,12 @@ class GenerateThumbsJob < ApplicationJob
     # Ignore if record type is sound or moving image
     return if record.dc_type.nil?
     return if ((record.dc_type == 'Sound') || (record.dc_type.include? 'Moving'))
-    return record.thumbnail_file = nil if record.preview.blank?
+
+    if record.preview.blank?
+      record.thumbnail_file = nil
+      record.image_file = nil
+      return
+    end
 
     # if record.preview is a pdf
     if record.preview.include? 'pdf'
