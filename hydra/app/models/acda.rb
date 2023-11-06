@@ -9,7 +9,7 @@ class Acda < ActiveFedora::Base
   after_save :generate_thumbnail, if: :saved_change_to_preview?
 
   def saved_change_to_preview?
-    previous_changes['preview'].present?
+    previous_changes['preview'].present? || thumbnail_file.blank?
   end
 
   self.indexer = ::Indexer
