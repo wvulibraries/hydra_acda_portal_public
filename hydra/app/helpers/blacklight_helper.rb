@@ -19,4 +19,14 @@ module BlacklightHelper
       date_string
     end
   end
+
+  def export_params
+    # Checks if we're exporting from the bookmarks page
+    bookmarks = controller.instance_variable_get(:@bookmarks)
+    return params unless bookmarks
+
+    identifiers = bookmarks.map { |bookmark| SolrDocument.find(bookmark.document_id)['identifier_ssi'] }
+    params.merge('search_field' => 'identifier',
+                 'q' => identifiers.map { |identifier| "\"#{identifier}\"" }.join(' OR '))
+  end
 end
