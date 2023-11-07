@@ -26,6 +26,7 @@
 // Required by Blacklight
 // -----------------------------------------------------
 //= require blacklight/blacklight
+//= require bookmark_toggle
 
 // Required by Bulkrax
 // -----------------------------------------------------
