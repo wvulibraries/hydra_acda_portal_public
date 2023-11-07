@@ -4,6 +4,7 @@
     position: fixed;
     bottom: 0;
     background-color: #f7f7f7;
+    z-index: 4;
 }
 .partners ul {
     display: inline-block;
@@ -34,6 +35,6 @@
         padding: 10px;
     }
     .partners li {
-        margin: 10px 
+        margin: 10px
     }
 }
