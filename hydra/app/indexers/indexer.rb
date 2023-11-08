@@ -1,6 +1,8 @@
 class Indexer < ActiveFedora::IndexingService
   def generate_solr_document
     super.tap do |solr_doc|
+      solr_doc['has_image_file_bsi'] = object.image_file.present?
+      solr_doc['has_thumbnail_file_bsi'] = object.thumbnail_file.present?
       add_date(solr_doc)
     end
   end

@@ -78,6 +78,14 @@ class SolrDocument
     fetch('language', []).map { |l| BlacklightOaiProvider::Set.new("language:#{l}") }
   end
 
+  def image_file?
+    self['has_image_file_bsi']
+  end
+
+  def thumbnail_file?
+    self['has_thumbnail_file_bsi']
+  end
+
   private
 
     # Check if a given string is a URL
