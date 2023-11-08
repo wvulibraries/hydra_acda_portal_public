@@ -3,44 +3,20 @@ class GeneratePdfThumbsJob < ApplicationJob
 
   queue_as :import
 
-  def perform(identifier)
+  def perform(id, download_path)
+    return unless File.exist? download_path
+
     # find record
-    record = Acda.where(identifier: identifier).first
-
+    record = Acda.where(id: id).first
     # temp folder to store pdf files
-    pdf_path = "/home/hydra/tmp/pdf"
+    pdf_dir = "/home/hydra/tmp/pdf"
 
-    # make folder if it doesn't exist
-    FileUtils.mkdir_p(pdf_path) unless File.exist?(pdf_path)
+    # make folder if it doesn't exist and move pdf file to folder
+    FileUtils.mkdir_p(pdf_dir) unless File.exist?(pdf_dir)
 
-    # add identifier and extension to pdf path so we have
-    # full path and file name to pdf file.
-    pdf_path = "#{pdf_path}/#{identifier}.pdf"
-
-    begin
-      # download image file from preview url
-      pdf_file = URI.open(record.preview)
-    rescue Errno::ENOENT => e
-      Rails.logger.error "Error: edm:preview for #{identifier} is not a valid pdf url. #{e.message}"
-      record.thumbnail_file = nil
-      record.image_file = nil
-      return
-    end
-
-    tempfile = File.new(pdf_path, "w+")
-    IO.copy_stream(pdf_file, pdf_path)
-    tempfile.close
-
-    # check if the tempfile is indeed a pdf
-    mime_type = `file --brief --mime-type #{Shellwords.escape(pdf_path)}`.strip
-
-    # sets thumbnail_file and image_file to nil if mime_type is not an image
-    # so we don't retain the previous thumbnail and image
-    unless mime_type.include?('pdf')
-      record.thumbnail_file = nil
-      record.image_file = nil
-      return
-    end
+    pdf_path = "#{pdf_dir}/#{id}.pdf"
+    # moves the already downloaded file to the expected path
+    FileUtils.mv(download_path, pdf_path)
 
     record.files.build unless record.files.present?
 
@@ -58,18 +34,18 @@ class GeneratePdfThumbsJob < ApplicationJob
       convert.density 300
       convert.quality 100
       # add page to be converted
-      convert << tempfile.path
+      convert << pdf_path
       # add path of page to be converted
-      convert << "#{image_path}/#{identifier}.jpg"
+      convert << "#{image_path}/#{id}.jpg"
     end
 
     # check and see if image exists
-    if File.exist?("#{image_path}/#{identifier}.jpg")
+    if File.exist?("#{image_path}/#{id}.jpg")
       # set image file
-      image_path = "#{image_path}/#{identifier}.jpg"
-    elsif File.exist?("#{image_path}/#{identifier}-0.jpg")
+      image_path = "#{image_path}/#{id}.jpg"
+    elsif File.exist?("#{image_path}/#{id}-0.jpg")
       # set image file
-      image_path = "#{image_path}/#{identifier}-0.jpg"
+      image_path = "#{image_path}/#{id}-0.jpg"
     end
 
     ImportLibrary.set_file(record.build_image_file, 'application/jpg', image_path)
@@ -91,27 +67,23 @@ class GeneratePdfThumbsJob < ApplicationJob
       # add page to be converted
       convert << image_path
       # add path of page to be converted
-      convert << "#{thumbnail_path}/#{identifier}.jpg"
+      convert << "#{thumbnail_path}/#{id}.jpg"
     end
 
-    ImportLibrary.set_file(record.build_thumbnail_file, 'application/jpg', "#{thumbnail_path}/#{identifier}.jpg")
+    ImportLibrary.set_file(record.build_thumbnail_file, 'application/jpg', "#{thumbnail_path}/#{id}.jpg")
     record.save!
-
-    # delete temp files
-    # tempfile.unlink
 
     # delete downloaded pdf file
     File.delete(pdf_path) if File.exist?(pdf_path)
 
-    # delete all images with identifier
-    Dir.glob("#{image_path}/#{identifier}*").each do |file|
+    # delete all images with id
+    Dir.glob("#{image_path}/#{id}*").each do |file|
       File.delete(file)
     end
 
-    # delete thumbnails with identifier
-    Dir.glob("#{thumbnail_path}/#{identifier}*").each do |file|
+    # delete thumbnails with id
+    Dir.glob("#{thumbnail_path}/#{id}*").each do |file|
       File.delete(file)
     end
   end
-
 end

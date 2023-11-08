@@ -16,7 +16,7 @@ class Acda < ActiveFedora::Base
 
   def generate_thumbnail
     # queue job to generate thumbnail
-    GenerateThumbsJob.perform_later(identifier)
+    GenerateThumbsJob.perform_later(id)
   end
 
   def clear_empty_fields
