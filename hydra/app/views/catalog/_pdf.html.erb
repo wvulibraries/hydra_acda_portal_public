@@ -1,19 +1,19 @@
 <%# Ruby Page Variables %>
-<% identifier = @document[:id] %>
+<% id = @document[:id] %>
 <% project = @document[:project_ssi] %>
 <% num_files = @document[:num_files_isi] %>
 <% description = @document[:description_tesim] %>
 <% preview = @document[:preview_ssi] %>
 
 <div class="row">
-  <div class="col-md-4">      
+  <div class="col-md-4">
       <a class="document-image-full" href="<%= preview %>">
-        <% if Acda.where(identifier: identifier).first&.thumbnail_file.nil? %>
+        <% if @document.thumbnail_file? == false %>
           <span class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></span>
         <% else %>
-          <%= image_tag("/image/#{identifier}", title:"#{@document[:title_ssi]}", alt:description, class:"full-size-responsive") %> 
+          <%= image_tag("/image/#{id}", title:"#{@document[:title_ssi]}", alt:description, class:"full-size-responsive") %>
         <% end %>
-        <br><br> 
+        <br><br>
         <span class="fa fa-file-pdf-o"> Click on the image to view full PDF.</span>
       </a>
   </div>
