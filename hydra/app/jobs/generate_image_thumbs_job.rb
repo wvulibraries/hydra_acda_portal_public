@@ -60,7 +60,7 @@ class GenerateImageThumbsJob < ApplicationJob
     File.delete(image_path) if File.exist?(image_path)
 
     # delete thumbnails with identifer
-    Dir.glob("#{image_path}/#{id}*").each do |file|
+    Dir.glob("#{File.dirname(image_path)}/#{id}*").each do |file|
       File.delete(file)
     end
 
