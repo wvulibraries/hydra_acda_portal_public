@@ -77,7 +77,7 @@ class GeneratePdfThumbsJob < ApplicationJob
     File.delete(pdf_path) if File.exist?(pdf_path)
 
     # delete all images with id
-    Dir.glob("#{image_path}/#{id}*").each do |file|
+    Dir.glob("#{File.dirname(image_path)}/#{id}*").each do |file|
       File.delete(file)
     end
 
