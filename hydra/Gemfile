@@ -23,7 +23,7 @@ gem 'bootsnap', '>= 1.1.0', require: false
 
 # OAI-PMH 
 # =====================================================
-gem 'blacklight_oai_provider'
+gem 'blacklight_oai_provider', '>= 7.0.2'
 
 # Automatic Import
 # =====================================================
@@ -42,7 +42,7 @@ gem 'active-fedora'
 gem 'active-triples'
 gem 'blacklight'
 
-gem 'hydra-head'
+gem 'hydra-head', '>= 12.1.0'
 gem 'ldp'
 gem 'nokogiri'
 gem 'solrizer'
