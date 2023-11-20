@@ -119,21 +119,6 @@ services:
     networks:
       - hydra
 
-  # conversion:
-  #   build:
-  #     context: ./conversion/
-  #     dockerfile: Dockerfile
-  #   container_name: acda_conversion
-  #   restart: always
-  #   environment:
-  #     - TERM=xterm
-  #   volumes:
-  #     - ./conversion/scripts:/convert/
-  #     - ./conversion/control:/control/
-  #     - ./data/mfcs-exports:/mnt/nfs-exports/mfcs-exports
-  #   networks:
-  #     - hydra
-
 networks:
   hydra:
     driver: bridge
