@@ -3,8 +3,6 @@
 <!DOCTYPE html>
 <!-- nagios check -->
 <html lang="en" class="no-js">
-
-<html lang="en" class="no-js">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -50,7 +48,7 @@
     <%= render "shared/navigation" %>
     
     <!-- Hydra Piece -->
-    <%= render partial: 'shared/ajax_modal' %>
+    <%= render partial: 'shared/modal' %>
     <div id="main-container" class="container">
         <% flash.each do |key, value| %>
             <div class="alert alert-<%= key %>"><%= value %></div>
@@ -75,5 +73,17 @@
 
     <!-- Share This Integration -->
     <script type="text/javascript" src="//platform-api.sharethis.com/js/sharethis.js#property=59ce7f4afeebe0001600e9c5&product=inline-share-buttons"></script>
+
+    <!-- Browser Update --> 
+    <script> 
+        var $buoop = {required:{e:0,f:-3,o:-3,s:-1,c:-3},insecure:true,unsupported:true,style:"bottom",api:2018.08 }; 
+        function $buo_f(){ 
+            var e = document.createElement("script"); 
+            e.src = "//browser-update.org/update.min.js"; 
+            document.body.appendChild(e);
+        };
+        try {document.addEventListener("DOMContentLoaded", $buo_f,false)}
+        catch(e){window.attachEvent("onload", $buo_f)}
+    </script>
     </body>
 </html>

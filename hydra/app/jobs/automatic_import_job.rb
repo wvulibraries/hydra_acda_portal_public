@@ -1,3 +1,8 @@
+# AutomaticImportJob
+# Author:: David J. Davis  (mailto:djdavis@mail.wvu.edu)
+# Modified_By:: Tracy A. McCormick (mailto:tam0013@mail.wvu.edu)
+# Modified:: January 20, 2023
+# Automatic import Job.
 class AutomaticImportJob < ApplicationJob
   queue_as :default
 
@@ -44,6 +49,7 @@ class AutomaticImportJob < ApplicationJob
     project_name = control_file["project_name"]
     time_stamp = control_file["time_stamp"]
     emails = control_file['contact_emails']
+    retry_count = 0
     
     # send the email
     begin  
@@ -51,19 +57,30 @@ class AutomaticImportJob < ApplicationJob
       import = AutomaticImport.new(control_file)
       import.run
     rescue => e
-      process_dir = "/mnt/nfs-exports/mfcs-exports/#{project_name}/control/hydra/in-progress"
-      failed_dir = "/mnt/nfs-exports/mfcs-exports/#{project_name}/control/hydra/failed"
-      File.rename("#{process_dir}/#{time_stamp}.yaml", "#{failed_dir}/#{time_stamp}.yaml")
+      # pause processing and retry
+      sleep 10
+      retry_count += 1
+      if retry_count < 5
+        # print the error and retry
+        puts "Error: #{e}"
+        puts "Retrying"
+        retry
+      else 
+        # move the control file to the failed directory
+        process_dir = "/mnt/nfs-exports/mfcs-exports/#{project_name}/control/hydra/in-progress"
+        failed_dir = "/mnt/nfs-exports/mfcs-exports/#{project_name}/control/hydra/failed"
+        File.rename("#{process_dir}/#{time_stamp}.yaml", "#{failed_dir}/#{time_stamp}.yaml")
 
-      # if rails is in development do not send emails
-      if Rails.env.production?      
-        subject = "Failed Automatic Import for #{project_name.capitalize}"
-    
-        # format body of the email 
-        body = "The import failed for #{project_name}.  This is the error thrown: #{e}"
-        ImportMailer.email(emails, subject, body).deliver_now
+        # if rails is in development do not send emails
+        if Rails.env.production?
+          subject = "Failed Automatic Import for #{project_name.capitalize}"
+      
+          # format body of the email 
+          body = "The import failed for #{project_name}.  This is the error thrown: #{e}. \n\n StackTrace: #{e.backtrace.join("\n")}"
+          ImportMailer.email(emails, subject, body).deliver_now
+        end
+        abort "Could not complete the automatic import." 
       end
-      abort "Could not complete the automatic import." 
     end
   end
 end

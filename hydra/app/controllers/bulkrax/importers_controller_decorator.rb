@@ -10,4 +10,4 @@ module Bulkrax::ImportersControllerDecorator
   end
 end
 
-Bulkrax::ImportersController.prepend(Bulkrax::ImportersControllerDecorator)
+# Bulkrax::ImportersController.prepend(Bulkrax::ImportersControllerDecorator)

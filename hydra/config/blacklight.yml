@@ -7,3 +7,4 @@ test: &test
 production:
   adapter: solr
   url: <%= ENV['SOLR_PROD_URL'] %>
+

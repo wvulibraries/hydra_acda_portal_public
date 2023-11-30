@@ -38,4 +38,13 @@ class HydraFormatting
   def self.mime_type(filename)
     MIME::Types.type_for("#{filename}").first.content_type
   end
+
+  # adjust hashes/strings to array
+  def self.predicatable_array(obj)
+    if obj.class == Hash
+      obj.values
+    elsif obj.class == String
+      ["#{obj}"]
+    end
+  end
 end

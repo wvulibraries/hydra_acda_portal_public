@@ -1,4 +1,5 @@
 module ApplicationHelper
+  
   def application_name
     'American Congress Digital Archives Portal'
   end
@@ -19,4 +20,13 @@ module ApplicationHelper
     # link_to document[:value].to_s.html_safe
     link_to document[:value].first, document[:value].first.html_safe
   end
+
+  def catalog_page_render
+    # if any params exist render search results partial
+    if params[:q] || params[:f] || params[:search_field]
+      'search_results'
+    else
+      'home_text'
+    end
+  end   
 end

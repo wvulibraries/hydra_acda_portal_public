@@ -9,19 +9,27 @@ services:
     restart: always
     volumes:
       - ./hydra:/home/hydra
-      - ./solr:/home/hydra/solr
-      - ./data/logs:/home/hydra/log
-      - ./scripts:/home/hydra/scripts
-      - ./tmp/imports:/home/hydra/tmp/imports
-      - ./tmp/exports:/home/hydra/tmp/exports
-      - /home/hydra/tmp # don't mount tmp directory
+      # map node_modules to a persistent volume
+      - ./data/node_modules:/home/hydra/node_modules
+      # map in various bash scripts
+      - ./scripts:/home/hydra/scripts  
+      # map in various persistent directories in the data folder
+      - ./data/logs:/home/hydra/log 
+      - ./data/pdf:/home/hydra/tmp/pdf
+      - ./data/thumbnails:/home/hydra/tmp/thumbnails
+      - ./data/images:/home/hydra/tmp/images
+      # map in various persistent directories in the tmp folder
+      - ./data/imports:/home/hydra/tmp/imports
+      - ./data/exports:/home/hydra/tmp/exports
+      # don't mount tmp directory  
+      - /home/hydra/tmp 
     networks:
       - hydra
 
   web:
     extends: app
     container_name: acda_portal
-    command: bash -c "bundle install; service cron start; gem install whenever; whenever --update-crontab; bundle exec rails s -p 3000 -b 0.0.0.0"
+    command: bash -c "bundle install; sh ./scripts/startup.sh"
     ports:
       - "3000:3000"
     depends_on:
@@ -72,18 +80,21 @@ services:
       - hydra
 
   fcrepo:
-    image: ghcr.io/scientist-softserv/docker-fcrepo:4.7.6-SNAPSHOT2
+    image: fcrepo/fcrepo:6.4.0
     container_name: fcrepo
-    restart: on-failure
-    volumes:
-      - ./data/fcrepo:/data:cached
+    depends_on:
+      - db
+    env_file:
+      - './env/env.fedora'
     ports:
-      - "8080"
+      - "8080:8080"
+    volumes:
+      - fcrepo:/data:cached
     networks:
       - hydra
 
   solr:
-    image: solr:8.11.1
+    image: solr:9.3.0
     container_name: solr
     restart: on-failure
     ports:
@@ -95,14 +106,15 @@ services:
       - "&&"
       - "chown -R 8983:8983 /var/solr"
     volumes:
-      - ./solr/conf:/opt/solr/server/configsets/hydraconf
+      - ./hydra/solr/conf:/opt/solr/server/configsets/hydraconf
+      - ./data/logs/solr:/var/solr/logs
       - ./data/solr:/var/solr/data:cached
     networks:
       - hydra
 
   db:
     container_name: db
-    image: postgres:14-alpine
+    image: postgres:15.2-alpine
     ports:
       - "5432"
     env_file:

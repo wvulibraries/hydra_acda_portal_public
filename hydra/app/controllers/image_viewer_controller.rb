@@ -5,7 +5,7 @@ class ImageViewerController < ApplicationController
     id = File.basename(params[:id], File.extname(params[:id]))
     image_model = Acda.where(id: id).first
     @image = image_model.image_file.content
-    render 'index.jpg.erb'
+    render inline: "<%= raw @image %>", layout: false
   end
 
   ## gets image and shows image
@@ -13,6 +13,6 @@ class ImageViewerController < ApplicationController
     id = File.basename(params[:id], File.extname(params[:id]))
     image_model = Acda.where(id: id).first
     @thumb = image_model.thumbnail_file.content
-    render 'thumb.jpg.erb'
+    render inline: "<%= raw @thumb %>", layout: false
   end
 end

@@ -36,7 +36,6 @@ Rails.application.routes.draw do
     concerns :oai_provider
     concerns :searchable
     concerns :range_searchable
-
   end
 
   devise_for :users

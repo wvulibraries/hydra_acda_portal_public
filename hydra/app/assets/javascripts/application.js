@@ -11,9 +11,9 @@
 // about supported directives.
 //
 
-// Rails or Hydra Requirements
+// Rails or Hydra Requirements 
 // -----------------------------------------------------
-//= require jquery
+//= require jquery3
 
 // Required by Blacklight Advance Search
 // -----------------------------------------------------
@@ -23,8 +23,13 @@
 //= require jquery_ujs
 
 //= require tether
+
 // Required by Blacklight
 // -----------------------------------------------------
+//= require popper
+// Twitter Typeahead for autocomplete
+//= require twitter/typeahead
+//= require bootstrap
 //= require blacklight/blacklight
 //= require bookmark_toggle
 
@@ -32,7 +37,7 @@
 // -----------------------------------------------------
 //= require bulkrax/application
 
-// CUSTOM COLLECTION JS
+// CUSTOM COLLECTION JS 
 // -----------------------------------------------------
 //= require partials/equal_heights
 //= require partials/facets

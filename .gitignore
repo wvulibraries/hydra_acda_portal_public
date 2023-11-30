@@ -10,3 +10,6 @@ hydra/vendor/engines
 tmp
 /tmp/
 /tmp/*
+
+/hydra-old/
+/hydra-old/*

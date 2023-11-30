@@ -1,9 +1,10 @@
 # -*- encoding : utf-8 -*-
 require 'blacklight/catalog'
 
+# Blacklight controller that handles searches and document requests
 class CatalogController < ApplicationController
 
-  include BlacklightRangeLimit::ControllerOverride
+  #include BlacklightRangeLimit::ControllerOverride
   include BlacklightAdvancedSearch::Controller
 
   include Hydra::Catalog
@@ -232,25 +233,4 @@ class CatalogController < ApplicationController
     end
   end
 
-  # adds additional pages that will also use the searchbar from the navigation
-  # customizable behavior should be done in a module or static model
-  def about
-    render "about.html.erb"
-  end
-
-  def contribute
-    render "contribute.html.erb"
-  end
-
-  def partners
-    render "partners.html.erb"
-  end
-
-  def policies
-    render "policies.html.erb"
-  end
-
-  def contributingcollections
-    render "contributingcollections.html.erb"
-  end
 end

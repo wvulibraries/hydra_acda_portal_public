@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+
+# Represents a single document returned from Solr
 class SolrDocument
   include Blacklight::Solr::Document
   include BlacklightOaiProvider::SolrDocument
@@ -70,7 +72,7 @@ class SolrDocument
   # Recommendation: Use field names from Dublin Core
   use_extension(Blacklight::Document::DublinCore)
 
-  # Do content negotiation for AF models.
+  # Do content negotiation for AF models. 
   use_extension( Hydra::ContentNegotiation )
 
   # Sets

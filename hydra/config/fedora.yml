@@ -3,13 +3,16 @@ development:
   password: fedoraAdmin
   url: <%= ENV['FEDORA_DEV_URL']%>
   base_path: /dev
+  request: { timeout: 2000, open_timeout: 2000}
 test:
   user: fedoraAdmin
   password: fedoraAdmin
   url: <%= ENV['FEDORA_DEV_URL']%>
   base_path: /test
+  request: { timeout: 2000, open_timeout: 2000}
 production:
   user: fedoraAdmin
   password: fedoraAdmin
   url: <%= ENV['FEDORA_PROD_URL']%>
   base_path: /prod
+  request: { timeout: 2000, open_timeout: 2000}

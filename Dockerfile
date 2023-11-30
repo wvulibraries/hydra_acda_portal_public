@@ -1,4 +1,4 @@
-FROM trmccormick/hydra_docker_build:ruby2.7
+FROM trmccormick/hydra_docker_build:ruby3.3-rc
 
 ENV RAILS_ENV production
 ENV RACK_ENV production
