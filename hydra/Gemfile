@@ -49,7 +49,7 @@ gem 'solrizer'
 
 gem 'rsolr'
 gem 'devise'
-gem 'devise-guests', '~> 0.5'
+gem 'devise-guests', '~> 0.8', '>= 0.8.2'
 
 # Capistrano
 # =====================================================
