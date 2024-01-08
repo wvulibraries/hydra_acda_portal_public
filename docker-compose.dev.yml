@@ -22,7 +22,7 @@ services:
 
   web:
     extends: app
-    container_name: acda_portal
+    container_name: acda_portal_public
     command: bash -c "bundle install; service cron start; gem install whenever; whenever --update-crontab; bundle exec rails s -p 3000 -b 0.0.0.0"
     ports:
       - "3000:3000"
