@@ -20,7 +20,7 @@ RUN apt-get install -y libjemalloc2
 ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2
 
 RUN \
-  gem update --system --quiet && \
+#  gem update --system --quiet && \
   gem install bundler -v ${BUNDLER_VERSION} && \
   gem install rails -v ${RAILS_VERSION} && \
   bundle install --jobs=4 --retry=3 
