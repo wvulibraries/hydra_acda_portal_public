@@ -28,7 +28,7 @@ gem 'blacklight_oai_provider'
 
 # Blacklight Range Limit for date searches
 # =====================================================
-gem 'blacklight_range_limit'
+gem 'blacklight_range_limit', '>= 7.1.0'
 
 # Automatic Import
 # =====================================================
@@ -43,7 +43,7 @@ gem 'bulkrax', git: 'https://github.com/samvera-labs/bulkrax.git', ref: 'b689afa
 # Dependices for Thumbnail Creation
 # =====================================================
 gem 'mini_magick'
-gem 'open-uri'
+gem 'open-uri', '>= 0.4.0'
 
 # background jobs
 # =====================================================
@@ -57,7 +57,7 @@ gem 'sidekiq-failures'
 gem 'active-fedora', '~> 13.3.0'
 gem 'active-triples'
 gem 'blacklight', '~> 6.25.0'
-gem 'blacklight_advanced_search'
+gem 'blacklight_advanced_search', '>= 7.0.0'
 
 gem 'hydra-head'
 gem 'ldp'
@@ -70,7 +70,7 @@ gem 'devise-guests', '~> 0.5'
 
 # Questioning Authority
 # =====================================================
-gem 'qa'
+gem 'qa', '>= 5.11.0'
 
 # Capistrano
 # =====================================================
@@ -93,6 +93,6 @@ group :test do
 end
 
 group :development do
-  gem 'web-console', '~> 3.0'
+  gem 'web-console', '~> 4.0', '>= 4.0.0'
   gem 'spring', '< 4.0.0'
 end
