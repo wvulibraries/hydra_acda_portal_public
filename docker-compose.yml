@@ -95,7 +95,7 @@ services:
       - hydra_prod
       - /opt/solr/server/configsets/hydraconf
     volumes:
-      - solr:/var/solr/data
+      - ./data/solr:/var/solr/data
       - ./data/logs/dev/:/var/solr/logs
       - ./hydra/solr/conf:/opt/solr/server/configsets/hydraconf 
     healthcheck:
