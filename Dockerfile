@@ -20,6 +20,6 @@ RUN sed -i -E 's/name="disk" value=".+"/name="disk" value="4GiB"/g' /etc/ImageMa
 RUN sed -i 's/policy domain="coder" rights="none" pattern="PDF"/policy domain="coder" rights="read|write" pattern="PDF"/' /etc/ImageMagick-6/policy.xml
 
 RUN \
-  gem update --system --quiet && \
+  # gem update --system --quiet && \
   bundle config set --local without 'development test' && \
   bundle install --jobs=4 --retry=3 
