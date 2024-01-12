@@ -51,6 +51,9 @@ html, form, nav, div {
 		}
 	}
 }
+#csl-citation {
+	text-align: left;
+}
 #logo {
 	display: inline-block;
 	width: 100px;
@@ -90,7 +93,7 @@ html, form, nav, div {
 					margin: 0 5% 5%;
 					.index-document-functions {
 						padding: 10px 0;
-						border-top: 1px solid $gray;	
+						border-top: 1px solid $gray;
 						margin: 0;
 						.bookmark_toggle {
 							.checkbox {
@@ -136,8 +139,8 @@ html, form, nav, div {
 	z-index: 3;
 	width:100%;
 	box-sizing: content-box;
-	/* border-top: 2px solid #d3d3d3; 
-	box-shadow: 0px 0 100px rgba(0,0,0,0.4); 
+	/* border-top: 2px solid #d3d3d3;
+	box-shadow: 0px 0 100px rgba(0,0,0,0.4);
 	box-shadow: 0px 0 100px rgba(0,0,0,0.75); */
 	box-shadow: 0px 0px 75px rgba(0, 0, 0, 0.5);
 	.sticky-header-nav {
@@ -158,9 +161,9 @@ html, form, nav, div {
 			}
 			li:last-child {
 				margin-right: 0;
-			}			
+			}
 		}
-	}	
+	}
 	.sticky-header-search {
 		.search-query-form {
 			transition: all 0.2s ease;
@@ -174,19 +177,19 @@ html, form, nav, div {
 			.sr-only {
 				display: none;
 			}
-			.form-control { 
+			.form-control {
 				color:#333;
 				height:35px;
 			}
 			.input-group-addon {
-				padding:0; 
+				padding:0;
 				font-size: 14px;
-				font-weight: normal; 
-				line-height: 1; 
+				font-weight: normal;
+				line-height: 1;
 				color: #333;
-				text-align: center; 
-				background-color: #eeeeee; 
-				border: 0; 
+				text-align: center;
+				background-color: #eeeeee;
+				border: 0;
 				border-radius: 4px;
 				height:34px;
 				}
@@ -270,7 +273,7 @@ html, form, nav, div {
 }
 .wrap {
 	width: 95%;
-	margin: 0 auto; 
+	margin: 0 auto;
 }
 
 /* Toggles */
@@ -375,12 +378,31 @@ html, form, nav, div {
 	            	dt, dd {
 	            		text-align: left;
 	            	}
-	            }
+	            } 				
 	        }
 		}
 	}
 }
 
+
+/* Bulkrax Forms */
+.importer-form, .exporter-form, .bulkrax-align-text, .accordion-container {
+  .form-control {
+    color: rgb(51, 51, 51)
+  }
+  .nav-tabs > li.active > a {
+    color: #337ab7
+  }
+  .accordion-body, .accordion-heading {
+    text-align: left;
+  }
+  .accordion-body {
+    strong {
+      width: 40%;
+      display: inline-block;
+    }
+  }
+}
 
 /*********************************************************************
 	768px to 1024px
@@ -498,7 +520,7 @@ html, form, nav, div {
 				float:left;
 				margin-top:0;
 				margin-left: 60px;
-			}			
+			}
 			#search-toggle {
 				display: none;
 			}
@@ -510,8 +532,8 @@ html, form, nav, div {
 		}
 	}
 
-	div#document { 
-		div { text-align: left; } 
+	div#document {
+		div { text-align: left; }
 	}
 }
 

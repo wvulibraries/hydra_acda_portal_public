@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
+git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '2.7.7'
+ruby '2.7.8'
 
 # Rails Dependencies
 # =====================================================
@@ -17,17 +18,32 @@ gem 'jbuilder', '~> 2.5'
 
 # Use Redis adapter to run Action Cable in production
 gem 'redis', '~> 4.0'
-gem 'sdoc', '~> 0.4.0', group: :doc
+# gem 'sdoc', '~> 0.4.0', group: :doc
 
 gem 'bootsnap', '>= 1.1.0', require: false
 
-# OAI-PMH 
+# OAI-PMH
 # =====================================================
 gem 'blacklight_oai_provider'
+
+# Blacklight Range Limit for date searches
+# =====================================================
+gem 'blacklight_range_limit'
 
 # Automatic Import
 # =====================================================
 gem 'whenever', require: false
+
+# Bulkrax Import
+# =====================================================
+# Switch the comments on these two lines to work on Bulkrax locally
+gem 'bulkrax', git: 'https://github.com/samvera-labs/bulkrax.git', ref: 'b689afa'
+# gem 'bulkrax', path: 'vendor/engines/bulkrax'
+
+# Dependices for Thumbnail Creation
+# =====================================================
+gem 'mini_magick'
+gem 'open-uri'
 
 # background jobs
 # =====================================================
@@ -38,9 +54,10 @@ gem 'sidekiq-failures'
 
 # Hydra Dependencies
 # =====================================================
-gem 'active-fedora'
+gem 'active-fedora', '~> 13.3.0'
 gem 'active-triples'
-gem 'blacklight'
+gem 'blacklight', '~> 6.25.0'
+gem 'blacklight_advanced_search'
 
 gem 'hydra-head'
 gem 'ldp'
@@ -50,6 +67,10 @@ gem 'solrizer'
 gem 'rsolr'
 gem 'devise'
 gem 'devise-guests', '~> 0.5'
+
+# Questioning Authority
+# =====================================================
+gem 'qa'
 
 # Capistrano
 # =====================================================
@@ -72,6 +93,6 @@ group :test do
 end
 
 group :development do
-  gem 'web-console', '~> 2.0'
+  gem 'web-console', '~> 3.0'
   gem 'spring', '< 4.0.0'
 end

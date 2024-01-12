@@ -12,6 +12,9 @@ module ImportLibrary
     end
 
     def self.set_file(file_obj, type, path)
+        # ensure the file exists in the path
+        return unless File.exist?(path.to_s)
+
         file_obj.mime_type = type
         file_obj.content = File.open(path)
         file_obj.original_name = path
@@ -190,26 +193,30 @@ module ImportLibrary
       # modify each record
       {
         # insert fields here
-        identifier: HydraFormatting.valid_string(record['identifier']),
-        contributing_institution: HydraFormatting.valid_string(record['contributing_institution']),
+        id: HydraFormatting.valid_string(record['identifier']), 
+        contributing_institution: HydraFormatting.valid_string(record['contributing_institution']), 
         title: HydraFormatting.valid_string(record['title']),
         date: HydraFormatting.valid_string(record['date']),
         edtf: HydraFormatting.valid_string(record['edtf']),
-        creator: HydraFormatting.valid_string(record['creator']),
-        rights: HydraFormatting.valid_string(record['rights']),
+        creator: HydraFormatting.valid_string(record['creator']), 
+        rights: HydraFormatting.valid_string(record['rights']), 
         language: HydraFormatting.split_subjects(record['language']),
-        record_type: HydraFormatting.split_subjects(record['record_type']),
-        collection: HydraFormatting.valid_string(record['collection']),
-        collection_finding_aid: HydraFormatting.valid_string(record['collection_finding_aid']),
-        description: HydraFormatting.remove_special_chars(record['description'].to_s), 
-        policy_area: HydraFormatting.split_subjects(record['subject_policy']),
-        names: HydraFormatting.split_subjects(record['subject_names']), 
-        topic: HydraFormatting.split_subjects(record['subject_topical']),
         congress: HydraFormatting.valid_string(record['coverage_congress']),
+        collection_title: HydraFormatting.valid_string(record['collection']), 
+        # physical_location: \"Collection 012, Box 35, Folder 31\", 
+        collection_finding_aid: HydraFormatting.valid_string(record['collection_finding_aid']), 
+        identifier: HydraFormatting.valid_string(record['identifier']), 
+        # preview: \"https://dolearchivecollections.ku.edu/index.php?p=...\", 
+        # available_at: \"https://dolearchivecollections.ku.edu/index.php?p=...\", 
+        record_type: HydraFormatting.split_subjects(record['record_type']), 
+        policy_area: HydraFormatting.split_subjects(record['subject_policy']),
+        topic: HydraFormatting.split_subjects(record['subject_topical']), 
+        names: HydraFormatting.split_subjects(record['subject_names']), 
         location_represented: HydraFormatting.split_subjects(record['coverage_spatial']),
-        dc_type: HydraFormatting.valid_string(record['dc_type']),
-        extent: HydraFormatting.valid_string(record['extent']), 
+        extent: HydraFormatting.valid_string(record['extent']),  
         publisher: HydraFormatting.split_subjects(record['publisher']),
+        description: HydraFormatting.remove_special_chars(record['description'].to_s),  
+        dc_type: HydraFormatting.valid_string(record['dc_type']), 
 
         # end of insert fields
         

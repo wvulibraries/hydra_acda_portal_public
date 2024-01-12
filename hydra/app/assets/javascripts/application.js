@@ -11,19 +11,36 @@
 // about supported directives.
 //
 
-// Rails or Hydra Requirements 
+// Rails or Hydra Requirements
 // -----------------------------------------------------
 //= require jquery
+
+// Required by Blacklight Advance Search
+// -----------------------------------------------------
+//= require 'blacklight_advanced_search'
+//= require advanced_search_additional_fields
+
 //= require jquery_ujs
 
+//= require tether
 // Required by Blacklight
 // -----------------------------------------------------
 //= require blacklight/blacklight
+//= require bookmark_toggle
 
-// CUSTOM COLLECTION JS 
+// Required by Bulkrax
+// -----------------------------------------------------
+//= require bulkrax/application
+
+// CUSTOM COLLECTION JS
 // -----------------------------------------------------
 //= require partials/equal_heights
 //= require partials/facets
 //= require partials/toggles
 //= require partials/smooth_scroll
 //= require partials/cookie_modal
+
+
+// For blacklight_range_limit built-in JS, if you don't want it you don't need
+// this:
+//= require 'blacklight_range_limit'

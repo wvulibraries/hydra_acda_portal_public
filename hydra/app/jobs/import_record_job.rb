@@ -12,8 +12,8 @@ class ImportRecordJob < ApplicationJob
 
     if record_exists.nil?
       ImportLibrary.import_record(id, ImportLibrary.modify_record(export_path, record))
-    else          
-      ImportLibrary.update_record(record_exists, ImportLibrary.modify_record(export_path, record))
+    # else          
+    #   ImportLibrary.update_record(record_exists, ImportLibrary.modify_record(export_path, record))
     end
   end
 
