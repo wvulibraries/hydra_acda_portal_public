@@ -10,3 +10,4 @@ hydra/vendor/engines
 tmp
 /tmp/
 /tmp/*
+hydra/public/assets/*

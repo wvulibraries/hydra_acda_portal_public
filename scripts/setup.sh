@@ -10,3 +10,9 @@ else
 fi
 
 bin/rails db:seed
+
+# if rails is in production mode, precompile assets
+if [ "$RAILS_ENV" = "production" ]; then
+    echo "Precompiling Assets"
+    bin/rails assets:precompile
+fi

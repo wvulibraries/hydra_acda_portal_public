@@ -16,6 +16,7 @@ services:
       - ./data/pdf:/home/hydra/tmp/pdf
       - ./data/thumbnails:/home/hydra/tmp/thumbnails
       - ./data/images:/home/hydra/tmp/images
+      - ./data/node_modules:/home/hydra/node_modules
       - /home/hydra/tmp # don't mount tmp directory
     networks:
       - hydra
