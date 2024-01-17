@@ -105,6 +105,12 @@ services:
     volumes:
       - ./solr/conf:/opt/solr/server/configsets/hydraconf
       - ./data/solr:/var/solr/data:cached
+      - ./data/logs/prod/:/var/solr/logs
+    healthcheck:
+      test: "curl -f http://localhost:8983/solr/#/"
+      interval: 5s
+      timeout: 5s
+      retries: 20       
     networks:
       - hydra
 
