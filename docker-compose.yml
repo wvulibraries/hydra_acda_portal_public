@@ -93,14 +93,15 @@ services:
     image: solr:8.11.1
     container_name: solr
     restart: on-failure
+    env_file:
+      - './env/env.solr'
     ports:
-      - "8983"
-    command:
-      - sh
-      - "-c"
-      - "solr-precreate hydra_prod /opt/solr/server/configsets/hydraconf"
-      - "&&"
-      - "chown -R 8983:8983 /var/solr"
+      - 8983:8983
+    user: root # run as root to change the permissions of the solr folder
+    # Change permissions of the solr folder, create a default core and start solr as solr user
+    command: bash -c "
+      chown -R 8983:8983 /var/solr
+      && runuser -u solr -- solr-precreate hydra_prod"
     volumes:
       - ./solr/conf:/opt/solr/server/configsets/hydraconf
       - ./data/solr:/var/solr/data:cached
