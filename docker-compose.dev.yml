@@ -103,10 +103,11 @@ services:
       - './env/env.solr'       
     ports:
       - "8983:8983"
-    command:
-      - solr-precreate
-      - hydra_dev
-      - /opt/solr/server/configsets/hydraconf
+    user: root # run as root to change the permissions of the solr folder
+    # Change permissions of the solr folder, create a default core and start solr as solr user
+    command: bash -c "
+     chown -R 8983:8983 /var/solr
+     && runuser -u solr -- solr-precreate hydra_prod /opt/solr/server/configsets/hydraconf"
     volumes:
       - solr:/var/solr/data
       - ./data/logs/dev/:/var/solr/logs
