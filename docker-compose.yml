@@ -6,7 +6,6 @@ services:
       dockerfile: Dockerfile
     env_file:
       - './env/env.hydra'
-    restart: always
     volumes:
       - ./hydra:/home/hydra
       - ./solr:/home/hydra/solr
@@ -14,6 +13,10 @@ services:
       - ./scripts:/home/hydra/scripts
       - ./tmp/imports:/home/hydra/tmp/imports
       - ./tmp/exports:/home/hydra/tmp/exports
+      - ./data/pdf:/home/hydra/tmp/pdf
+      - ./data/thumbnails:/home/hydra/tmp/thumbnails
+      - ./data/images:/home/hydra/tmp/images
+      - ./data/node_modules:/home/hydra/node_modules
       - /home/hydra/tmp # don't mount tmp directory
     networks:
       - hydra
@@ -21,7 +24,8 @@ services:
   web:
     extends: app
     container_name: acda_portal_public
-    command: bash -c "bundle install; service cron start; gem install whenever; whenever --update-crontab; bundle exec rails s -p 3000 -b 0.0.0.0"
+    # command: bash -c "bundle install; service cron start; gem install whenever; whenever --update-crontab; bundle exec rails s -p 3000 -b 0.0.0.0"
+    command: bash -c "bundle install; sh ./scripts/startup.sh"  
     ports:
       - "3000:3000"
     depends_on:
@@ -74,41 +78,45 @@ services:
   fcrepo:
     image: ghcr.io/scientist-softserv/docker-fcrepo:4.7.6-SNAPSHOT2
     container_name: fcrepo
-    restart: on-failure
-    volumes:
-      - ./data/fcrepo:/data:cached
-    ports:
-      - "8080"
-    networks:
-      - hydra
-
-  solr:
-    container_name: solr
-    image: solr:9.3.0
-    restart: on-failure
+    depends_on:
+      - db
     env_file:
-      - './env/env.solr'       
+      - './env/env.fedora'
     ports:
-      - "8983:8983"
-    command:
-      - solr-precreate
-      - hydra_prod
-      - /opt/solr/server/configsets/hydraconf
+      - "8080:8080"
     volumes:
-      - solr:/var/solr/data
-      - ./data/logs/dev/:/var/solr/logs
-      - ./hydra/solr/conf:/opt/solr/server/configsets/hydraconf 
-    healthcheck:
-      test: "curl -f localhost:8983/solr/#/"
-      interval: 5s
-      timeout: 5s
-      retries: 20        
+      - ./data/fcrepo:/data:cached      
     networks:
       - hydra 
 
+  solr:
+    image: solr:8.11.1
+    container_name: solr
+    restart: on-failure
+    env_file:
+      - './env/env.solr'
+    ports:
+      - 8983:8983
+    user: root # run as root to change the permissions of the solr folder
+    # Change permissions of the solr folder, create a default core and start solr as solr user
+    command: bash -c "
+      chown -R 8983:8983 /var/solr
+      && runuser -u solr -- solr-precreate hydra_prod /opt/solr/server/configsets/hydraconf"
+    volumes:
+      - ./solr/conf:/opt/solr/server/configsets/hydraconf
+      - ./data/solr:/var/solr/data:cached
+      - ./data/logs/prod/:/var/solr/logs
+    healthcheck:
+      test: "curl -f http://localhost:8983/solr/#/"
+      interval: 5s
+      timeout: 5s
+      retries: 20       
+    networks:
+      - hydra
+
   db:
     container_name: db
-    image: postgres:16-alpine
+    image: postgres:16-alpine	
     ports:
       - "5432"
     env_file:
@@ -117,7 +125,7 @@ services:
       - ./data/postgres:/var/lib/postgresql/data
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready", "-d", "fcrepo"]
+      test: ["CMD-SHELL", "pg_isready", "-d", "postgres"]
       interval: 30s
       timeout: 60s
       retries: 5
