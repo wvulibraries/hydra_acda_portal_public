@@ -14,13 +14,13 @@ conversion_finished_dir = "/mnt/nfs-exports/mfcs-exports/#{project_name}/control
 export_dir = "/mnt/nfs-exports/mfcs-exports/#{project_name}/export"
 
 # create the directories if they don't exist
-FileUtils.mkdir_p(control_dir) unless File.exists?(control_dir)
-FileUtils.mkdir_p(process_dir) unless File.exists?(process_dir)
-FileUtils.mkdir_p(process_finished_dir) unless File.exists?(process_finished_dir)
-FileUtils.mkdir_p(process_failed_dir) unless File.exists?(process_failed_dir)
-FileUtils.mkdir_p(conversion_process_dir) unless File.exists?(conversion_process_dir)
-FileUtils.mkdir_p(conversion_finished_dir ) unless File.exists?(conversion_finished_dir )
-FileUtils.mkdir_p(export_dir) unless File.exists?(export_dir)
+FileUtils.mkdir_p(control_dir) unless File.exist?(control_dir)
+FileUtils.mkdir_p(process_dir) unless File.exist?(process_dir)
+FileUtils.mkdir_p(process_finished_dir) unless File.exist?(process_finished_dir)
+FileUtils.mkdir_p(process_failed_dir) unless File.exist?(process_failed_dir)
+FileUtils.mkdir_p(conversion_process_dir) unless File.exist?(conversion_process_dir)
+FileUtils.mkdir_p(conversion_finished_dir ) unless File.exist?(conversion_finished_dir )
+FileUtils.mkdir_p(export_dir) unless File.exist?(export_dir)
 
 # if there is already a control file in the conversion directory, exit
 if Dir.entries(conversion_process_dir).length > 2

@@ -22,7 +22,6 @@
 
 //= require jquery_ujs
 
-//= require tether
 // Required by Blacklight
 // -----------------------------------------------------
 //= require blacklight/blacklight

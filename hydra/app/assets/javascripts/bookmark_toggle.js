@@ -1,5 +1,3 @@
-//= require blacklight/core
-//= require blacklight/checkbox_submit
 
 // Set up a MutationObserver to observe when the bookmark form is added to the DOM.
 // The original javascript wasn't working on the record's show page because the form

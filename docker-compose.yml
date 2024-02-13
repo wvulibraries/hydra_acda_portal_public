@@ -24,7 +24,6 @@ services:
   web:
     extends: app
     container_name: acda_portal_public
-    # command: bash -c "bundle install; service cron start; gem install whenever; whenever --update-crontab; bundle exec rails s -p 3000 -b 0.0.0.0"
     command: bash -c "bundle install; sh ./scripts/startup.sh"  
     ports:
       - "3000:3000"
@@ -96,7 +95,7 @@ services:
     env_file:
       - './env/env.solr'
     ports:
-      - 8983:8983
+      - "8983:8983"
     user: root # run as root to change the permissions of the solr folder
     # Change permissions of the solr folder, create a default core and start solr as solr user
     command: bash -c "

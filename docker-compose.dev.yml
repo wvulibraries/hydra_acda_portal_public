@@ -24,7 +24,7 @@ services:
   web:
     extends: app
     container_name: acda_portal_public
-    command: bash -c "bundle install; service cron start; gem install whenever; whenever --update-crontab; bundle exec rails s -p 3000 -b 0.0.0.0"
+    command: bash -c "bundle install; sh ./scripts/startup.sh"  
     ports:
       - "3000:3000"
     depends_on:
@@ -101,7 +101,7 @@ services:
     container_name: solr
     restart: on-failure
     ports:
-      - "127.0.0.1:8983:8983"
+      - "8983:8983"
     user: root # run as root to change the permissions of the solr folder
     # Change permissions of the solr folder, create a default core and start solr as solr user
     command: bash -c "
@@ -109,7 +109,7 @@ services:
       && runuser -u solr -- solr-precreate hydra_dev /opt/solr/server/configsets/hydraconf"
     volumes:
       - ./solr/conf:/opt/solr/server/configsets/hydraconf
-      - ./data/logs/prod/:/var/solr/logs      
+      - ./data/logs/dev/:/var/solr/logs      
       - solr:/var/solr
     networks:
       - hydra
