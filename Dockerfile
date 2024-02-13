@@ -1,4 +1,4 @@
-FROM trmccormick/hydra_docker_build:ruby3.3-rc
+FROM trmccormick/hydra_docker_build:ruby3.3
 
 ENV RAILS_ENV production
 ENV RACK_ENV production
@@ -6,7 +6,7 @@ ENV RACK_ENV production
 WORKDIR /home/hydra
 ADD ./hydra /home/hydra
 
-RUN apt-get update && apt-get -y install imagemagick ghostscript
+RUN apt-get update && apt-get -y install imagemagick ghostscript vim
 
 # Use JEMALLOC instead
 # JEMalloc is a faster garbage collection for Ruby.
