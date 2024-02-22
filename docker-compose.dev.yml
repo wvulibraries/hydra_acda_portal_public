@@ -23,7 +23,7 @@ services:
 
   web:
     extends: app
-    container_name: acda_portal_public
+    container_name: acda_portal
     command: bash -c "bundle install; sh ./scripts/startup.sh"  
     ports:
       - "3000:3000"
@@ -83,23 +83,34 @@ services:
       - hydra
 
   fcrepo:
-    image: ghcr.io/scientist-softserv/docker-fcrepo:4.7.6-SNAPSHOT2
+    image: fcrepo/fcrepo:6.4.0
     container_name: fcrepo
-    depends_on:
-      - db
-    env_file:
-      - './env/env.dev.fedora'
+    restart: always
     ports:
       - "8080:8080"
+    env_file:
+      - './env/env.fedora' 
     volumes:
-      - fcrepo:/data:cached
+      - fcrepo:/data:cached                 
+    logging:
+      options:
+        max-size: 50m  
+    healthcheck:
+      test: "curl -f http://localhost:8080/fcrepo"
+      interval: 5s
+      timeout: 5s
+      retries: 20      
+    depends_on:
+      - db
     networks:
       - hydra
 
   solr:
-    image: solr:8.11.1
+    image: solr:9.3.0
     container_name: solr
     restart: on-failure
+    env_file:
+      - './env/env.solr'        
     ports:
       - "8983:8983"
     user: root # run as root to change the permissions of the solr folder
