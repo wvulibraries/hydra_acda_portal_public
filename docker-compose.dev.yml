@@ -27,6 +27,7 @@ services:
     command: bash -c "bundle install; service cron start; gem install whenever; whenever --update-crontab; bundle exec rails s -p 3000 -b 0.0.0.0"
     ports:
       - "3000:3000"
+    restart: unless-stopped
     depends_on:
       redis:
         condition: service_started
@@ -43,6 +44,7 @@ services:
     extends: app
     container_name: sidekiq
     command:  bash -c "bundle install; bundle exec sidekiq -C config/sidekiq.yml"        
+    restart: unless-stopped
     depends_on:
       redis:
         condition: service_started
@@ -91,6 +93,7 @@ services:
       - './env/env.dev.fedora'
     ports:
       - "8080:8080"
+    restart: unless-stopped
     volumes:
       - fcrepo:/data:cached
     networks:
@@ -99,9 +102,9 @@ services:
   solr:
     image: solr:8.11.1
     container_name: solr
-    restart: on-failure
     ports:
       - "127.0.0.1:8983:8983"
+    restart: unless-stopped
     user: root # run as root to change the permissions of the solr folder
     # Change permissions of the solr folder, create a default core and start solr as solr user
     command: bash -c "
