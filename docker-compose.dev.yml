@@ -26,12 +26,8 @@ services:
     container_name: acda_portal_public
     command: bash -c "bundle install; service cron start; gem install whenever; whenever --update-crontab; bundle exec rails s -p 3000 -b 0.0.0.0"
     ports:
-<<<<<<< HEAD
       - "3000:3000"
     restart: unless-stopped
-=======
-      - "3025:3000"
->>>>>>> origin/frontend-updates
     depends_on:
       redis:
         condition: service_started
