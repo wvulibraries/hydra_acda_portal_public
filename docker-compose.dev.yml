@@ -64,18 +64,20 @@ services:
       - hydra
 
   redis:
-    image: redis:alpine
+    image: redis:latest
     container_name: redis
-    command: redis-server
+    command: redis-server    
+    # command: redis-server /usr/local/etc/redis/redis.conf    
     ports:
-      - "6379"
+      - "127.0.0.1:6379:6379"
     env_file:
       - './env/env.dev.redis'
     volumes:
       - redis:/var/lib/redis/data
+      # - ./config/redis.conf:/usr/local/etc/redis/redis.conf
     restart: unless-stopped
     healthcheck:
-      test: redis-cli -h redis ping
+      test: redis-cli -h localhost -p 6379 -a $$REDIS_PASSWORD ping
       interval: 30s
       timeout: 3s
       retries: 3
