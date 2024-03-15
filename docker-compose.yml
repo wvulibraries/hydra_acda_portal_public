@@ -70,7 +70,6 @@ services:
       - './env/env.redis'
     volumes:
       - ./data/redis:/var/lib/redis/data
-    restart: unless-stopped
     healthcheck:
       test: redis-cli -h localhost -p 6379 -a $$REDIS_PASSWORD ping
       interval: 30s
