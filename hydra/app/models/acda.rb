@@ -172,7 +172,7 @@ class Acda < ActiveFedora::Base
   # Internal predicate of Subject
   # ==============================================================================================================
   # Topic property
-  property :topic, predicate: ::RDF::URI.intern('http://lib.wvu.edu/hydra/subject'), multiple: true do |index|
+  property :topic, predicate: ::RDF::URI.intern('http://purl.org/dc/terms/subject'), multiple: true do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
   end
 
