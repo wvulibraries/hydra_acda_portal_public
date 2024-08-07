@@ -25,11 +25,11 @@ gem 'bootsnap', '>= 1.1.0', require: false
 
 # OAI-PMH
 # =====================================================
-gem 'blacklight_oai_provider'
+gem 'blacklight_oai_provider', '>= 7.0.2'
 
 # Blacklight Range Limit for date searches
 # =====================================================
-gem 'blacklight_range_limit'
+gem 'blacklight_range_limit', '>= 7.1.0'
 
 # Automatic Import
 # =====================================================
@@ -57,8 +57,8 @@ gem 'sidekiq-failures'
 # =====================================================
 gem 'active-fedora', '~> 13.3.0'
 gem 'active-triples'
-gem 'blacklight', '~> 6.25.0'
-gem 'blacklight_advanced_search'
+gem 'blacklight', '~> 7.0.0'
+gem 'blacklight_advanced_search', '>= 7.0.0'
 
 gem 'hydra-head'
 gem 'ldp'
@@ -71,7 +71,7 @@ gem 'devise-guests', '~> 0.5'
 
 # Questioning Authority
 # =====================================================
-gem 'qa'
+gem 'qa', '>= 5.12.0'
 
 # Capistrano
 # =====================================================
