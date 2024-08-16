@@ -10,8 +10,8 @@ answer.strip!
 
 if (answer == 'y' || answer == 'yes' || answer == true || answer == 1)
   # delete the project
-  ActiveFedora::Base.where(project_tesim: '%%abbr%%').destroy_all
-  puts "Destroyed the project -- %%abbr%%"
+  ActiveFedora::Base.where(project_tesim: 'acda').destroy_all
+  puts "Destroyed the project -- acda"
 else 
   puts "Aborted."
 end 

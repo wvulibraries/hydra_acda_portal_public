@@ -191,3 +191,7 @@ include BlacklightOaiProvider::CatalogControllerBehavior
 
 ## Adjusting Routes
 `concern :oai_provider, BlacklightOaiProvider::Routes::Provider.new` at the top of the routes.rb file, and `concerns :oai_provider` inside of the resource for the catalog.
+
+## Bulkrax Imports
+To access bulkrax importers go to "http://localhost:3000/importers" or whatever url you use to get to the site. The username and
+password is set in your .env file.
