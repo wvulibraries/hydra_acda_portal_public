@@ -9,6 +9,7 @@
 <div class="document <%= render_document_class document %>" itemscope itemtype="<%= document.itemtype %>">
 	<div class="document-wrap">
     <% id = document[:id] %>
+	<% presenter = ImagePresenter.new(id) %>
 		<% description = document[:description_tesim].to_s %>
 		<% if document[:dc_type_ssi] == "Sound" %>
 			<%= link_to_document document, render(:partial => 'audio_button'), class: "button audio-button" %>
@@ -16,6 +17,8 @@
 			<%= link_to_document document, render(:partial => 'video_button'), class: "button video-button" %>
 		<% elsif (document.image_file? == false) && (document[:dc_type_ssi] == "Text") %>
 			<%= link_to_document document, render(:partial => 'pdf_button'), class: "button pdf-button" %>
+ 		<% elsif presenter.show_image_button? %>
+			<%= link_to_document document, render(:partial => 'image_button'), class: "button image-button" %>  
 		<% else %>
 			<%= link_to_document document, image_tag("/thumb/#{id}", title:"#{document[:title_ssi]}", alt:description) %>
 		<% end %>
