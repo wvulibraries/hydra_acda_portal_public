@@ -137,7 +137,7 @@ GEM
     date (3.3.4)
     deprecation (1.1.0)
       activesupport
-    devise (4.9.3)
+    devise (4.9.4)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
       railties (>= 4.1.0)
@@ -198,7 +198,7 @@ GEM
       hydra-access-controls (= 12.1.0)
       hydra-core (= 12.1.0)
       rails (>= 5.2, < 7.1)
-    i18n (1.14.1)
+    i18n (1.14.4)
       concurrent-ruby (~> 1.0)
     iso8601 (0.9.1)
     jbuilder (2.11.5)
@@ -267,7 +267,8 @@ GEM
     method_source (1.0.0)
     mini_magick (4.12.0)
     mini_mime (1.1.5)
-    minitest (5.21.1)
+    mini_portile2 (2.8.6)
+    minitest (5.22.3)
     msgpack (1.7.2)
     multi_json (1.15.0)
     multipart-post (2.3.0)
@@ -281,7 +282,10 @@ GEM
     net-smtp (0.4.0.1)
       net-protocol
     nio4r (2.7.0)
-    nokogiri (1.15.5-x86_64-linux)
+    nokogiri (1.15.6)
+      mini_portile2 (~> 2.8.2)
+      racc (~> 1.4)
+    nokogiri (1.15.6-x86_64-linux)
       racc (~> 1.4)
     oai (1.1.0)
       builder (>= 3.1.0)
@@ -307,7 +311,7 @@ GEM
       rdf
     raabro (1.4.0)
     racc (1.7.3)
-    rack (2.2.8)
+    rack (2.2.9)
     rack-test (2.1.0)
       rack (>= 1.3)
     rails (5.2.8.1)
@@ -425,7 +429,7 @@ GEM
       execjs (>= 0.3.0, < 3)
     tether-rails (1.4.0)
       rails (>= 3.1)
-    thor (1.3.0)
+    thor (1.3.1)
     thread_safe (0.3.6)
     tilt (2.3.0)
     time (0.3.0)
@@ -457,6 +461,7 @@ GEM
     zeitwerk (2.6.12)
 
 PLATFORMS
+  ruby
   x86_64-linux
 
 DEPENDENCIES
@@ -471,7 +476,7 @@ DEPENDENCIES
   bundler
   byebug
   coffee-rails (~> 4.2)
-  devise
+  devise (>= 4.9.4)
   devise-guests (~> 0.5)
   factory_bot_rails
   fcrepo_wrapper (~> 0.4)

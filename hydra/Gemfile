@@ -66,7 +66,7 @@ gem 'nokogiri'
 gem 'solrizer'
 
 gem 'rsolr'
-gem 'devise'
+gem 'devise', '>= 4.9.4'
 gem 'devise-guests', '~> 0.5'
 
 # Questioning Authority
