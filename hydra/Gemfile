@@ -5,7 +5,7 @@ ruby '2.7.8'
 
 # Rails Dependencies
 # =====================================================
-gem 'rails', '~> 5.2.8.1'
+gem 'rails', '~> 7.0.0.0'
 gem 'bundler'
 gem 'rake', '~> 12.3'
 gem 'puma', '~> 4.3'
@@ -25,11 +25,11 @@ gem 'bootsnap', '>= 1.1.0', require: false
 
 # OAI-PMH
 # =====================================================
-gem 'blacklight_oai_provider'
+gem 'blacklight_oai_provider', '>= 7.0.2'
 
 # Blacklight Range Limit for date searches
 # =====================================================
-gem 'blacklight_range_limit'
+gem 'blacklight_range_limit', '>= 7.2.0'
 
 # Automatic Import
 # =====================================================
@@ -57,8 +57,8 @@ gem 'sidekiq-failures'
 # =====================================================
 gem 'active-fedora', '~> 13.3.0'
 gem 'active-triples'
-gem 'blacklight', '~> 6.25.0'
-gem 'blacklight_advanced_search'
+gem 'blacklight', '~> 7.0.0'
+gem 'blacklight_advanced_search', '>= 7.0.0'
 
 gem 'hydra-head'
 gem 'ldp'
