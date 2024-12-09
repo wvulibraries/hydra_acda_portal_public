@@ -52,6 +52,7 @@ class GenerateThumbsJob < ApplicationJob
     def unset_image_and_thumbnail!(record)
       record.thumbnail_file = nil
       record.image_file = nil
+      record.save
       record.update_index
     end
 end

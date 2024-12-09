@@ -46,6 +46,9 @@ class Acda < ActiveFedora::Base
   # Minting ID
   # Overriding Fedoras LONG URI NOT FRIENDLY ID
   def assign_id
+    # Ensure identifier is defined or fetched
+    identifier = self.identifier if self.respond_to?(:identifier)
+
     # Removes the protocol (http or https) and domain part of the url
     cleaned_identifier = identifier.gsub(/https?:\/\/[^\/]+\//, '')
 

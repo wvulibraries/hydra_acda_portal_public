@@ -1,8 +1,10 @@
 # This is a sample config file that points to a solr server for each environment
 development:
-  url: <%= ENV['SOLR_DEV_URL'] %>
+  url: http://<%= ENV['SOLR_USER']%>:<%= ENV['SOLR_PASSWORD']%>@<%= ENV['SOLR_HOST']%>:<%= ENV['SOLR_PORT']%>/solr/<%= ENV['SOLR_PATH'] %>/
 test:
-  url: <%= ENV['SOLR_DEV_URL'] %>
+  url: http://<%= ENV['SOLR_USER']%>:<%= ENV['SOLR_PASSWORD']%>@<%= ENV['SOLR_HOST']%>:<%= ENV['SOLR_PORT']%>/solr/<%= ENV['SOLR_PATH'] %>/
 production:
-  url: <%= ENV['SOLR_PROD_URL'] %>
+  url: http://<%= ENV['SOLR_USER']%>:<%= ENV['SOLR_PASSWORD']%>@<%= ENV['SOLR_HOST']%>:<%= ENV['SOLR_PORT']%>/solr/<%= ENV['SOLR_PATH'] %>/
+
+
 

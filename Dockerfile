@@ -1,25 +1,51 @@
-FROM trmccormick/hydra_docker_build:ruby3.3
-
-ENV RAILS_ENV production
-ENV RACK_ENV production
-
-WORKDIR /home/hydra
-ADD ./hydra /home/hydra
-
-RUN apt-get update && apt-get -y install imagemagick ghostscript vim
-
-# Use JEMALLOC instead
-# JEMalloc is a faster garbage collection for Ruby.
+# Use the official Ruby image
 # -------------------------------------------------------------------------------------------------
-RUN apt-get install -y libjemalloc2
-ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2
+  FROM ruby:3.3.5
 
-# increase ImageMagick's memory limit
-RUN sed -i -E 's/name="disk" value=".+"/name="disk" value="4GiB"/g' /etc/ImageMagick-6/policy.xml
-# Modifiy ImageMagick's security policy to allow reading and writing PDFs
-RUN sed -i 's/policy domain="coder" rights="none" pattern="PDF"/policy domain="coder" rights="read|write" pattern="PDF"/' /etc/ImageMagick-6/policy.xml
+  # Install dependencies
+  # -------------------------------------------------------------------------------------------------
+  RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs vim cron imagemagick \
+  ghostscript ffmpeg pdftk qpdf
+  
+  # Set the working directory
+  # -------------------------------------------------------------------------------------------------
+  WORKDIR /home/hydra
+  
+  # Install Bundler
+  # -------------------------------------------------------------------------------------------------
+  RUN gem install bundler
+  
+  # Copy the Gemfile and Gemfile.lock into the container
+  # -------------------------------------------------------------------------------------------------
+  COPY ./hydra/Gemfile ./hydra/Gemfile.lock /home/hydra/
+  
+  # Install gems
+  # -------------------------------------------------------------------------------------------------
+  RUN bundle install
+  
+  # Copy the rest of the application code into the container
+  # -------------------------------------------------------------------------------------------------
+  ADD ./hydra /home/hydra
+  
+  # Use JEMALLOC instead
+  # JEMalloc is a faster garbage collection for Ruby.
+  # -------------------------------------------------------------------------------------------------
+  RUN apt-get install -y libjemalloc2 libjemalloc-dev
+  ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so
+  
+  # increase ImageMagick's memory limit
+  # -------------------------------------------------------------------------------------------------
+  RUN sed -i -E 's/name="disk" value=".+"/name="disk" value="4GiB"/g' /etc/ImageMagick-6/policy.xml
+  
+  # Modifiy ImageMagick's security policy to allow reading and writing PDFs
+  # -------------------------------------------------------------------------------------------------
+  RUN sed -i 's/policy domain="coder" rights="none" pattern="PDF"/policy domain="coder" rights="read|write" pattern="PDF"/' /etc/ImageMagick-6/policy.xml
+  
+  # Install Yarn
+  # -------------------------------------------------------------------------------------------------
+  RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+  RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+  RUN apt-get update && apt-get install -y yarn
 
-RUN \
-  gem update --system --quiet && \
-  bundle config set --local without 'development test' && \
-  bundle install --jobs=4 --retry=3 
+  # Expose port 3000 to the Docker host
+  EXPOSE 3000

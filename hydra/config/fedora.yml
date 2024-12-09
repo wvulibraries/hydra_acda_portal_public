@@ -1,18 +1,18 @@
 development:
-  user: fedoraAdmin
-  password: fedoraAdmin
-  url: <%= ENV['FEDORA_DEV_URL']%>
+  user: <%= ENV['FEDORA_USER']%>
+  password: <%= ENV['FEDORA_PASSWORD']%>
+  url: http://<%= ENV['FEDORA_HOST']%>:<%= ENV['FEDORA_PORT']%>/<%= ENV['FEDORA_PATH']%>/
   base_path: /dev
   request: { timeout: 2000, open_timeout: 2000}
 test:
-  user: fedoraAdmin
-  password: fedoraAdmin
-  url: <%= ENV['FEDORA_DEV_URL']%>
+  user: <%= ENV['FEDORA_USER']%>
+  password: <%= ENV['FEDORA_PASSWORD']%>
+  url: http://<%= ENV['FEDORA_HOST']%>:<%= ENV['FEDORA_PORT']%>/<%= ENV['FEDORA_PATH']%>/
   base_path: /test
   request: { timeout: 2000, open_timeout: 2000}
 production:
-  user: fedoraAdmin
-  password: fedoraAdmin
-  url: <%= ENV['FEDORA_PROD_URL']%>
+  user: <%= ENV['FEDORA_USER']%>
+  password: <%= ENV['FEDORA_PASSWORD']%>
+  url: http://<%= ENV['FEDORA_HOST']%>:<%= ENV['FEDORA_PORT']%>/<%= ENV['FEDORA_PATH']%>/
   base_path: /prod
   request: { timeout: 2000, open_timeout: 2000}

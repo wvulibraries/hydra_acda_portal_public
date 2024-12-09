@@ -86,6 +86,6 @@ Rails.application.configure do
   config.active_job.queue_adapter = :sidekiq
   
   # developers can add their individual ips to this value. This configuration can also take an array
-  config.web_console.whitelisted_ips = %w(127.0.0.1 172.0.0.0/8)
+  config.web_console.allowed_ips = %w(127.0.0.1 172.0.0.0/8)
   config.web_console.development_only = false
 end

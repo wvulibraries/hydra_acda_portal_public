@@ -82,39 +82,53 @@ services:
   fcrepo:
     image: fcrepo/fcrepo:6.4.0
     container_name: fcrepo
-    depends_on:
-      - db
-    env_file:
-      - './env/env.fedora'
+    restart: always
     ports:
       - "8080:8080"
+    env_file:
+      - './env/env.fedora' 
     volumes:
-      - fcrepo:/data:cached
+      - ./data/fcrepo:/usr/local/tomcat/fcrepo-home                 
+    logging:
+      options:
+        max-size: 50m  
+    healthcheck:
+      test: "curl -f http://localhost:8080/fcrepo"
+      interval: 5s
+      timeout: 5s
+      retries: 20      
+    depends_on:
+      - db
     networks:
       - hydra
 
   solr:
-    image: solr:9.3.0
     container_name: solr
+    image: solr:9.5.0
     restart: on-failure
+    env_file:
+      - './env/env.solr'       
     ports:
-      - "8983"
-    command:
-      - sh
-      - "-c"
-      - "solr-precreate hydra_prod /opt/solr/server/configsets/hydraconf"
-      - "&&"
-      - "chown -R 8983:8983 /var/solr"
-    volumes:
-      - ./hydra/solr/conf:/opt/solr/server/configsets/hydraconf
-      - ./data/logs/solr:/var/solr/logs
-      - ./data/solr:/var/solr/data:cached
+      - "8983:8983"
+    user: root # run as root to change the permissions of the solr folder
+    # Change permissions of the solr folder, create a default core and start solr as solr user
+    command: bash -c "sh /scripts/startup.sh hydra_prod" 
+    volumes:    
+      - ./data/solr:/var/solr/data/hydra_prod/data
+      - ./data/logs/dev/:/var/solr/logs    
+      - ./solr9-setup:/solr9-setup
+      - ./scripts/startup-solr.sh:/scripts/startup.sh  
+    healthcheck:
+      test: "curl -f localhost:8983/solr/#/"
+      interval: 5s
+      timeout: 5s
+      retries: 20        
     networks:
-      - hydra
+      - hydra  
 
   db:
     container_name: db
-    image: postgres:15.2-alpine
+    image: postgres:16-alpine	
     ports:
       - "5432"
     env_file:
@@ -135,4 +149,4 @@ networks:
   hydra:
     driver: bridge
     driver_opts:
-      com.docker.network.bridge.name: br-hydra-bridge
+      com.docker.network.bridge.name: br-hydra-ca

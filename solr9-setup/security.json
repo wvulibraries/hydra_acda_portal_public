@@ -1,0 +1,16 @@
+{
+  "authentication":{
+    "blockUnknown":true,
+    "class":"solr.BasicAuthPlugin",
+    "credentials":{
+      "solr":"hnuIob32EdmoMMTG9OwMJJtQrtHTf/6CA5ARsZ5IVwA= awzpFXeHgKU2bQznLPtsCTxjjVIJKCWLvaqLc4E88Y0=",
+      "hydra":"Gsa7H9GLOpegPaIGK/cL+UQx7cRrF1Ci1vJ1waAg/0k= Z7Ys7tk9kWDM84DMj3seFLUl8eK9jlBLE1qDI2uk+2k="},
+    "realm":"My Solr users",
+    "forwardCredentials":false,
+    "":{"v":0}},
+  "authorization":{
+    "class":"solr.RuleBasedAuthorizationPlugin",
+    "permissions":[{
+        "name":"security-edit",
+        "role":"admin"}],
+    "user-role":{"solr":"admin"}}}
