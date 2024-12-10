@@ -26,7 +26,7 @@ GIT
 
 GIT
   remote: https://github.com/samvera/bulkrax.git
-  revision: 87910e257dbe6523ace61426ddc6f061cb90eb1d
+  revision: b26ea16ae38a01d1b1c7aef3f6e6e52fdd60f7c6
   branch: hydra-rails-7-support
   specs:
     bulkrax (8.3.0)
