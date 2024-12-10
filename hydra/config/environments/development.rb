@@ -64,7 +64,7 @@ Rails.application.configure do
   # Suppress logger output for asset requests.
   config.assets.quiet = true
 
-  # Email Tests 
+  # Email Tests
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.perform_deliveries    = true
   config.action_mailer.delivery_method       = :smtp
@@ -75,7 +75,7 @@ Rails.application.configure do
     port: 25,
     enable_starttls_auto: true
   }
-  
+
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 
@@ -84,8 +84,8 @@ Rails.application.configure do
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
   config.active_job.queue_adapter = :sidekiq
-  
+
   # developers can add their individual ips to this value. This configuration can also take an array
-  config.web_console.allowed_ips = %w(127.0.0.1 172.0.0.0/8)
+  config.web_console.allowed_ips = %w(127.0.0.1 172.0.0.0/8 0.0.0.0/0)
   config.web_console.development_only = false
 end

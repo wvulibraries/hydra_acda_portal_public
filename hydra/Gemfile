@@ -38,7 +38,7 @@ gem 'bootsnap', '>= 1.4.2', require: false
 gem 'twitter-typeahead-rails', '0.11.1.pre.corejavascript'
 
 
-# OAI-PMH 
+# OAI-PMH
 # =====================================================
 gem 'blacklight_oai_provider', github: 'projectblacklight/blacklight_oai_provider', ref: '428da77'
 
@@ -50,7 +50,7 @@ gem 'whenever', require: false
 # =====================================================
 # Switch the comments on these two lines to work on Bulkrax locally
 # gem 'bulkrax', git: 'https://github.com/samvera-labs/bulkrax.git' , ref: 'b689afa'
-gem 'bulkrax'
+gem 'bulkrax', github: 'samvera/bulkrax', branch: 'hydra-rails-7-support'
 
 # Dependices for Thumbnail Creation
 # =====================================================

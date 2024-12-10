@@ -24,4 +24,8 @@ class ApplicationController < ActionController::Base
   # removing the following 2 lines will re-enable devise auth
   def authenticate_user!
   end
+
+  def current_user
+    super || guest_user
+  end
 end
