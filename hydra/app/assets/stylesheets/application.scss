@@ -21,7 +21,7 @@
  *
 */
 
-// import custom scss 
+// import custom scss
 // it is important that the order gets imported in a certain way so that variables are able to be used in other scss files
 @import "partials/variables";
 @import "blacklight";
@@ -38,3 +38,4 @@
 @import "partials/bulkrax";
 @import "date_facet_range";
 @import "blacklight_advanced_search";
+@import "datatables";
