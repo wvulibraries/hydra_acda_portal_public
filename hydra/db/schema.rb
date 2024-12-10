@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_02_09_070952) do
+ActiveRecord::Schema[7.0].define(version: 2024_12_05_212513) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -40,7 +40,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_09_070952) do
     t.string "importerexporter_type", default: "Bulkrax::Importer"
     t.integer "import_attempts", default: 0
     t.string "status_message", default: "Pending"
+    t.string "error_class"
     t.index ["identifier", "importerexporter_id", "importerexporter_type"], name: "bulkrax_identifier_idx"
+    t.index ["importerexporter_id", "importerexporter_type", "id"], name: "index_bulkrax_entries_on_importerexporter_id_type_and_id"
     t.index ["importerexporter_id", "importerexporter_type"], name: "bulkrax_entries_importerexporter_idx"
     t.index ["type"], name: "index_bulkrax_entries_on_type"
   end
@@ -76,6 +78,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_09_070952) do
     t.boolean "include_thumbnails", default: false
     t.boolean "generated_metadata", default: false
     t.string "status_message", default: "Pending"
+    t.string "error_class"
     t.index ["user_id"], name: "index_bulkrax_exporters_on_user_id"
   end
 
@@ -117,6 +120,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_09_070952) do
     t.datetime "last_error_at", precision: nil
     t.datetime "last_succeeded_at", precision: nil
     t.string "status_message", default: "Pending"
+    t.datetime "last_imported_at", precision: nil
+    t.datetime "next_import_at", precision: nil
+    t.string "error_class"
     t.index ["user_id"], name: "index_bulkrax_importers_on_user_id"
   end
 
@@ -127,6 +133,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_09_070952) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.integer "order", default: 0
+    t.string "status_message", default: "Pending"
     t.index ["child_id"], name: "index_bulkrax_pending_relationships_on_child_id"
     t.index ["importer_run_id"], name: "index_bulkrax_pending_relationships_on_importer_run_id"
     t.index ["parent_id"], name: "index_bulkrax_pending_relationships_on_parent_id"
