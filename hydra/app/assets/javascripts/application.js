@@ -11,7 +11,7 @@
 // about supported directives.
 //
 
-// Rails or Hydra Requirements 
+// Rails or Hydra Requirements
 // -----------------------------------------------------
 //= require jquery3
 
@@ -31,13 +31,13 @@
 //= require twitter/typeahead
 //= require bootstrap
 //= require blacklight/blacklight
-//= require bookmark_toggle
 
 // Required by Bulkrax
 // -----------------------------------------------------
 //= require bulkrax/application
+//= require datatables
 
-// CUSTOM COLLECTION JS 
+// CUSTOM COLLECTION JS
 // -----------------------------------------------------
 //= require partials/equal_heights
 //= require partials/facets

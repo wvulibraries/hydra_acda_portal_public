@@ -33,10 +33,10 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_09_070952) do
     t.bigint "importerexporter_id"
     t.text "raw_metadata"
     t.text "parsed_metadata"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.datetime "last_error_at"
-    t.datetime "last_succeeded_at"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.datetime "last_error_at", precision: nil
+    t.datetime "last_succeeded_at", precision: nil
     t.string "importerexporter_type", default: "Bulkrax::Importer"
     t.integer "import_attempts", default: 0
     t.string "status_message", default: "Pending"
@@ -65,10 +65,10 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_09_070952) do
     t.string "export_source"
     t.string "export_from"
     t.string "export_type"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.datetime "last_error_at"
-    t.datetime "last_succeeded_at"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.datetime "last_error_at", precision: nil
+    t.datetime "last_succeeded_at", precision: nil
     t.date "start_date"
     t.date "finish_date"
     t.string "work_visibility"
@@ -86,8 +86,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_09_070952) do
     t.integer "processed_records", default: 0
     t.integer "deleted_records", default: 0
     t.integer "failed_records", default: 0
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "processed_collections", default: 0
     t.integer "failed_collections", default: 0
     t.integer "total_collection_entries", default: 0
@@ -111,11 +111,11 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_09_070952) do
     t.integer "limit"
     t.text "parser_fields"
     t.text "field_mapping"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.boolean "validate_only"
-    t.datetime "last_error_at"
-    t.datetime "last_succeeded_at"
+    t.datetime "last_error_at", precision: nil
+    t.datetime "last_succeeded_at", precision: nil
     t.string "status_message", default: "Pending"
     t.index ["user_id"], name: "index_bulkrax_importers_on_user_id"
   end
@@ -124,8 +124,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_09_070952) do
     t.bigint "importer_run_id", null: false
     t.string "parent_id", null: false
     t.string "child_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "order", default: 0
     t.index ["child_id"], name: "index_bulkrax_pending_relationships_on_child_id"
     t.index ["importer_run_id"], name: "index_bulkrax_pending_relationships_on_importer_run_id"
@@ -141,8 +141,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_09_070952) do
     t.string "statusable_type"
     t.integer "runnable_id"
     t.string "runnable_type"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["error_class"], name: "index_bulkrax_statuses_on_error_class"
     t.index ["runnable_id", "runnable_type"], name: "bulkrax_statuses_runnable_idx"
     t.index ["statusable_id", "statusable_type"], name: "bulkrax_statuses_statusable_idx"

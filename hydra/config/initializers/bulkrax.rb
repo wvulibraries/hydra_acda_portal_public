@@ -111,8 +111,3 @@
 #   # specific delimeter should likely be present in the multi_value_element_split_on expression.
 #   # config.multi_value_element_join_on = ' | '
 # end
-
-# Sidebar for hyrax 3+ support
-if Object.const_defined?(:Hyrax) && ::Hyrax::DashboardController&.respond_to?(:sidebar_partials)
-  Hyrax::DashboardController.sidebar_partials[:repository_content] << 'hyrax/dashboard/sidebar/bulkrax_sidebar_additions'
-end
