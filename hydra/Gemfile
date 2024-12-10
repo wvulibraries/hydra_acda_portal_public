@@ -51,6 +51,7 @@ gem 'whenever', require: false
 # Switch the comments on these two lines to work on Bulkrax locally
 # gem 'bulkrax', git: 'https://github.com/samvera-labs/bulkrax.git' , ref: 'b689afa'
 gem 'bulkrax', github: 'samvera/bulkrax', branch: 'hydra-rails-7-support'
+gem 'jquery-datatables'
 
 # Dependices for Thumbnail Creation
 # =====================================================
