@@ -4,15 +4,14 @@
 
 .facet-values {
     text-align: left;
+    a {
+        text-decoration: none;
+    }
 }
 
 .container {
     width: 100%;
     margin: 40px auto;
-    padding-left: 0;
-    padding-right: 0;
-    padding-bottom: 80px;
-    box-sizing: border-box;
     .row {
         margin-left: 0;
     	margin-right: 0;
@@ -20,11 +19,12 @@
 	    	p {
 	    		line-height: 150%;
 	    		color: $neutral-wgray1;
+                text-align: left;
 	    	}
             h2 {
-                color:#1d2228;
-                font-weight: 600;
-                font-size: 2em;
+                color: #1d2228;
+                font-weight:300;
+                font-size: 1.6em;
             }
             h3 {
                 font-size: 1.5em;
@@ -54,9 +54,9 @@
         float: left;
         border-bottom: none;
         .document-wrap {
-            border: 1px solid #D9D9D9;
+            border: 1px solid #D9D9D9;    
             width: 100%;
-            height: 100%;
+            height: 100%;        
             .awrap {
                 width: 100%;
                 z-index: 2;
@@ -65,7 +65,6 @@
                 left: 0;
             }
             .index-document-functions {
-                width: 100%;
                 float: left;
             }
             .documentHeader {
@@ -90,45 +89,66 @@
         }
         .document-metadata {
             margin: 0;
-            dd {
+            dd, dt {
                 text-align: left;
-                padding-left: 0px;
-                word-wrap: break-word;
-            }
-            dt {
-                float: left;
-                width: auto;
-                clear: left;
-                text-align: left;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-                padding-right: 5px;
-            }
+                padding-left: 20px;
+            }        
         }
     }
 }
 .col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, #search-navbar .search-query-form, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .col-lg-12 {
     position: inherit;
 }
-.dl-horizontal dd::after {
-    clear: both !important;
-}
-
-/* Catalog index Export dropdown */
-#export-results .dropdown-toggle {
-    color: #337ab7;
-
-    .caret {
-        color: #333333;
+.pagination {
     }
-}
+    #sortAndPerPage .pagination {
+        margin: 0;
+    }
+    .col-md-12 {
+        width: 100%;
+    }
+    .row .record-padding {
+        display: inline-block !important;
+        text-align: center;
+    }
+    .facet-limit-active .card-header .btn {
+        color: black;
+    }
+    .bg-success, .facet-limit-active .card-header {
+        background-color: $gray !important;
+    
+        
+    }
+    .facet-limit-active {
+        --bs-border-opacity: 1;
+        border-color: $gray !important; 
+    }
+    .text-success, .facet-values li .selected{
+        color: $accent-orange3 !important;
+    }
+    #bookmarks_nav {
+        padding-right: 20px;
+    }
+    .container .row #content h3{
+    font-weight: 300;
+    text-align: left;
+    font-size: 1rem;
+    p{
+        text-align: left;
+    }
+    a {
+        text-decoration: none;
+    }
+ }
 /*********************************************************************
     768px and up
 **********************************************************************/
 @media screen and (min-width: 768px) {
     .container {
-        width: 90%;
+        width: 100%;
+        max-width: 100%;
+        padding-left: 150px;
+        padding-right: 100px;
     }
     #documents .document {
         width: 48%;
@@ -146,4 +166,7 @@
         width: 31%;
         margin: 0 1% 20px 1%;
     }
+    .pagination {
+        margin: 20px 10vw;
+        }
 }
