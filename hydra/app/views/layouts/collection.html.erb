@@ -39,14 +39,12 @@
 
     <!-- Share This -->
     <script type='text/javascript' src='//platform-api.sharethis.com/js/sharethis.js#property=59ce811221dcc40012f170a4&product=inline-share-buttons' async='async'></script>
-
     </head>
     <body class="<%= render_body_class %>"><a name="top"></a>
 
-    
-    <%= render "shared/collection_header" %>    
+    <%= render "shared/collection_header" %>
     <%= render "shared/navigation" %>
-    
+
     <!-- Hydra Piece -->
     <%= render partial: 'shared/modal' %>
     <div id="main-container" class="container">
@@ -66,20 +64,24 @@
     </div>
 
     <%= render "shared/partners" %>
-    <%= render "shared/google_analytics" %>  
+    <%= render "shared/google_analytics" %>
 
     <!-- JavaScripts -->
+    <%# Needed to add these two to make accordions and datatables work in Bulkrax %>
+    <%# It seems they need to go before the application.js %>
+    <%= javascript_include_tag "https://code.jquery.com/jquery-3.7.1.slim.min.js", crossorigin: "anonymous" %>
+    <%= javascript_include_tag "https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js", crossorigin: "anonymous" %>
     <%= javascript_include_tag "application" %>
 
     <!-- Share This Integration -->
     <script type="text/javascript" src="//platform-api.sharethis.com/js/sharethis.js#property=59ce7f4afeebe0001600e9c5&product=inline-share-buttons"></script>
 
-    <!-- Browser Update --> 
-    <script> 
-        var $buoop = {required:{e:0,f:-3,o:-3,s:-1,c:-3},insecure:true,unsupported:true,style:"bottom",api:2018.08 }; 
-        function $buo_f(){ 
-            var e = document.createElement("script"); 
-            e.src = "//browser-update.org/update.min.js"; 
+    <!-- Browser Update -->
+    <script>
+        var $buoop = {required:{e:0,f:-3,o:-3,s:-1,c:-3},insecure:true,unsupported:true,style:"bottom",api:2018.08 };
+        function $buo_f(){
+            var e = document.createElement("script");
+            e.src = "//browser-update.org/update.min.js";
             document.body.appendChild(e);
         };
         try {document.addEventListener("DOMContentLoaded", $buo_f,false)}
