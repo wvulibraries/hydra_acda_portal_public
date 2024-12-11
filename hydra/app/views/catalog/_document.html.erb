@@ -12,7 +12,7 @@
 		<% description = document[:description_tesim].to_s %>
 		<% if document[:dc_type_ssi] == "Sound" %>
 			<%= link_to_document document, render(:partial => 'audio_button'), class: "button audio-button" %>
-		<% elsif "Moving".in? document[:dc_type_ssi] %>
+		<% elsif document[:dc_type_ssi]&.include? "Moving" %>
 			<%= link_to_document document, render(:partial => 'video_button'), class: "button video-button" %>
 		<% elsif (document.image_file? == false) && (document[:dc_type_ssi] == "Text") %>
 			<%= link_to_document document, render(:partial => 'pdf_button'), class: "button pdf-button" %>
