@@ -435,199 +435,184 @@ html, form, nav, div {
 	}
 }
 
-/* Bulkrax Forms */
-.importer-form, .exporter-form, .bulkrax-align-text, .accordion-container {
-  .form-control {
-    color: rgb(51, 51, 51)
-  }
-  .nav-tabs > li.active > a {
-    color: #337ab7
-  }
-  .accordion-body, .accordion-heading {
-    text-align: left;
-  }
-  .accordion-body {
-    strong {
-      width: 40%;
-      display: inline-block;
-	  }
-	}
-  }
-  
-  /*********************************************************************
-	  768px to 1024px
-  **********************************************************************/
-  @media screen and (min-width: 768px) {
-	#main-container {
-	  .row {
-		#sidebar {
-		  display: block;
-		}
-  
-		#content {
-		  .shareThis {
-			display: inline-block;
-			width: auto;
-		  }
-  
-		  div[id*='doc_wvulibraries'] {
-			.document-image {
-			  width: 49%;
-			  margin-right: 2%;
-			}
-  
-			.document-image:nth-child(2) {
-			  margin-right: 0;
-			}
-		  }
-		}
-	  }
-	}
-  
-	.tabbarBlue {
-	  background: none;
-	}
-  
-	.tbwrap {
-	  width: 90%;
-	}
-  
-	.collection-header {
-	  margin-bottom: 0;
-  
-	  .collection-header-title {
-		display: inline-block;
-		margin-left: 20px;
-		width: auto;
-			padding: 40px 0;
-			font-size: 38px;
-		}
-	  .navbar-right {
-		float: right;
-		width: auto;
-		padding-top: 60px;
-		margin-right: 50px;
-	  }
-	}
-  
-	.sticky-header {
-	  height: 100px;
-	  position: relative;
-	  bottom: 0;
-	  left: 0;
-	  z-index: 3;
-	  border-top: none;
-	  border-bottom: 1px solid #d3d3d3;
-	  box-shadow: none;
-	  padding: 10px 0;
-	  .tabBar {
-		width: auto;
-		a {
-		  margin: 0;
-		}
-	  }
-  
-	  .sticky-header-top {
-		display: none;
-	  }
-  
-	  .sticky-header-filter {
-		display: none;
-	  }
-  
-	  .sticky-header-nav {
-		background: none;
-  
-		.tabbarToggle {
-		  padding: 0;
-		}
-  
-		ul {
-		  list-style-type: none;
-		  margin-left: 60px;
-		  background: none;
-		  position: relative;
-		  border-top: none;
-		  bottom: 0;
-  
-		  li {
-			display: inline-block;
-			margin: 0 40px 0 0;
-  
-			a {
-			  font-size: 18px;
-			  padding: 4px 0 5px 0;
-			  display: block;
-			  color: #76323f;
-			  font-weight: bold;
-			}
-		  }
-  
-		  li:last-child {
-			margin-right: 0;
-		  }
-		}
-  
-		#menu-toggle {
-		  display: none;
-		}
-	  }
-  
-	  .sticky-header-search {
-		.search-query-form {
-		  background: none;
-		  position: relative;
-		  border-top: none;
-		  bottom: 0;
-		  max-width: 640px;
-		  float:left;
-		  margin-top:0;
-		  margin-left: 60px;
-		}
-  
-		#search-toggle {
-		  display: none;
-		}
-  
-		.navbar-form {
-		  display: block;
-		  height: 35px;
-		  padding: 0;
-		}
-	  }
-	}
-  
-	div#document {
-	  div {
-		text-align: left;
-	  }
-	}
+/*********************************************************************
+  768px to 1024px
+**********************************************************************/
+@media screen and (min-width: 768px) {
+  #main-container {
+    .row {
+      #sidebar {
+        display: block;
+      }
 
-  /*********************************************************************
-	937px and up
-  **********************************************************************/
-  @media screen and (min-width: 937px) {
-	#logo {
-		float:left;
-	}
-  }
-  
-  /*********************************************************************
-	1301px and up
-  **********************************************************************/
-  @media screen and (min-width: 1301px) {
-    .sticky-header {
-	    height: 35px;
-
-	    .tabBar{
-		    width: auto;
+      #content {
+        .shareThis {
+          display: inline-block;
+          width: auto;
         }
-        .sticky-header-search {
-			.search-query-form {
-                float:left;
-                margin-left: 10px;
-            }
-	  }
-	}
+
+        div[id*='doc_wvulibraries'] {
+          .document-image {
+            width: 49%;
+            margin-right: 2%;
+          }
+
+          .document-image:nth-child(2) {
+            margin-right: 0;
+          }
+        }
+      }
+    }
+  }
+
+  .tabbarBlue {
+    background: none;
+  }
+
+  .tbwrap {
+    width: 90%;
+  }
+
+  .collection-header {
+    margin-bottom: 0;
+
+    .collection-header-title {
+      display: inline-block;
+      margin-left: 20px;
+      width: auto;
+      padding: 40px 0;
+      font-size: 38px;
+    }
+
+    .navbar-right {
+      float: right;
+      width: auto;
+      padding-top: 60px;
+      margin-right: 50px;
+    }
+  }
+
+  .sticky-header {
+    height: 100px;
+    position: relative;
+    bottom: 0;
+    left: 0;
+    z-index: 3;
+    border-top: none;
+    border-bottom: 1px solid #d3d3d3;
+    box-shadow: none;
+    padding: 10px 0;
+
+    .tabBar {
+      width: auto;
+
+      a {
+        margin: 0;
+      }
+    }
+
+    .sticky-header-top {
+      display: none;
+    }
+
+    .sticky-header-filter {
+      display: none;
+    }
+
+    .sticky-header-nav {
+      background: none;
+
+      .tabbarToggle {
+        padding: 0;
+      }
+
+      ul {
+        list-style-type: none;
+        margin-left: 60px;
+        background: none;
+        position: relative;
+        border-top: none;
+        bottom: 0;
+
+        li {
+          display: inline-block;
+          margin: 0 40px 0 0;
+
+          a {
+            font-size: 18px;
+            padding: 4px 0 5px 0;
+            display: block;
+            color: #76323f;
+            font-weight: bold;
+          }
+        }
+
+        li:last-child {
+          margin-right: 0;
+        }
+      }
+
+      #menu-toggle {
+        display: none;
+      }
+    }
+
+    .sticky-header-search {
+      .search-query-form {
+        background: none;
+        position: relative;
+        border-top: none;
+        bottom: 0;
+        max-width: 640px;
+        float: left;
+        margin-top: 0;
+        margin-left: 60px;
+      }
+
+      #search-toggle {
+        display: none;
+      }
+
+      .navbar-form {
+        display: block;
+        height: 35px;
+        padding: 0;
+      }
+    }
+  }
+
+  div#document {
+    div {
+      text-align: left;
+    }
+  }
+}
+
+/*********************************************************************
+  937px and up
+**********************************************************************/
+@media screen and (min-width: 937px) {
+  #logo {
+    float: left;
+  }
+}
+
+/*********************************************************************
+  1301px and up
+**********************************************************************/
+@media screen and (min-width: 1301px) {
+  .sticky-header {
+    height: 35px;
+
+    .tabBar {
+      width: auto;
+    }
+
+    .sticky-header-search {
+      .search-query-form {
+        float: left;
+        margin-left: 10px;
+      }
+    }
   }
 }

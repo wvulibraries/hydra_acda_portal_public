@@ -24,3 +24,22 @@
     }
   }
 }
+
+/* Bulkrax Forms */
+.importer-form, .exporter-form, .bulkrax-align-text, .accordion-item {
+  .form-control {
+    color: rgb(51, 51, 51)
+  }
+  .nav-tabs > li.active > a {
+    color: #337ab7
+  }
+  .accordion-body, .accordion-header {
+    text-align: left;
+  }
+  .accordion-body {
+    strong {
+      width: 40%;
+      display: inline-block;
+    }
+  }
+}
