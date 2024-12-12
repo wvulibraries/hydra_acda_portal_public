@@ -1,0 +1,55 @@
+<%# OVERRIDE BULKRAX 8 to change accordion to bootstrap 5 %>
+<% if item.failed? %>
+  <div class="accordion accordion-flush" id="error-trace-heading">
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <a class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#error-trace-show" aria-expanded="false" aria-controls="error-trace-show">
+          Errors:
+        </a>
+      </h2>
+      <div id="error-trace-show" class="accordion-collapse collapse"  role="tabpanel" data-bs-parent="#error-trace-heading">
+        <div class="accordion-body">
+          <div class="bulkrax-nav-tab-bottom-margin">
+
+            <!-- Toggle buttons -->
+            <div class="btn-group pull-right" role="group" aria-label="...">
+              <button id="full-errors-tab" type="button" class="btn btn-light active"><a href="#bulkrax-full-toggle-1" aria-controls="bulkrax-full-toggle-1" role="tab" data-toggle="tab">Full</a></button>
+              <button id="raw-errors-tab" type="button" class="btn btn-light"><a href="#bulkrax-raw-toggle-1" aria-controls="bulkrax-raw-toggle-1" role="tab" data-toggle="tab">Raw</a></button>
+            </div>
+            <!-- Tab panes -->
+            <div class="tab-content">
+              <div role="tabpanel" class="tab-pane active" id="bulkrax-full-toggle-1">
+                <strong>Errored at:</strong> <%= item.status_at %><br /><br />
+                <strong>Error:</strong> <%= item.current_status.error_class %> - <%= item.current_status.error_message %><br /><br />
+                <strong>Error Trace:</strong><br/><br />
+                <% item.current_status.error_backtrace.each do |v| %>
+                  <%= coderay(v, { wrap: :page, css: :class, tab_width: 200, break_lines: true }) %>
+                  <br>
+                <% end %>
+              </div>
+              <div role="tabpanel" class="tab-pane" id="bulkrax-raw-toggle-1">
+                <strong>Errored at:</strong> <%= item.status_at %><br /><br />
+                <strong>Error:</strong> <%= item.current_status.error_class %> - <%= item.current_status.error_message %><br /><br />
+                <strong>Error Trace:</strong><br/><br />
+                <% item.current_status.error_backtrace.each do |v| %>
+                  <%= coderay(v, { css: :class, tab_width: 0, break_lines: false }) %>
+                  <br>
+                <% end %>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+<% elsif item.succeeded? %>
+  <p class='bulkrax-p-align'>
+    <strong>Succeeded At:</strong> <%= item.status_at %>
+  </p>
+<% else %>
+  <p class='bulkrax-p-align'>
+    <strong>Succeeded At:</strong> Item has not yet been <%= @importer.present? ? 'imported' : 'exported' %> successfully
+  </p>
+<% end %>

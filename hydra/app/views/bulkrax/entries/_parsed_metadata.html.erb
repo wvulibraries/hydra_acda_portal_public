@@ -1,0 +1,19 @@
+<%# OVERRIDE BULKRAX 8 to change accordion to bootstrap 5 %>
+<% if @entry.parsed_metadata.present? %>
+  <div class="accordion accordion-flush" id="parsed-metadata-heading">
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <a class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#parsed-metadata-show" aria-expanded="false" aria-controls="parsed-metadata-show">
+          Parsed Metadata:
+        </a>
+      </h2>
+      <div id="parsed-metadata-show" class="accordion-collapse collapse"  role="tabpanel" data-bs-parent="#parsed-metadata-heading">
+        <div class="accordion-body">
+          <% @entry.parsed_metadata.each do |k, v| %>
+            <strong><%= k %>:</strong> <%= v %><br>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
