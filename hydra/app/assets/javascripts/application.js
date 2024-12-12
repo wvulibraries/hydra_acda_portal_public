@@ -34,8 +34,8 @@
 
 // Required by Bulkrax
 // -----------------------------------------------------
-//= require bulkrax/application
 //= require datatables
+//= require bulkrax/application
 
 // CUSTOM COLLECTION JS
 // -----------------------------------------------------
@@ -44,6 +44,7 @@
 //= require partials/toggles
 //= require partials/smooth_scroll
 //= require partials/cookie_modal
+//= require partials/nav_toggles
 
 
 // For blacklight_range_limit built-in JS, if you don't want it you don't need
