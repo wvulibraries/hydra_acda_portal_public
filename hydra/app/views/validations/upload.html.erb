@@ -1,0 +1,11 @@
+Hello world!
+
+<%= form_with(url: validate_path, local: true, multipart: true) do |form| %>
+  <div class="form-group">
+    <%= form.label :csv_file, "Upload CSV" %>
+    <%= form.file_field :csv_file, accept: ".csv" %>
+  </div>
+  <div class="form-group">
+    <%= form.submit "Upload" %>
+  </div>
+<% end %>
