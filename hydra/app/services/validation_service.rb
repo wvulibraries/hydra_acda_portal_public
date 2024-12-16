@@ -48,7 +48,7 @@ class ValidationService
       when 'edm:isShownAt'
         validate_url
       when 'dcterms:http://purl.org/dc/terms/type'
-        search_getty_aat # TODO
+        search_getty_aat
       when 'dcterms:type'
         validate_local_authorities('types')
       when 'dcterms:subject'
@@ -58,7 +58,7 @@ class ValidationService
       when 'dcterms:contributor'
         search_lc_linked_data_service('http://id.loc.gov/authorities/names')
       when 'dcterms:spatial'
-        search_tgn # TODO
+        search_getty_tgn if @values.present?
       when 'dcterms:format'
         validate_free_text if @values.present?
       when 'dcterms:publisher'
@@ -134,33 +134,48 @@ class ValidationService
 
   def search_getty_aat
     @values.each do |value|
-      endpoint = "https://vocab.getty.edu/sparql"
-      query = <<~SPARQL
-        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-        SELECT ?concept ?label WHERE {
-          ?concept a skos:Concept ;
-                    skos:prefLabel "#{value}"@en .
-        }
-      SPARQL
+      results = search_getty(value)
 
-      params = {
-        query: query,
-        format: 'json'
-      }
-
-      uri = URI(endpoint)
-      uri.query = URI.encode_www_form(params)
-
-      response = Net::HTTP.get_response(uri)
-      unless response.is_a?(Net::HTTPSuccess)
-        add_error("Error: #{response.message}")
-        return
+      if results.empty? || !results['concept']['value'].include?('http://vocab.getty.edu/aat/')
+        add_error("<strong>#{value}</strong> was not found in Getty AAT")
       end
-
-      results = JSON.parse(response.body)['results']['bindings']
-
-      add_error("<strong>#{value}</strong> was not found in Getty AAT") if results.empty?
     end
+  end
+
+  def search_getty_tgn
+    @values.each do |value|
+      results = search_getty(value)
+
+      if results.empty? || !results['concept']['value'].include?('http://vocab.getty.edu/tgn/')
+        add_error("<strong>#{value}</strong> was not found in Getty TGN")
+      end
+    end
+  end
+
+  def search_getty(value)
+    endpoint = "https://vocab.getty.edu/sparql"
+    query = <<~SPARQL
+      SELECT ?concept {
+        ?concept a skos:Concept;
+                   skos:prefLabel "#{value}"@en .
+      }
+    SPARQL
+
+    params = {
+      query: query,
+      format: 'json'
+    }
+
+    uri = URI(endpoint)
+    uri.query = URI.encode_www_form(params)
+
+    response = Net::HTTP.get_response(uri)
+    unless response.is_a?(Net::HTTPSuccess)
+      add_error("Error: #{response.message}")
+      return
+    end
+
+    JSON.parse(response.body)['results']['bindings'][0] || {}
   end
 
   def search_tgn
