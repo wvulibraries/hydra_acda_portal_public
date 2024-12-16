@@ -30,13 +30,13 @@
 
 <div id="sidebar" class="col-md-3 col-sm-4">
    <%= render_document_sidebar_partial %>
-  <div id="csl-citation">
+   <div id="csl-citation">
       <h4>Chicago citation style</h4>
-    <p><%= ChicagoCitationService.format(document: @document, original_url: request.original_url) %></p>
-    <br />
-    <p>
-      <strong>Note:</strong>
-      These citations are programmatically generated and may be incomplete.
-    </p>
-  </div>
+      <p><%= ChicagoCitationService.format(document: @document, original_url: request.original_url) %></p>
+      <br />
+      <p>
+        <strong>Note:</strong>
+        These citations are programmatically generated and may be incomplete.
+      </p>
+   </div>
 </div>

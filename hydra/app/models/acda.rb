@@ -164,7 +164,7 @@ class Acda < ActiveFedora::Base
     index.as :stored_searchable, :stored_sortable, :facetable
   end
 
-  # EDM isShownBy - Direct PDF URI (to download)
+  # EDM isShownBy - Direct PDF or Image URI (to download)
   # ==============================================================================================================
   # Avaliable By Property
   property :available_by, predicate: ::RDF::Vocab::EDM.isShownBy, multiple: false do |index|
