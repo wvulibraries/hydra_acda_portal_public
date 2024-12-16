@@ -113,7 +113,7 @@ class CatalogController < ApplicationController
     config.add_show_field solr_name('date', :stored_searchable, type: :string), label: 'Date Created', link_to_search: :date_sim
     config.add_show_field solr_name('edtf', :stored_searchable, type: :string), label: 'EDTF'
     config.add_show_field solr_name('creator', :stored_searchable, type: :string), label: 'Creator', link_to_search: :creator_sim
-    config.add_show_field solr_name('rights', :stored_searchable, type: :string), label: 'Rights'
+    config.add_show_field solr_name('rights', :stored_searchable, type: :string), label: 'Rights', helper_method: :render_html_safe_url
     config.add_show_field solr_name('language', :stored_searchable, type: :string), label: 'Language'
     config.add_show_field solr_name('record_type', :stored_searchable, type: :string), label: 'Record Type'
     config.add_show_field solr_name('collection_title', :stored_searchable, type: :string), label: 'Collection', link_to_search: :collection_title_sim
