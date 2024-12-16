@@ -1,9 +1,13 @@
 # Generated Model for Metadata
+require 'net/http'
+require 'uri'
+
 class Acda < ActiveFedora::Base
   include Hydra::AccessControls::Permissions
 
   include ImportLibrary
 
+  before_save :fetch_final_url # this is to insure preview is the actual url for the thumbnail
   after_create :generate_or_download_thumbnail #, if: -> { self.preview? || self.available_by? }
   after_save :clear_empty_fields
   after_save :generate_or_download_thumbnail, if: :saved_change_to_preview?
@@ -13,6 +17,26 @@ class Acda < ActiveFedora::Base
   end
 
   self.indexer = ::Indexer
+
+  def fetch_final_url
+    uri = URI.parse(self.preview)
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = (uri.scheme == "https")
+  
+    request = Net::HTTP::Get.new(uri.request_uri)
+  
+    response = http.request(request)
+  
+    # Follow redirects
+    while response.is_a?(Net::HTTPRedirection)
+      new_url = response['location']
+      uri = URI.parse(new_url)
+      response = http.request(Net::HTTP::Get.new(uri))
+    end
+  
+    # update preview with final url
+    self.preview = uri.to_s
+  end
 
   def generate_or_download_thumbnail
     if preview.present?

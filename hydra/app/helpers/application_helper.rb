@@ -29,7 +29,7 @@ module ApplicationHelper
       'home_text'
     end
   end 
-  
+
   def is_active_url?(url)
     # Example implementation: checks if the URL is accessible
     return false if url.blank?
