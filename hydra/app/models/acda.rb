@@ -4,9 +4,9 @@ class Acda < ActiveFedora::Base
 
   include ImportLibrary
 
-  after_create :generate_thumbnail
+  after_create :generate_or_download_thumbnail #, if: -> { self.preview? || self.available_by? }
   after_save :clear_empty_fields
-  after_save :generate_thumbnail, if: :saved_change_to_preview?
+  after_save :generate_or_download_thumbnail, if: :saved_change_to_preview?
 
   def saved_change_to_preview?
     previous_changes['preview'].present? || thumbnail_file.blank?
@@ -14,9 +14,15 @@ class Acda < ActiveFedora::Base
 
   self.indexer = ::Indexer
 
-  def generate_thumbnail
-    # queue job to generate thumbnail
-    GenerateThumbsJob.perform_later(id)
+  def generate_or_download_thumbnail
+    if preview.present?
+      # queue job to download and set the thumbnail
+      # using the available_at url
+      DownloadAndSetThumbsJob.perform_later(id)
+    else
+      # queue job to generate thumbnail
+      GenerateThumbsJob.perform_later(id)
+    end
   end
 
   def clear_empty_fields
@@ -144,17 +150,24 @@ class Acda < ActiveFedora::Base
     index.as :stored_searchable, :stored_sortable, :facetable
   end
 
-  # EDM preview
+  # EDM preview - (link to external thumbnail image)
   # ==============================================================================================================
-  # preview property
+  # preview property - (link to external thumbnail image)
   property :preview, predicate: ::RDF::Vocab::EDM.preview, multiple: false do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
   end
 
-  # EDM isShownAt
+  # EDM isShownAt - (link to external resource)
   # ==============================================================================================================
   # Avaliable At Property
   property :available_at, predicate: ::RDF::Vocab::EDM.isShownAt, multiple: false do |index|
+    index.as :stored_searchable, :stored_sortable, :facetable
+  end
+
+  # EDM isShownBy - Direct PDF or Image URI (to download)
+  # ==============================================================================================================
+  # Avaliable By Property
+  property :available_by, predicate: ::RDF::Vocab::EDM.isShownBy, multiple: false do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
   end
 

@@ -1,4 +1,4 @@
-class GenerateThumbsJob < ApplicationJob
+class DownloadAndSetThumbsJob < ApplicationJob
   queue_as :import
 
   # we are passing in the Fedora object's id instead of identifier
@@ -22,10 +22,10 @@ class GenerateThumbsJob < ApplicationJob
     download_path = "#{file_path}/#{id}"
 
     begin
-      # download file from available_by url
-      file = URI.open(record.available_by)
+      # download file from preview url
+      file = URI.open(record.preview)
     rescue Errno::ENOENT => e
-      Rails.logger.error "Error: edm:available_by for #{record.identifier} is not a valid resource url. #{e.message}"
+      Rails.logger.error "Error: edm:preview for #{record.identifier} is not a valid resource url. #{e.message}"
       return unset_image_and_thumbnail!(record)
     end
 
@@ -33,18 +33,15 @@ class GenerateThumbsJob < ApplicationJob
     IO.copy_stream(file, download_path)
     tempfile.close
 
-    # check if the tempfile is indeed a pdf or image
+    # check if the tempfile is indeed an image
     mime_type = `file --brief --mime-type #{Shellwords.escape(download_path)}`.strip
+    return unset_image_and_thumbnail!(record) unless mime_type.include?('image')
 
-    # sets thumbnail_file and image_file to nil if mime_type is not a pdf or image
-    # so we don't retain the previous thumbnail_file and image_file
-    if mime_type.include?('pdf')
-      GeneratePdfThumbsJob.perform_later(id, download_path)
-    elsif mime_type.include?('image')
-      GenerateImageThumbsJob.perform_later(id, download_path)
-    else
-      return unset_image_and_thumbnail!(record)
-    end
+    ImportLibrary.set_file(record.build_thumbnail_file, 'application/jpg', "#{download_path}")
+    record.save!
+
+    # remove the downloaded file
+    File.delete(download_path)
   end
 
   private

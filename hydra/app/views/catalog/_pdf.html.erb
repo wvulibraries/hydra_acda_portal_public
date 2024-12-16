@@ -4,14 +4,17 @@
 <% num_files = @document[:num_files_isi] %>
 <% description = @document[:description_tesim] %>
 <% preview = @document[:preview_ssi] %>
+<% available = @document[:available_at_ssi] %>
 
 <div class="row">
   <div class="col-md-4">
-      <a class="document-image-full" href="<%= preview %>">
-        <% if @document.thumbnail_file? == false %>
-          <span class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></span>
+      <a class="document-image-full" href="<%= available %>">
+        <% if is_active_url?(preview) %>
+          <%= image_tag(preview, title:"#{@document[:title_ssi]}", alt:description, class:"full-size-responsive") %>
+        <% elsif @document.thumbnail_file? %>
+          <%= image_tag("/thumb/#{id}.jpg", title:"#{@document[:title_ssi]}", alt:description, class:"full-size-responsive") %>
         <% else %>
-          <%= image_tag("/image/#{id}", title:"#{@document[:title_ssi]}", alt:description, class:"full-size-responsive") %>
+          <span class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></span>
         <% end %>
         <br><br>
         <span class="fa fa-file-pdf-o"> Click on the image to view full PDF.</span>

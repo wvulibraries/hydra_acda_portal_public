@@ -28,5 +28,18 @@ module ApplicationHelper
     else
       'home_text'
     end
-  end   
+  end 
+  
+  def is_active_url?(url)
+    # Example implementation: checks if the URL is accessible
+    return false if url.blank?
+
+    begin
+      uri = URI.parse(url)
+      response = Net::HTTP.get_response(uri)
+      response.is_a?(Net::HTTPSuccess)
+    rescue
+      false
+    end
+  end
 end
