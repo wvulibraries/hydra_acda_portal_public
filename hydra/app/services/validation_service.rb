@@ -65,8 +65,6 @@ class ValidationService
         validate_free_text if @values.present?
       when 'dcterms:description'
         validate_free_text if @values.present?
-      else
-        add_error("Header not recognized")
       end
     end
 
@@ -176,10 +174,5 @@ class ValidationService
     end
 
     JSON.parse(response.body)['results']['bindings'][0] || {}
-  end
-
-  def search_tgn
-    # TODO: need to figure out how to query TGN
-    # https://www.getty.edu/research/tools/vocabularies/tgn/index.html
   end
 end

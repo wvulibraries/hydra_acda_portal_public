@@ -24,6 +24,10 @@ class ValidationsController < ApplicationController
     csv_data = File.read(csv_path)
     results = []
 
+    headers = CSV.parse(csv_data, headers: true).headers
+    invalid_headers = headers - bulkrax_headers
+    results << invalid_headers.map { |header| { row: 1, header: header, message: "<strong>#{header}</strong> is an invalid header" } } if invalid_headers.present?
+
     CSV.parse(csv_data, headers: true).each_with_index do |row, index|
       row_results = validate_row(row: row, row_number: index + 2)
       results << row_results if row_results.present?
@@ -35,5 +39,10 @@ class ValidationsController < ApplicationController
   def validate_row(row:, row_number:)
     validator = ValidationService.new(row, row_number)
     validator.validate
+  end
+
+  def bulkrax_headers
+    # taking out the 'bulkrax_identifier' field because WVU csv's don't use it
+    Bulkrax.field_mappings["Bulkrax::CsvParser"].values.flat_map { |hash| hash[:from] } - ['bulkrax_identifier']
   end
 end
