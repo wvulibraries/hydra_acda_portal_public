@@ -1,6 +1,37 @@
 # frozen_string_literal: true
 
 class ValidationService
+  class_attribute :split_on, default: ("\;")
+
+  MAPPINGS = {
+    'dcterms:provenance' => -> { validate_free_text },
+    'dcterms:title' => -> { validate_free_text },
+    'dcterms:date' => -> { validate_free_text },
+    'dcterms:created' => -> { validate_edtf },
+    'dcterms:creator' => -> { search_lc_linked_data_service('http://id.loc.gov/authorities/names') },
+    'dcterms:rights' => -> { validate_local_authorities('rights') },
+    'dcterms:language' => -> { validate_iso_639_2 },
+    'dcterms:temporal' => -> { validate_local_authorities('congress') },
+    'dcterms:relation' => -> { validate_free_text },
+    'dcterms:isPartOf' => -> { validate_free_text },
+    'dcterms:source' => -> { validate_url },
+    'dcterms:identifier' => -> { validate_free_text }, # TODO: check for uniqueness?
+    'edm:preview' => -> { validate_url if values.present? },
+    'edm:isShownBy' => -> { validate_url },
+    'edm:isShownAt' => -> { validate_url },
+    'dcterms:http://purl.org/dc/terms/type' => -> { search_getty_aat },
+    'dcterms:type' => -> { validate_local_authorities('types') },
+    'dcterms:subject' => -> { validate_local_authorities('policy_area') if values.present? },
+    'http://lib.wvu.edu/hydra/subject' => -> { search_lc_linked_data_service('http://id.loc.gov/authorities/subjects') },
+    'dcterms:contributor' => -> { search_lc_linked_data_service('http://id.loc.gov/authorities/names') },
+    'dcterms:spatial' => -> { search_getty_tgn if values.present? },
+    'dcterms:format' => -> { validate_free_text if values.present? },
+    'dcterms:publisher' => -> { validate_free_text if values.present? },
+    'dcterms:description' => -> { validate_free_text if values.present? }
+  }
+  class_attribute :actions, default: MAPPINGS
+  attr_accessor  :row, :row_number, :results, :header, :values
+
   def initialize(row, row_number)
     @row = row
     @row_number = row_number
@@ -10,83 +41,60 @@ class ValidationService
   end
 
   def validate
-    headers = @row.headers
-
-    headers.each do |header|
-      @header = header
-      @values = @row[header]&.split("\;")&.map(&:strip)
-
-      case header
-      when 'dcterms:provenance'
-        validate_free_text
-      when 'dcterms:title'
-        validate_free_text
-      when 'dcterms:date'
-        validate_free_text
-      when 'dcterms:created'
-        validate_edtf
-      when 'dcterms:creator'
-        search_lc_linked_data_service('http://id.loc.gov/authorities/names')
-      when 'dcterms:rights'
-        validate_local_authorities('rights')
-      when 'dcterms:language'
-        validate_iso_639_2
-      when 'dcterms:temporal'
-        validate_local_authorities('congress')
-      when 'dcterms:relation'
-        validate_free_text
-      when 'dcterms:isPartOf'
-        validate_free_text
-      when 'dcterms:source'
-        validate_url
-      when 'dcterms:identifier'
-        validate_free_text # TODO: check for uniqueness?
-      when 'edm:preview'
-        validate_url if @values.present?
-      when 'edm:isShownBy'
-        validate_url
-      when 'edm:isShownAt'
-        validate_url
-      when 'dcterms:http://purl.org/dc/terms/type'
-        search_getty_aat
-      when 'dcterms:type'
-        validate_local_authorities('types')
-      when 'dcterms:subject'
-        validate_local_authorities('policy_area') if @values.present?
-      when 'http://lib.wvu.edu/hydra/subject'
-        search_lc_linked_data_service('http://id.loc.gov/authorities/subjects')
-      when 'dcterms:contributor'
-        search_lc_linked_data_service('http://id.loc.gov/authorities/names')
-      when 'dcterms:spatial'
-        search_getty_tgn if @values.present?
-      when 'dcterms:format'
-        validate_free_text if @values.present?
-      when 'dcterms:publisher'
-        validate_free_text if @values.present?
-      when 'dcterms:description'
-        validate_free_text if @values.present?
-      end
+    @row.each_pair do |key, value|
+      @header = key
+      @values = split_term(value:)
+      validate_content
     end
-
     @results
   end
 
   private
 
+  def validate_content
+    action = actions[header]
+    instance_exec(&action) if action
+  end
+
+  # Use bulkrax split character to break into multiple values
+  # Always return an array since split returns an array
+  def split_term(value:)
+    # ensure we always return an array for consistency with split function
+    term = Array.wrap(value)
+    return term if value.nil? || check_split[header] == false
+    value.split(split_on)
+  end
+
+  # Use Bulkrax to determine if this header is one we split
+  def check_split
+    @split_headers ||= begin
+      new_hash = {}
+      mappings = Bulkrax.field_mappings["Bulkrax::CsvParser"]
+      mappings.each do |_, value|
+        value[:from].each do |from_value|
+          new_hash[from_value] = value.fetch(:split, false)
+        end
+      end
+      new_hash
+    end
+  end
+
   def add_error(message)
     @results << {
       row: @row_number,
-      header: @header,
+      header: header,
       message: message
     }
   end
 
   def validate_free_text
-    add_error("Missing required value") if @values.empty?
+    values.each do |value|
+      add_error("Missing required value") if value.empty?
+    end
   end
 
   def validate_edtf
-    @values.each do |value|
+    values.each do |value|
       add_error("<strong>#{value}</strong> is not a valid EDTF") if EDTF.parse(value).nil?
     end
   end
@@ -94,25 +102,25 @@ class ValidationService
   def validate_local_authorities(authority)
     qa = QaSelectService.new(authority)
 
-    @values.each do |value|
+    values.each do |value|
       add_error("<strong>#{value}</strong> is not valid") unless qa.authority.find(value)['active']
     end
   end
 
   def validate_iso_639_2
-    @values.each do |value|
+    values.each do |value|
       add_error("<strong>#{value}</strong> is not a valid language code") unless ::ISO_639.find_by_code(value)&.compact_blank&.include?(value)
     end
   end
 
   def validate_url(required: false)
-    @values.each do |value|
+    values.each do |value|
       add_error("<strong>#{value}</strong> is an invalid URL format") unless value.starts_with?('http')
     end
   end
 
   def search_lc_linked_data_service(linked_data_service)
-    @values.each do |value|
+    values.each do |value|
       base_url = "https://id.loc.gov/search/"
       lds = "cs:#{linked_data_service}" if linked_data_service.present?
       params = { q: [lds, "\"#{value}\""], format: "atom" }
@@ -131,7 +139,7 @@ class ValidationService
   end
 
   def search_getty_aat
-    @values.each do |value|
+    values.each do |value|
       results = search_getty(value)
 
       if results.empty? || !results['concept']['value'].include?('http://vocab.getty.edu/aat/')
@@ -141,7 +149,7 @@ class ValidationService
   end
 
   def search_getty_tgn
-    @values.each do |value|
+    values.each do |value|
       results = search_getty(value)
 
       if results.empty? || !results['concept']['value'].include?('http://vocab.getty.edu/tgn/')
