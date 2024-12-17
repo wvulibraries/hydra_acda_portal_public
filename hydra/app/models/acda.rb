@@ -34,8 +34,8 @@ class Acda < ActiveFedora::Base
       response = http.request(Net::HTTP::Get.new(uri))
     end
   
-    # update preview with final url
-    self.preview = uri.to_s
+    # update preview with final url only if it has changed
+    self.preview = uri.to_s if uri.to_s != self.preview
   end
 
   def generate_or_download_thumbnail
