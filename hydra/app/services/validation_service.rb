@@ -30,26 +30,46 @@ class ValidationService
     'dcterms:description' => -> { validate_free_text if values.present? }
   }
   class_attribute :actions, default: MAPPINGS
-  attr_accessor  :row, :row_number, :results, :header, :values
+  attr_accessor :path, :row, :row_number, :results, :header, :values
 
-  def initialize(row, row_number)
-    @row = row
-    @row_number = row_number
+  def initialize(path:)
+    @path = path
     @results = []
-    @header = nil
-    @values = []
   end
 
   def validate
-    @row.each_pair do |key, value|
+    csv_path = path
+    csv_data = File.read(csv_path)
+
+    headers = CSV.parse(csv_data, headers: true).headers
+    invalid_headers = headers - bulkrax_headers
+    results << invalid_headers.map { |header| { row: 1, header: header, message: "<strong>#{header}</strong> is an invalid header" } } if invalid_headers.present?
+
+    CSV.parse(csv_data, headers: true).each_with_index do |row, index|
+      validate_row(row: row, row_number: index + 2)
+    end
+
+    results
+  end
+
+  private
+
+  def validate_row(row:, row_number:)
+    @row = row
+    @row_number = row_number
+
+    row.each_pair do |key, value|
       @header = key
       @values = split_term(value:)
       validate_content
     end
-    @results
+    true
   end
 
-  private
+  def bulkrax_headers
+    # taking out the 'bulkrax_identifier' field because WVU csv's don't use it
+    Bulkrax.field_mappings["Bulkrax::CsvParser"].values.flat_map { |hash| hash[:from] } - ['bulkrax_identifier']
+  end
 
   def validate_content
     action = actions[header]
@@ -80,8 +100,8 @@ class ValidationService
   end
 
   def add_error(message)
-    @results << {
-      row: @row_number,
+    results << {
+      row: row_number,
       header: header,
       message: message
     }
