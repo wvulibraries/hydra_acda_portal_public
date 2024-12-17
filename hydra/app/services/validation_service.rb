@@ -148,16 +148,6 @@ class ValidationService
     end
   end
 
-  def search_getty_tgn
-    values.each do |value|
-      results = search_getty(value)
-
-      if results.empty? || !results['concept']['value'].include?('http://vocab.getty.edu/tgn/')
-        add_error("<strong>#{value}</strong> was not found in Getty TGN")
-      end
-    end
-  end
-
   def search_getty(value)
     endpoint = "https://vocab.getty.edu/sparql"
     query = <<~SPARQL
@@ -182,5 +172,30 @@ class ValidationService
     end
 
     JSON.parse(response.body)['results']['bindings'][0] || {}
+  end
+
+  # This is a very fragile approach to parsing the Getty TGN because
+  # it scrapes the HTML page and relies on the structure of the page.
+  # Ideally, we want to utilize the SPARQL endpoint for the Getty TGN
+  # as well but it doesn't seem to have the functionality to search by
+  # place type or at least we haven't found a way yet.
+  def search_getty_tgn
+    values.each do |value|
+      # We split the value because it looks something like "Maryland (state)" and this is
+      # what we want to store.  However we need to search Getty TGN with the name and
+      # place type separately.
+      match_data = value.match(/^(.*?)\s*\((.*?)\)$/)
+      next add_error("#{value} is not valid") unless match_data
+
+      name, place_type = match_data[1], match_data[2]
+      url = "https://www.getty.edu/vow/TGNServlet?english=Y&find=\"#{name}\"&place=#{place_type}&page=1&nation="
+      doc = Nokogiri::HTML(URI.open(url))
+      selector = "//td[@valign='bottom' and @colspan='2']/span[@class='page'][contains(., '(#{place_type})') and .//a/b[text()='#{name}']]"
+      element = doc.at_xpath(selector)
+
+      if element.nil? || element.children[0].text.strip != name || !element.children[1].text.include?(place_type)
+        add_error("<strong>#{value}</strong> was not found in Getty TGN")
+      end
+    end
   end
 end
