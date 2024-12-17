@@ -1,0 +1,11 @@
+<div class="container">
+  <h2>Validate Import File</h2>
+
+  <%= form_with(url: validate_path, local: true, multipart: true) do |form| %>
+    <div class="form-group">
+      <%= form.label :csv_file, "Upload CSV" %>
+      <%= form.file_field :csv_file, accept: ".csv" %>
+      <%= form.submit "Upload & Validate", class: 'btn btn-primary' %>
+    </div>
+  <% end %>
+</div>
