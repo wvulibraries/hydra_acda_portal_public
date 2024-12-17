@@ -1,6 +1,8 @@
 <div class="container">
   <h2>Validation Results</h2>
-
+    <div class="alert alert-default">
+      <%= params['csv_file'].original_filename %>
+    </div>
   <% if @results.any? %>
     <div class="alert alert-warning">
       Found <%= pluralize(@results.size, 'issue') %>
