@@ -27,7 +27,7 @@ class ValidationsController < ApplicationController
   private
 
   def submit_validate_job
-    ValidateJob.perform_later(path: @path, mail_to: params[:mail_to])
+    ValidateJob.perform_later(path: @path, file_name: params['csv_file'].original_filename, mail_to: params[:mail_to])
   end
 
   def validate_file

@@ -39,14 +39,17 @@ class ValidationService
 
   def validate
     csv_path = path
-    csv_data = File.read(csv_path)
+    if File.exist?(csv_path)
+      csv_data = File.read(csv_path)
 
-    headers = CSV.parse(csv_data, headers: true).headers
-    invalid_headers = headers - bulkrax_headers
-    results << invalid_headers.map { |header| { row: 1, header: header, message: "<strong>#{header}</strong> is an invalid header" } } if invalid_headers.present?
-
-    CSV.parse(csv_data, headers: true).each_with_index do |row, index|
-      validate_row(row: row, row_number: index + 2)
+      headers = CSV.parse(csv_data, headers: true).headers
+      invalid_headers = headers - bulkrax_headers
+      invalid_headers.map { |header| results << { row: 1, header: header, message: "<strong>#{header}</strong> is an invalid header" } } if invalid_headers.present?
+      CSV.parse(csv_data, headers: true).each_with_index do |row, index|
+        validate_row(row: row, row_number: index + 2)
+      end
+    else
+      results << { row: 1, header: "", message: "File missing at #{csv_path}" }
     end
 
     results
