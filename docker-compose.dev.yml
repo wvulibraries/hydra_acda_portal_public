@@ -21,6 +21,7 @@ services:
       - ./data/imports:/home/hydra/tmp/imports
       - ./data/exports:/home/hydra/tmp/exports
       - ./data/validations:/home/hydra/tmp/validations
+      - ./data/letter_opener:/home/hydra/tmp/letter_opener
       # don't mount tmp directory
       - /home/hydra/tmp
     networks:
