@@ -7,7 +7,7 @@
       <%= form.file_field :csv_file, accept: ".csv" %>
       <div>
         <%= form.check_box :background_job?, id: 'checkbox' %>
-        <%= form.label :background_job, "Run as Background Job and email results to " %>
+        <%= form.label :background_job, "Run as Background Job and email results to ", for: 'checkbox' %>
         <%= form.email_field :mail_to, placeholder: "Enter your email", id: 'mail_to' %>
       </div>
       <%= form.submit "Upload & Validate", class: 'btn btn-primary' %>

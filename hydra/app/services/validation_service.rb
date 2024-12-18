@@ -85,7 +85,7 @@ class ValidationService
     # ensure we always return an array for consistency with split function
     term = Array.wrap(value)
     return term if value.nil? || check_split[header] == false
-    value.split(split_on)
+    value.split(split_on).map(&:strip)
   end
 
   # Use Bulkrax to determine if this header is one we split

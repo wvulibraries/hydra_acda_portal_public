@@ -2,6 +2,8 @@
 
 class ValidationMailer < ApplicationMailer
   def email_validation(mail_to:, file_name:, content:)
+    @content = content
+
     # content is used by app/views/validation_mailer/email_validation.html.erb
     # to prepare body of email.
     email = mail(
