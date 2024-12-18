@@ -6,7 +6,7 @@ class ValidationMailer < ApplicationMailer
 
     # content is used by app/views/validation_mailer/email_validation.html.erb
     # to prepare body of email.
-    email = mail(
+    mail(
       :to => mail_to,
       :subject => "Validation results for file: #{file_name}",
       date: Time.now,
