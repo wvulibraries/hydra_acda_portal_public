@@ -45,6 +45,7 @@
 //= require partials/smooth_scroll
 //= require partials/cookie_modal
 //= require partials/nav_toggles
+//= require partials/toggle_required
 
 
 // For blacklight_range_limit built-in JS, if you don't want it you don't need

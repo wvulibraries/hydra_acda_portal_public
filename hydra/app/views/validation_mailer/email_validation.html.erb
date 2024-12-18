@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th, td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+    </style>
+  </head>
+  <body>
+    <% if @content.any? %>
+      <div class="alert alert-warning">
+        Found <%= pluralize(@content.size, 'issue') %>
+      </div>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Row</th>
+            <th>Field</th>
+            <th>Issue</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @content.each do |result| %>
+            <tr>
+              <td><%= result[:row] %></td>
+              <td><%= result[:header] %></td>
+              <td><%= result[:message].html_safe %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <div class="alert alert-success">
+        No validation issues found!
+      </div>
+    <% end %>
+  </body>
+</html>
