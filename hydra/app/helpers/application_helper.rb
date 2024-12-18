@@ -9,11 +9,11 @@ module ApplicationHelper
   end
 
   def render_page_description
-    'change me'
+    'The American Congress Digital Archives Portal is a collaborative, non-partisan project that aggregates congressional archives held by multiple institutions and makes the archives available online.'
   end
 
   def render_key_words
-    'change me'
+    'congress, government, legislation, policy, politics'
   end
 
   def render_html_safe_url(document)
@@ -29,7 +29,7 @@ module ApplicationHelper
       'home_text'
     end
   end 
-  
+
   def is_active_url?(url)
     # Example implementation: checks if the URL is accessible
     return false if url.blank?

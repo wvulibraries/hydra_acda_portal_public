@@ -5,19 +5,28 @@
    end
 %>
 
+<%# Ruby Page Variables %>
+<% id = document[:identifier_ssi].to_s %>
+<% description = document[:description_ssi].to_s %>
+<% preview = document[:preview_ssi].to_s %>
+<% title = document[:title_ssi].to_s %>
+
 <% # container for a single doc -%>
 <div class="document <%= render_document_class document %>" itemscope itemtype="<%= document.itemtype %>">
 	<div class="document-wrap">
-    <% id = document[:id] %>
 		<% description = document[:description_tesim].to_s %>
-		<% if document[:dc_type_ssi] == "Sound" %>
+        <% if is_active_url?(preview) %>
+          <%= image_tag(preview, title:"#{title}", alt:description, class:"full-size-responsive") %>
+        <% elsif document.thumbnail_file? %>
+          <%= image_tag("/thumb/#{id}.jpg", title:"#{title}", alt:description, class:"full-size-responsive") %>
+		<% elsif document[:dc_type_ssi] == "Sound" %>
 			<%= link_to_document document, render(:partial => 'audio_button'), class: "button audio-button" %>
 		<% elsif document[:dc_type_ssi]&.include? "Moving" %>
 			<%= link_to_document document, render(:partial => 'video_button'), class: "button video-button" %>
 		<% elsif (document.image_file? == false) && (document[:dc_type_ssi] == "Text") %>
 			<%= link_to_document document, render(:partial => 'pdf_button'), class: "button pdf-button" %>
 		<% else %>
-			<%= link_to_document document, image_tag("/thumb/#{id}", title:"#{document[:title_ssi]}", alt:description) %>
+			<%= link_to_document document, render(:partial => 'image_slash'), class: "button image-slash" %>   			
 		<% end %>
 
 		<div style="clear:both !important;"></div>
