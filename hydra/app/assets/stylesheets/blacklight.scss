@@ -54,9 +54,9 @@
         float: left;
         border-bottom: none;
         .document-wrap {
-            border: 1px solid #D9D9D9;    
+            border: 1px solid #D9D9D9;
             width: 100%;
-            height: 100%;        
+            height: 100%;
             .awrap {
                 width: 100%;
                 z-index: 2;
@@ -92,7 +92,7 @@
             dd, dt {
                 text-align: left;
                 padding-left: 20px;
-            }        
+            }
         }
     }
 }
@@ -116,12 +116,12 @@
     }
     .bg-success, .facet-limit-active .card-header {
         background-color: $gray !important;
-    
-        
+
+
     }
     .facet-limit-active {
         --bs-border-opacity: 1;
-        border-color: $gray !important; 
+        border-color: $gray !important;
     }
     .text-success, .facet-values li .selected{
         color: $accent-orange3 !important;
@@ -169,4 +169,9 @@
     .pagination {
         margin: 20px 10vw;
         }
+}
+
+#main-container {
+    // accounting for the height of the footer
+    margin-bottom: 105px;
 }

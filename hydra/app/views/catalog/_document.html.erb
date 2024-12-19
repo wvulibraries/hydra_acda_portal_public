@@ -1,41 +1,16 @@
-<% if params[:q].present?
-     @page_title = t('blacklight.search.page_title.title', :constraints => render_search_to_page_title(params), :application_name => application_name)
-   else
-	 @page_title = "Browsing #{application_name}"
-   end
+<%#
+  OVERRIDE: Blaclight v7.40.0 to render the thumbnail at the bottom of the document card
 %>
 
-<%# Ruby Page Variables %>
-<% id = document[:identifier_ssi].to_s %>
-<% description = document[:description_ssi].to_s %>
-<% preview = document[:preview_ssi].to_s %>
-<% title = document[:title_ssi].to_s %>
-
 <% # container for a single doc -%>
-<div class="document <%= render_document_class document %>" itemscope itemtype="<%= document.itemtype %>">
-	<div class="document-wrap">
-		<% description = document[:description_tesim].to_s %>
-        <% if is_active_url?(preview) %>
-          <%= image_tag(preview, title:"#{title}", alt:description, class:"full-size-responsive") %>
-        <% elsif document.thumbnail_file? %>
-          <%= image_tag("/thumb/#{id}.jpg", title:"#{title}", alt:description, class:"full-size-responsive") %>
-		<% elsif document[:dc_type_ssi] == "Sound" %>
-			<%= link_to_document document, render(:partial => 'audio_button'), class: "button audio-button" %>
-		<% elsif document[:dc_type_ssi]&.include? "Moving" %>
-			<%= link_to_document document, render(:partial => 'video_button'), class: "button video-button" %>
-		<% elsif (document.image_file? == false) && (document[:dc_type_ssi] == "Text") %>
-			<%= link_to_document document, render(:partial => 'pdf_button'), class: "button pdf-button" %>
-		<% else %>
-			<%= link_to_document document, render(:partial => 'image_slash'), class: "button image-slash" %>   			
-		<% end %>
-
-		<div style="clear:both !important;"></div>
-
-	    <%= render_document_partials(document, blacklight_config.view_config(document_index_view_type).partials, :document_counter => document_counter).html_safe %>
-
-		<div class="bookmark">
-			<% # bookmark functions for items/docs -%>
-			<%= render_index_doc_actions document, :wrapping_class => "index-document-functions col-sm-3 col-lg-2" %>
-		</div>
-	</div>
-</div>
+<% view_config = local_assigns[:view_config] || blacklight_config.view_config(document_index_view_type) %>
+<%= render (view_config.document_component || Blacklight::DocumentComponent).new(presenter: document_presenter(document), counter: document_counter_with_offset(document_counter)) do |component| %>
+  <% component.public_send(view_config.document_component.blank? && view_config.partials.any? ? :with_body : :with_partial) do %>
+    <%= render_document_partials document, view_config.partials, component: component, document_counter: document_counter %>
+    <div class="bookmark">
+      <div class="index-document-functions col-sm-3 col-lg-2">
+        <%= render Blacklight::Document::BookmarkComponent.new(document:) %>
+      </div>
+    </div>
+  <% end %>
+<% end %>
