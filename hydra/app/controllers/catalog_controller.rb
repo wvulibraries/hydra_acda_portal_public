@@ -16,6 +16,7 @@ class CatalogController < ApplicationController
     # default advanced config values
     config.advanced_search ||= Blacklight::OpenStructWithHashAccess.new
     # config.advanced_search[:qt] ||= 'advanced'
+    config.advanced_search[:enabled] = true
     config.advanced_search[:url_key] ||= 'advanced'
     config.advanced_search[:query_parser] ||= 'dismax'
     config.advanced_search[:form_solr_parameters] ||= {}
@@ -66,6 +67,7 @@ class CatalogController < ApplicationController
     config.index.display_type_field = 'has_model_ssim'
     config.index.partials = %i[index_header index] # remove default rendering of thumbnail because we want it in a different location
     config.index.thumbnail_method = :render_thumbnail # see ApplicationHelper#render_thumbnail
+    config.index.search_bar_component = Wvu::SearchBarComponent
 
     # QF Builder
     config.default_solr_params = {
