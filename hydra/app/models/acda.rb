@@ -8,10 +8,13 @@ class Acda < ActiveFedora::Base
   include ImportLibrary
   include ApplicationHelper
 
-  # before_save :update_preview # this is to insure preview is the actual url for the thumbnail
-  after_create :generate_or_download_thumbnail
-  after_save :clear_empty_fields
-  # after_save :generate_or_download_thumbnail if :saved_change_to_available_by?
+  before_save :update_preview # this is to insure preview is the actual url for the thumbnail
+  after_save :clear_empty_fields_and_generate_thumbnail
+
+  def clear_empty_fields_and_generate_thumbnail
+    clear_empty_fields
+    generate_or_download_thumbnail if saved_change_to_available_by?
+  end
 
   def saved_change_to_available_by?
     previous_changes['available_by'].present? || thumbnail_file.blank?
