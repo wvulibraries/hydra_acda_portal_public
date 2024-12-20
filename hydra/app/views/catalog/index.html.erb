@@ -3,5 +3,12 @@
 </div>
 
 <div id="content" class="col-md-9 col-sm-8">
+  <!-- Note: The next two lines were added from blacklight partial _search_results, as the
+       collection layout does not yield collection header content, and to get it into the
+       9 column position, we needed to put it here. The new version of index calls the
+       search results partial, so this will be reworked when index and layout are reworked. -->
+  <%= render 'search_results_header' %>
+  <%= render 'constraints' %>
+
   <%= render catalog_page_render %>
 </div>
