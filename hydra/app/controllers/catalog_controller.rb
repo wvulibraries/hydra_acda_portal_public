@@ -16,9 +16,24 @@ class CatalogController < ApplicationController
     # default advanced config values
     config.advanced_search ||= Blacklight::OpenStructWithHashAccess.new
     # config.advanced_search[:qt] ||= 'advanced'
+    config.advanced_search[:enabled] = true
     config.advanced_search[:url_key] ||= 'advanced'
     config.advanced_search[:query_parser] ||= 'dismax'
     config.advanced_search[:form_solr_parameters] ||= {}
+
+    config.add_results_document_tool(:bookmark, partial: 'bookmark_control', if: :render_bookmarks_control?)
+
+    config.add_results_collection_tool(:sort_widget)
+    config.add_results_collection_tool(:per_page_widget)
+    config.add_results_collection_tool(:view_type_group)
+
+    config.add_show_tools_partial(:bookmark, partial: 'bookmark_control', if: :render_bookmarks_control?)
+    config.add_show_tools_partial(:email, callback: :email_action, validator: :validate_email_params)
+    config.add_show_tools_partial(:sms, if: :render_sms_action?, callback: :sms_action, validator: :validate_sms_params)
+    config.add_show_tools_partial(:citation)
+
+    config.add_nav_action(:bookmark, partial: 'blacklight/nav/bookmark', if: :render_bookmarks_control?)
+    config.add_nav_action(:search_history, partial: 'blacklight/nav/search_history')
 
     ## Class for sending and receiving requests from a search index
     # config.repository_class = Blacklight::Solr::Repository
@@ -50,6 +65,9 @@ class CatalogController < ApplicationController
     # search config
     config.index.title_field = 'title_tesim'
     config.index.display_type_field = 'has_model_ssim'
+    config.index.partials = %i[index_header index] # remove default rendering of thumbnail because we want it in a different location
+    config.index.thumbnail_method = :render_thumbnail # see ApplicationHelper#render_thumbnail
+    config.index.search_bar_component = Wvu::SearchBarComponent
 
     # QF Builder
     config.default_solr_params = {
@@ -92,17 +110,17 @@ class CatalogController < ApplicationController
     # Index ---------------------------------------------
     # The ordering of the field names is the order of the display
     config.add_index_field solr_name('identifier', :stored_searchable), label: 'Identifier'
-    config.add_index_field solr_name('contributing_institution', :stored_searchable, type: :string), label: 'Contributing Institution', link_to_search: :contributing_institution_sim
-    config.add_index_field solr_name('collection_title', :stored_searchable), label: 'Collection', link_to_search: :collection_title_sim
+    config.add_index_field solr_name('contributing_institution', :stored_searchable, type: :string), label: 'Contributing Institution', helper_method: :render_html_safe_url
+    config.add_index_field solr_name('collection_title', :stored_searchable), label: 'Collection', helper_method: :render_html_safe_url
     config.add_index_field solr_name('title', :stored_searchable, type: :string), label: 'Title'
-    config.add_index_field solr_name('date', :stored_searchable, type: :string), label: 'Date', link_to_search: :date_sim
-    config.add_index_field solr_name('creator', :stored_searchable, type: :string), label: 'Creator', link_to_search: :creator_sim
-    config.add_index_field solr_name('publisher', :stored_searchable, type: :string), label: 'Publisher', link_to_search: :publisher_sim
-    config.add_index_field solr_name('policy_area', :stored_searchable, type: :string), label: 'Policy Area', link_to_search: :policy_area_sim
-    config.add_index_field solr_name('names', :stored_searchable), label: 'Names', link_to_search: :names_sim
-    config.add_index_field solr_name('topic', :stored_searchable, type: :string), label: 'Topic', link_to_search: :topic_sim
-    config.add_index_field solr_name('congress', :stored_searchable, type: :string), label: 'Congress', link_to_search: :congress_sim
-    config.add_index_field solr_name('location_respresented', :stored_searchable, type: :string), label: 'Location Respresented', link_to_search: :location_represented_sim
+    config.add_index_field solr_name('date', :stored_searchable, type: :string), label: 'Date', helper_method: :render_html_safe_url
+    config.add_index_field solr_name('creator', :stored_searchable, type: :string), label: 'Creator', helper_method: :render_html_safe_url
+    config.add_index_field solr_name('publisher', :stored_searchable, type: :string), label: 'Publisher', helper_method: :render_html_safe_url
+    config.add_index_field solr_name('policy_area', :stored_searchable, type: :string), label: 'Policy Area', helper_method: :render_html_safe_url
+    config.add_index_field solr_name('names', :stored_searchable), label: 'Names', helper_method: :render_html_safe_url
+    config.add_index_field solr_name('topic', :stored_searchable, type: :string), label: 'Topic', helper_method: :render_html_safe_url
+    config.add_index_field solr_name('congress', :stored_searchable, type: :string), label: 'Congress', helper_method: :render_html_safe_url
+    config.add_index_field solr_name('location_respresented', :stored_searchable, type: :string), label: 'Location Respresented', helper_method: :render_html_safe_url
 
     # Show ---------------------------------------------
     # show fields in the objects
@@ -232,5 +250,4 @@ class CatalogController < ApplicationController
       }
     end
   end
-
 end

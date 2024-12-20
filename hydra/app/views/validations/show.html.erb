@@ -1,0 +1,36 @@
+<div class="container">
+  <h2>Validation Results</h2>
+    <div class="alert alert-default">
+      <%= params['csv_file'].original_filename %>
+    </div>
+  <% if @results.any? %>
+    <div class="alert alert-warning">
+      Found <%= pluralize(@results.size, 'issue') %>
+    </div>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Row</th>
+          <th>Field</th>
+          <th>Issue</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @results.each do |result| %>
+          <tr>
+            <td><%= result[:row] %></td>
+            <td><%= result[:header] %></td>
+            <td><%= result[:message].html_safe %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="alert alert-success">
+      No validation issues found!
+    </div>
+  <% end %>
+
+  <%= link_to 'Validate Another File', validate_path, class: 'btn btn-primary' %>
+</div>

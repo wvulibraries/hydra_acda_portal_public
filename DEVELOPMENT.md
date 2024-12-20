@@ -124,6 +124,10 @@ To get data into the app:
 - You will have to log into the popup.  The username is in `ENV['BULKRAX_USERNAME']` and the password is in `ENV['BULKRAX_PW']`.  For local development, see [./env/env.dev.hydra](./env/env.dev.hydra).
   - Barring that, shell into the web container (e.g. `docker compose -f docker-compose.dev.yml exec web bash`) and run `echo "$BULKRAX_USERNAME:$BULKRAX_PW"`.
 
+### Emails
+
+Emails sent in development mode can be viewed at `http://localhost:3000/letter_opener/`
+
 ### Specs
 
 To run specs, bash into your `web` or `workers` container and run `rspec`.

@@ -87,6 +87,14 @@ gem 'devise-guests', '~> 0.5'
 # =====================================================
 gem 'qa'
 
+# EDTF-Ruby
+# =====================================================
+gem 'edtf'
+
+# ISO 639
+# =====================================================
+gem 'iso-639'
+
 # Capistrano
 # =====================================================
 # gem 'capistrano-rails'
@@ -108,6 +116,7 @@ group :test do
 end
 
 group :development do
+  gem 'letter_opener_web'
   gem 'web-console', '>= 3.3.0'
   gem 'spring', '< 4.0.0'
 end

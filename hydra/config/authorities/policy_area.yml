@@ -1,67 +1,100 @@
 terms:
   - id: Agriculture and Food
     term: Agriculture and Food
+    active: true
   - id: Animals
     term: Animals
+    active: true
   - id: Armed Forces and National Security
     term: Armed Forces and National Security
+    active: true
   - id: Arts, Culture, Religious
     term: Arts, Culture, Religious
+    active: true
   - id: Civil Rights and Liberties, Minority Issues
     term: Civil Rights and Liberties, Minority Issues
+    active: true
   - id: Commerce
     term: Commerce
+    active: true
   - id: Congress
     term: Congress
+    active: true
   - id: Constituent Relations
     term: Constituent Relations
+    active: true
   - id: Crime and Law Enforcement
     term: Crime and Law Enforcement
+    active: true
   - id: Economics and Public Finance
     term: Economics and Public Finance
+    active: true
   - id: Education
     term: Education
+    active: true
   - id: Emergency Management
     term: Emergency Management
+    active: true
   - id: Energy
     term: Energy
+    active: true
   - id: Environmental Protection
     term: Environmental Protection
+    active: true
   - id: Families
     term: Families
+    active: true
   - id: Finance and Financial Sector
     term: Finance and Financial Sector
+    active: true
   - id: Foreign Trade and International Finance
     term: Foreign Trade and International Finance
+    active: true
   - id: Government Operations and Politics
     term: Government Operations and Politics
+    active: true
   - id: Health
     term: Health
+    active: true
   - id: Housing and Community Development
     term: Housing and Community Development
+    active: true
   - id: Immigration
     term: Immigration
+    active: true
   - id: International Affairs
     term: International Affairs
+    active: true
   - id: Labor and Employment
     term: Labor and Employment
+    active: true
   - id: Law
     term: Law
+    active: true
   - id: Native Americans
     term: Native Americans
+    active: true
   - id: Public Lands and Natural Resources
     term: Public Lands and Natural Resources
+    active: true
   - id: Science, Technology, Communications
     term: Science, Technology, Communications
+    active: true
   - id: Social Sciences and History
     term: Social Sciences and History
+    active: true
   - id: Social Welfare
     term: Social Welfare
+    active: true
   - id: Sports and Recreation
     term: Sports and Recreation
+    active: true
   - id: Taxation
     term: Taxation
+    active: true
   - id: Transportation and Public Works
     term: Transportation and Public Works
+    active: true
   - id: Water Resources Development
     term: Water Resources Development
+    active: true

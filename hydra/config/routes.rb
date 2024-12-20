@@ -19,6 +19,8 @@ Rails.application.routes.draw do
   get '/partners' => 'catalog#partners'
   get '/policies' => 'catalog#policies'
   get '/contributingcollections' => 'catalog#contributingcollections'
+  get '/validate' => 'validations#upload'
+  post '/validate' => 'validations#show'
 
   # featured
   get '/featured' => 'featured#index'
@@ -62,4 +64,7 @@ Rails.application.routes.draw do
   mount Sidekiq::Web => '/sidekiq'
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+
+  # Access your emails by visiting http://localhost:3000/letter_opener in your browser.
+  mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
 end
