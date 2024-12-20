@@ -10,12 +10,12 @@ require 'active_fedora'
 project = 'acda'
 
 # get the identifier 
-puts "Are you sure you want to delete #{Rails.env} #{project}?"
-answer = gets.to_s
-answer.downcase!
-answer.strip!
+# puts "Are you sure you want to delete #{Rails.env} #{project}?"
+# answer = gets.to_s
+# answer.downcase!
+# answer.strip!
 
-if (answer == 'y' || answer == 'yes' || answer == true || answer == 1)
+# if (answer == 'y' || answer == 'yes' || answer == true || answer == 1)
   # delete the project
   # records = ActiveFedora::Base.where(project_tesim: project)
   records = ActiveFedora::Base.all
@@ -26,6 +26,6 @@ if (answer == 'y' || answer == 'yes' || answer == true || answer == 1)
       puts "No records found for project -- #{project}"
     end
     puts "Destroyed the project -- #{project}"
-else 
-  puts "Aborted."
-end
+# else 
+#   puts "Aborted."
+# end
