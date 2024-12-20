@@ -44,6 +44,7 @@ class SolrDocument
     identifier: 'identifier_tesim',
     preview: 'preview_tesim',
     available_at: 'available_at_tesim',
+    available_by: 'available_by_tesim',
     record_type: 'record_type_tesim',
     policy_area: 'policy_area_tesim',
     topic: 'topic_tesim',

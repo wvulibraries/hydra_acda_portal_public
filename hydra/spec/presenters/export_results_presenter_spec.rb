@@ -40,8 +40,12 @@ RSpec.describe ExportResultsPresenter do
     "preview_ssi"=>
       "https://dolearchives.omeka.net/exhibits/show/voices-from-the-big-first/item/323",
     "available_at_tesim"=>
-      ["https://dolearchives.omeka.net/exhibits/show/voices-from-the-big-first/item/323"],
+      ["https://dolearchives.omeka.net/exhibits/show/voices-from-the-big-first/item/323"],      
     "available_at_ssi"=>
+      "https://dolearchives.omeka.net/exhibits/show/voices-from-the-big-first/item/323",
+      "available_by_tesim"=>
+      ["https://dolearchives.omeka.net/exhibits/show/voices-from-the-big-first/item/323"],      
+    "available_by_ssi"=>
       "https://dolearchives.omeka.net/exhibits/show/voices-from-the-big-first/item/323",
     "record_type_tesim"=>["black-and-white photograph"],
     "record_type_ssi"=>"black-and-white photograph",
@@ -99,6 +103,8 @@ RSpec.describe ExportResultsPresenter do
     "preview_ssi"=>"https://www.youtube.com/watch?v=LSqyFpjhe3g",
     "available_at_tesim"=>["https://dolearchives.omeka.net/items/show/234"],
     "available_at_ssi"=>"https://dolearchives.omeka.net/items/show/234",
+    "available_by_tesim"=>["https://dolearchives.omeka.net/items/show/234"],
+    "available_by_ssi"=>"https://dolearchives.omeka.net/items/show/234",    
     "record_type_tesim"=>["moving image"],
     "record_type_ssi"=>"moving image",
     "policy_area_tesim"=>["Agriculture and Food, Health, International Affairs"],

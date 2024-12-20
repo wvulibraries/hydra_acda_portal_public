@@ -6,39 +6,47 @@ class Acda < ActiveFedora::Base
   include Hydra::AccessControls::Permissions
 
   include ImportLibrary
+  include ApplicationHelper
 
-  before_save :fetch_final_url # this is to insure preview is the actual url for the thumbnail
-  after_create :generate_or_download_thumbnail #, if: -> { self.preview? || self.available_by? }
+  # before_save :update_preview # this is to insure preview is the actual url for the thumbnail
+  after_create :generate_or_download_thumbnail
   after_save :clear_empty_fields
-  after_save :generate_or_download_thumbnail, if: :saved_change_to_preview?
+  # after_save :generate_or_download_thumbnail if :saved_change_to_available_by?
 
-  def saved_change_to_preview?
-    previous_changes['preview'].present? || thumbnail_file.blank?
+  def saved_change_to_available_by?
+    previous_changes['available_by'].present? || thumbnail_file.blank?
   end
 
   self.indexer = ::Indexer
 
-  def fetch_final_url
-    uri = URI.parse(self.preview)
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = (uri.scheme == "https")
-  
-    request = Net::HTTP::Get.new(uri.request_uri)
-  
-    response = http.request(request)
-  
-    # Follow redirects
-    while response.is_a?(Net::HTTPRedirection)
-      new_url = response['location']
-      uri = URI.parse(new_url)
-      response = http.request(Net::HTTP::Get.new(uri))
+  def update_preview
+    # check if preview is blank
+    if self.preview.blank?
+      # lets try to find the preview (thumbnail) from available_at
+      self.preview = generate_preview
+
+      # if preview is still blank, return
+      return if self.preview.blank?
     end
-  
-    # update preview with final url only if it has changed
-    self.preview = uri.to_s if uri.to_s != self.preview
+
+    # resolve redirect for preview
+    updated_preview = resolve_redirect(self.preview)
+
+    # update preview if it has changed
+    self.preview = updated_preview if updated_preview != preview 
   end
 
-  def generate_or_download_thumbnail
+  def generate_preview
+    # check and see if available_at is a preservica.com address
+    if available_at.include?('preservica.com')
+      # add download/thumbnail/ after the preservica.com to the url
+      # then check if the url is valid
+      preservica_url = available_at.gsub('preservica.com', 'preservica.com/download/thumbnail')
+      return preservica_url
+    end
+  end
+
+  def generate_or_download_thumbnail 
     if preview.present?
       # queue job to download and set the thumbnail
       # using the available_at url
@@ -176,7 +184,7 @@ class Acda < ActiveFedora::Base
 
   # EDM preview - (link to external thumbnail image)
   # ==============================================================================================================
-  # preview property - (link to external thumbnail image)
+  # preview property
   property :preview, predicate: ::RDF::Vocab::EDM.preview, multiple: false do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
   end

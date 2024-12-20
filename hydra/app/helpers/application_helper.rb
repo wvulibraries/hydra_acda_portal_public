@@ -1,3 +1,6 @@
+require 'net/http'
+require 'addressable/uri'
+
 module ApplicationHelper
 
   def application_name
@@ -52,14 +55,21 @@ module ApplicationHelper
   end
 
   def is_active_url?(url)
-    # Example implementation: checks if the URL is accessible
     return false if url.blank?
-
+  
     begin
-      uri = URI.parse(url)
+      sanitized_url = sanitize_url(url) # Sanitize the URL
+      resolved_url = resolve_redirect(sanitized_url) # Resolve any redirects
+      uri = URI.parse(resolved_url)
       response = Net::HTTP.get_response(uri)
-      response.is_a?(Net::HTTPSuccess)
-    rescue
+  
+      # Check if the response indicates success or redirection
+      response.is_a?(Net::HTTPSuccess) || response.is_a?(Net::HTTPRedirection)
+    rescue URI::InvalidURIError => e
+      Rails.logger.error "Invalid URL: #{url}. #{e.message}"
+      false
+    rescue StandardError => e
+      Rails.logger.error "Failed to check URL activity for #{url}: #{e.message}"
       false
     end
   end
@@ -77,4 +87,37 @@ module ApplicationHelper
 
     display_value.html_safe
   end
+
+  def resolve_redirect(url)
+    sanitized_url = sanitize_url(url) # Sanitize the URL before parsing
+    uri = URI.parse(sanitized_url)
+    response = Net::HTTP.get_response(uri)
+  
+    case response
+    when Net::HTTPRedirection
+      # Follow the redirect and resolve recursively
+      location = response['location']
+      Rails.logger.info "Redirected: #{url} -> #{location}"
+      resolve_redirect(location)
+    else
+      # Return the current URL if no redirects
+      sanitized_url
+    end
+  rescue URI::InvalidURIError => e
+    Rails.logger.error "Invalid URL while resolving redirect: #{url}. #{e.message}"
+    url # Return the original URL in case of an error
+  rescue StandardError => e
+    Rails.logger.error "Failed to resolve URL #{url}: #{e.message}"
+    url
+  end
+
+  def sanitize_url(url)
+    Addressable::URI.parse(url).normalize.to_s
+  end
+
+  def record_has_thumbnail?(id)
+    record = Acda.find(id)
+    record.thumbnail_file.present?
+  end
+
 end

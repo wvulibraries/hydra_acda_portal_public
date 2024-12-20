@@ -61,6 +61,7 @@ Rails.application.config.to_prepare do
         'topic' => { from: ['http://lib.wvu.edu/hydra/subject'], split: true },
         'preview' => { from: ['edm:preview'] },
         'available_at' => { from: ['edm:isShownAt'] },
+        'available_by' => { from: ['edm:isShownBy'] },       
         'description' => { from: ['dcterms:description'] },
         'names' => { from: ['dcterms:contributor'], split: true },
         'dc_type' => { from: ['dcterms:type'] },
