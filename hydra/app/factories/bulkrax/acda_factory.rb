@@ -6,7 +6,7 @@ module Bulkrax
   class AcdaFactory < ObjectFactory
     def initialize(**kwargs)
       @user = user || batch_user
-      super(user: @user, **kwargs)
+      super(**kwargs, user: @user)
     end
 
     # Override if we need to map the attributes from the parser in

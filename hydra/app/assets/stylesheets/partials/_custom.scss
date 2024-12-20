@@ -38,8 +38,17 @@ html, form, nav, div {
 			color: #fff;
 			text-shadow: 1px 4px 10px rgba(0,0,0,0.5);
 			font-weight: 800;
+			text-decoration: none;
 		}
 	  }
+
+	.user-util-links {
+		.nav-item {
+			display: flex;
+			align-items: center;
+			white-space: nowrap
+		}
+	}
 
 	.navbar-right {
 	  margin-right: 0;
@@ -61,7 +70,6 @@ html, form, nav, div {
 	display: inline-block;
 	width: 100px;
 	height: 100px;
-	margin-top: 30px;
 	background: url("white-logo.png");
 	background-size: contain;
 	background-repeat: no-repeat;
@@ -202,6 +210,7 @@ html, form, nav, div {
 			display: block;
 			color: #fff;
 			margin: 0px;
+			text-decoration: none;
 		  }
 		}
 
@@ -639,9 +648,9 @@ html, form, nav, div {
 }
 
 /*********************************************************************
-  1301px and up
+  1632px and up
 **********************************************************************/
-@media screen and (min-width: 1301px) {
+@media screen and (min-width: 1632px) {
   .sticky-header {
     height: 35px;
 
@@ -656,4 +665,36 @@ html, form, nav, div {
       }
     }
   }
+}
+
+/*********************************************************************
+	992px and up
+**********************************************************************/
+@media screen and (min-width: 992px) {
+	.user-util-links {
+		.navbar-nav {
+			flex-direction: row;
+		}
+	}
+}
+
+/*********************************************************************
+  991px and below
+**********************************************************************/
+@media screen and (max-width: 991px) {
+  .sticky-header {
+    .sticky-header-nav {
+      ul {
+        li {
+          margin: 0 15px 0 0;
+        }
+      }
+    }
+  }
+
+	.user-util-links {
+		.navbar-nav {
+			flex-direction: column;
+		}
+	}
 }
