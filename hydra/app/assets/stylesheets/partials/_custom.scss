@@ -23,7 +23,7 @@ html, form, nav, div {
 	  text-align: left;
 	  font-family: "Helvetica Neue", "Helvetica","Roboto", Arial, sans-serif;
  }
-  .collection-header {
+.collection-header {
 	background: #1d2228;
 	background-size: cover;
 	margin-bottom: 20px;
@@ -33,14 +33,14 @@ html, form, nav, div {
 	  display: block;
 	  float: left;
 	  width: 100%;
-	font-size: 32px;
+		font-size: 32px;
 	  a {
 			color: #fff;
 			text-shadow: 1px 4px 10px rgba(0,0,0,0.5);
 			font-weight: 800;
 			text-decoration: none;
 		}
-	  }
+	}
 
 	.user-util-links {
 		.nav-item {
@@ -51,25 +51,34 @@ html, form, nav, div {
 	}
 
 	.navbar-right {
-	  margin-right: 0;
-	  float: left;
-	  width: 100%;
+		margin-right: 0;
+		float: left;
+		width: 100%;
 
-	  a {
+		.navbar-nav{
+			flex-direction: row;
+		}
+
+		a {
 		color: #fff;
 			&:hover {
 				color: black;
+				background-color: white;
 			}
 		}
 	}
 }
+
 #csl-citation {
 	text-align: left;
 }
+
 #logo {
 	display: inline-block;
 	width: 100px;
 	height: 100px;
+	margin-top: 25px;
+	margin-bottom: 25px;
 	background: url("white-logo.png");
 	background-size: contain;
 	background-repeat: no-repeat;
@@ -639,12 +648,20 @@ html, form, nav, div {
 }
 
 /*********************************************************************
-  937px and up
+  988px and up
 **********************************************************************/
-@media screen and (min-width: 937px) {
+@media screen and (min-width: 988px) {
   #logo {
     float: left;
   }
+
+	.user-util-links {
+		padding-top: 0;
+
+		.navbar-nav {
+			flex-direction: row;
+		}
+	}
 }
 
 /*********************************************************************
@@ -668,10 +685,12 @@ html, form, nav, div {
 }
 
 /*********************************************************************
-	992px and up
+	1155px and up
 **********************************************************************/
-@media screen and (min-width: 992px) {
+@media screen and (min-width: 1155px) {
 	.user-util-links {
+		padding-top: 50px;
+
 		.navbar-nav {
 			flex-direction: row;
 		}
