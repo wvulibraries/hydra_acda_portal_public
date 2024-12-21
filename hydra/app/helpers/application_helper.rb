@@ -36,7 +36,7 @@ module ApplicationHelper
   def render_thumbnail(document, options = {})
     description = document[:description_tesim].to_s
     title = document[:title_tesim]&.first.to_s
-    preview = document[:preview_ssim]&.first
+    preview = document[:preview_tesim]&.first.to_s 
     id = document[:id]
 
     if preview.present? && is_active_url?(preview)
