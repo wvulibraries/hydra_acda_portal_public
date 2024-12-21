@@ -23,7 +23,7 @@ html, form, nav, div {
 	  text-align: left;
 	  font-family: "Helvetica Neue", "Helvetica","Roboto", Arial, sans-serif;
  }
-  .collection-header {
+.collection-header {
 	background: #1d2228;
 	background-size: cover;
 	margin-bottom: 20px;
@@ -33,35 +33,43 @@ html, form, nav, div {
 	  display: block;
 	  float: left;
 	  width: 100%;
-	font-size: 32px;
-	  a {
-			color: #fff;
-			text-shadow: 1px 4px 10px rgba(0,0,0,0.5);
-			font-weight: 800;
-		}
+		font-size: 32px;
+			a {
+				color: #fff;
+				text-shadow: 1px 4px 10px rgba(0,0,0,0.5);
+				font-weight: 800;
+			}
 	  }
 
 	.navbar-right {
-	  margin-right: 0;
-	  float: left;
-	  width: 100%;
+		margin-right: 0;
+		float: left;
+		width: 100%;
+		
+		.navbar-nav{
+			flex-direction: row;
+		}
 
-	  a {
+		a {
 		color: #fff;
 			&:hover {
 				color: black;
+				background-color: white;
 			}
 		}
 	}
 }
+
 #csl-citation {
 	text-align: left;
 }
+
 #logo {
 	display: inline-block;
 	width: 100px;
 	height: 100px;
 	margin-top: 30px;
+	margin-bottom: 25px;
 	background: url("white-logo.png");
 	background-size: contain;
 	background-repeat: no-repeat;

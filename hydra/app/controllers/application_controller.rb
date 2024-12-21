@@ -3,6 +3,7 @@ class ApplicationController < ActionController::Base
   # Adds a few additional behaviors into the application controller
   include Blacklight::Controller
   include Hydra::Controller::ControllerBehavior
+  include Blacklight::TokenBasedUser
   before_action :authenticate_if_needed
 
   layout 'collection'
@@ -26,6 +27,6 @@ class ApplicationController < ActionController::Base
   end
 
   def current_user
-    super || guest_user
+    @current_user || nil
   end
 end
