@@ -1,16 +1,18 @@
-<div id="export-results" class="btn-group">
-  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-    Export <span class="caret"></span>
+<div id="export-results" class="dropdown">
+  <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+    Export
   </button>
 
   <ul class="dropdown-menu">
     <li><%= link_to "Export to CSV", catalog_export_path(rows: @response.total,
-                                                         format: :csv,
-                                                         search_field: export_params[:search_field],
-                                                         q: export_params[:q]) %></li>
+                                                        format: :csv,
+                                                        search_field: export_params[:search_field],
+                                                        q: export_params[:q]),
+                                                        class: "dropdown-item" %></li>
     <li><%= link_to "Export to XML", catalog_export_path(rows: @response.total,
-                                                         format: :xml,
-                                                         search_field: export_params[:search_field],
-                                                         q: export_params[:q]) %></li>
+                                                        format: :xml,
+                                                        search_field: export_params[:search_field],
+                                                        q: export_params[:q]),
+                                                        class: "dropdown-item" %></li>
   </ul>
 </div>

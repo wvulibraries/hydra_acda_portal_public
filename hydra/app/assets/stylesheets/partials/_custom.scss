@@ -34,18 +34,27 @@ html, form, nav, div {
 	  float: left;
 	  width: 100%;
 		font-size: 32px;
-			a {
-				color: #fff;
-				text-shadow: 1px 4px 10px rgba(0,0,0,0.5);
-				font-weight: 800;
-			}
-	  }
+	  a {
+			color: #fff;
+			text-shadow: 1px 4px 10px rgba(0,0,0,0.5);
+			font-weight: 800;
+			text-decoration: none;
+		}
+	}
+
+	.user-util-links {
+		.nav-item {
+			display: flex;
+			align-items: center;
+			white-space: nowrap
+		}
+	}
 
 	.navbar-right {
 		margin-right: 0;
 		float: left;
 		width: 100%;
-		
+
 		.navbar-nav{
 			flex-direction: row;
 		}
@@ -68,7 +77,7 @@ html, form, nav, div {
 	display: inline-block;
 	width: 100px;
 	height: 100px;
-	margin-top: 30px;
+	margin-top: 25px;
 	margin-bottom: 25px;
 	background: url("white-logo.png");
 	background-size: contain;
@@ -210,6 +219,7 @@ html, form, nav, div {
 			display: block;
 			color: #fff;
 			margin: 0px;
+			text-decoration: none;
 		  }
 		}
 
@@ -638,18 +648,26 @@ html, form, nav, div {
 }
 
 /*********************************************************************
-  937px and up
+  988px and up
 **********************************************************************/
-@media screen and (min-width: 937px) {
+@media screen and (min-width: 988px) {
   #logo {
     float: left;
   }
+
+	.user-util-links {
+		padding-top: 0;
+
+		.navbar-nav {
+			flex-direction: row;
+		}
+	}
 }
 
 /*********************************************************************
-  1301px and up
+  1632px and up
 **********************************************************************/
-@media screen and (min-width: 1301px) {
+@media screen and (min-width: 1632px) {
   .sticky-header {
     height: 35px;
 
@@ -664,4 +682,38 @@ html, form, nav, div {
       }
     }
   }
+}
+
+/*********************************************************************
+	1155px and up
+**********************************************************************/
+@media screen and (min-width: 1155px) {
+	.user-util-links {
+		padding-top: 50px;
+
+		.navbar-nav {
+			flex-direction: row;
+		}
+	}
+}
+
+/*********************************************************************
+  991px and below
+**********************************************************************/
+@media screen and (max-width: 991px) {
+  .sticky-header {
+    .sticky-header-nav {
+      ul {
+        li {
+          margin: 0 15px 0 0;
+        }
+      }
+    }
+  }
+
+	.user-util-links {
+		.navbar-nav {
+			flex-direction: column;
+		}
+	}
 }
