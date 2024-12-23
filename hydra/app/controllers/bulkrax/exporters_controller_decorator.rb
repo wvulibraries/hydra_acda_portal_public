@@ -10,4 +10,4 @@ module Bulkrax::ExportersControllerDecorator
   end
 end
 
-# Bulkrax::ExportersController.prepend(Bulkrax::ExportersControllerDecorator)
+Bulkrax::ExportersController.prepend(Bulkrax::ExportersControllerDecorator)
