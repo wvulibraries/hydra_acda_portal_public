@@ -8,7 +8,7 @@ class Acda < ActiveFedora::Base
   include ImportLibrary
   include ApplicationHelper
 
-  before_save :update_preview # this is to insure preview is the actual url for the thumbnail
+  before_save :format_urls
   after_save :clear_empty_fields_and_generate_thumbnail
 
   def clear_empty_fields_and_generate_thumbnail
@@ -22,6 +22,14 @@ class Acda < ActiveFedora::Base
 
   def saved_change_to_available_by?
     previous_changes['available_by'].present? || thumbnail_file.blank?
+  end
+
+  def format_urls
+    # insure all urls are formatted correctly
+    self.available_at = format_url(self.available_at)
+    self.preview = update_preview if self.preview.blank?
+    self.preview = format_url(self.preview)
+    self.available_by = format_url(self.available_by)
   end
 
   self.indexer = ::Indexer
