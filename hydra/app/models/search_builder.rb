@@ -7,14 +7,14 @@ class SearchBuilder < Blacklight::SearchBuilder
   self.default_processor_chain += [:add_advanced_parse_q_to_solr, :add_advanced_search_to_solr]
 
   # Custom Processing of Holt only Records 
-  # self.default_processor_chain += [:show_only_acda_records]
+  self.default_processor_chain += [:show_only_acda_records]
 
   # looks for the project identifier and sets it to holt only 
   # helps to establish that only holt records will be coming form fedora and solr 
-  # def show_only_acda_records (solr_parameters)
-  #   solr_parameters[:fq] ||= []
-  #   solr_parameters[:fq] << 'project_sim:acda'
-  # end
+  def show_only_acda_records (solr_parameters)
+    solr_parameters[:fq] ||= []
+    solr_parameters[:fq] << 'has_model_ssim:Acda'
+  end
 
 
   ## DOCUMENTATION OF CUSTOM SOLR CHAIN
