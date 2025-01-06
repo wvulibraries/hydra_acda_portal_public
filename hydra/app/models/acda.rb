@@ -8,10 +8,17 @@ class Acda < ActiveFedora::Base
   include ImportLibrary
   include ApplicationHelper
 
-  # before_save :update_preview # this is to insure preview is the actual url for the thumbnail
-  after_create :generate_or_download_thumbnail
-  after_save :clear_empty_fields
-  # after_save :generate_or_download_thumbnail if :saved_change_to_available_by?
+  before_save :update_preview # this is to insure preview is the actual url for the thumbnail
+  after_save :clear_empty_fields_and_generate_thumbnail
+
+  def clear_empty_fields_and_generate_thumbnail
+    clear_empty_fields
+    generate_or_download_thumbnail if saved_change_to_available_by? || saved_change_to_preview?
+  end
+
+  def saved_change_to_preview?
+    previous_changes['preview'].present?
+  end
 
   def saved_change_to_available_by?
     previous_changes['available_by'].present? || thumbnail_file.blank?
@@ -40,8 +47,8 @@ class Acda < ActiveFedora::Base
     # check and see if available_at is a preservica.com address
     if available_at.include?('preservica.com')
       # add download/thumbnail/ after the preservica.com to the url
-      # then check if the url is valid
       preservica_url = available_at.gsub('preservica.com', 'preservica.com/download/thumbnail')
+      # return the new url
       return preservica_url
     end
   end
