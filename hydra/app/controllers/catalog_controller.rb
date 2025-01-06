@@ -94,7 +94,6 @@ class CatalogController < ApplicationController
       slider_js: false,
       maxlength: 4
     }
-    config.add_facet_field solr_name('extent', :facetable), label: 'Extent', limit: true, show: true, component: true
     config.add_facet_field solr_name('language', :facetable), label: 'Language', limit: true, show: true, component: true
     config.add_facet_field solr_name('location_represented', :facetable), label: 'Location Represented', link_to_search: :coverage_spatial_ssi, limit: true, show: true, component: true
     config.add_facet_field solr_name('names', :facetable), label: 'Names', link_to_search: :names_ssi, limit: true, show: true, component: true
@@ -102,7 +101,6 @@ class CatalogController < ApplicationController
     config.add_facet_field solr_name('policy_area', :facetable), label: 'Policy Area', link_to_search: :policy_area_ssi, limit: true, show: true, component: true
     config.add_facet_field solr_name('publisher', :facetable), label: 'Publisher', link_to_search: :publisher_ssi, limit: true, show: true, component: true
     config.add_facet_field solr_name('record_type', :facetable), label: 'Record Type', limit: true, show: true, component: true
-    config.add_facet_field solr_name('rights', :facetable), label: 'Rights', limit: true, show: true, component: true
     config.add_facet_field solr_name('topic', :facetable), label: 'Topic', link_to_search: :topic_ssi, limit: true, show: true, component: true
 
     # uses the above facets in blacklight
