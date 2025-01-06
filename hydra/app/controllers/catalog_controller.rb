@@ -26,6 +26,8 @@ class CatalogController < ApplicationController
     config.add_results_collection_tool(:sort_widget)
     config.add_results_collection_tool(:per_page_widget)
     config.add_results_collection_tool(:view_type_group)
+    # add config for exporting as csv
+    config.add_results_collection_tool(:export_search_results)
 
     config.add_show_tools_partial(:bookmark, partial: 'bookmark_control', if: :render_bookmarks_control?)
     config.add_show_tools_partial(:email, callback: :email_action, validator: :validate_email_params)
@@ -203,9 +205,6 @@ class CatalogController < ApplicationController
     config.add_sort_field "#{sort_creator} desc", :label => 'Creator (Z-A)'
     config.add_sort_field "score desc, #{sort_identifier} asc", :label => 'Relevance'
 
-    # add config for exporting as csv
-    config.add_results_collection_tool :export_search_results
-
     # If there are more than this many search results, no spelling ("did you
     # mean") suggestion is offered.
     config.spell_max = 5
@@ -238,7 +237,7 @@ class CatalogController < ApplicationController
   # end
 
   def export
-    @response = search_results(params)[0]
+    @response = search_service.search_results[0]
 
     respond_to do |format|
       format.csv {

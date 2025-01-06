@@ -1,9 +1,9 @@
-<div class="navbar-right">
-  <ul class="nav navbar-nav">
-  <% if controller.class == CatalogController %>
-    <%= render_nav_actions do |config, action|%>
-      <li class="nav-item"><%= action %></li>
+<div class="user-util-links float-end">
+  <ul class="navbar-nav">
+    <% if controller.class == CatalogController %>
+      <%= render_nav_actions do |config, action|%>
+        <li class="nav-item text-white d-block"><%= action %></li>
+      <% end %>
     <% end %>
-  <% end %>
   </ul>
 </div>

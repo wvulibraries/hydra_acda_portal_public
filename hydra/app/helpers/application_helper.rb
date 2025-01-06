@@ -39,7 +39,7 @@ module ApplicationHelper
     preview = document[:preview_tesim]&.first.to_s 
     id = document[:id]
 
-    if preview.present? && is_active_url?(preview)
+    if is_active_url?(preview)
       image_tag(preview, title: title, alt: description, class: "full-size-responsive")
     elsif document.thumbnail_file?
       image_tag("/thumb/#{id}.jpg", title: title, alt: description, class: "full-size-responsive")
