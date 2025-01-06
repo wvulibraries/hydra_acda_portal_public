@@ -4,7 +4,7 @@ require 'blacklight/catalog'
 # Blacklight controller that handles searches and document requests
 class CatalogController < ApplicationController
 
-  #include BlacklightRangeLimit::ControllerOverride
+  include BlacklightRangeLimit::ControllerOverride
   include BlacklightAdvancedSearch::Controller
 
   include Hydra::Catalog
@@ -86,10 +86,9 @@ class CatalogController < ApplicationController
     config.add_facet_field solr_name('congress', :facetable), label: 'Congress', link_to_search: :coverage_congress_ssi, limit: true, show: true, component: true
     config.add_facet_field solr_name('contributing_institution', :facetable), label: 'Contributing Institution', link_to_search: :contributing_institution_ssi, limit: true, show: true, component: true
     config.add_facet_field solr_name('creator', :facetable), label: 'Creator', limit: true, show: true, component: true
-    config.add_facet_field 'date_ssi', include_in_advanced_search: false, label: 'Date', limit: true, show: true, component: true, range: {
-      facet_field_label: 'Date Range',
+    config.add_facet_field 'date_ssi', label: 'Date', limit: true, show: true, range: {
       num_segments: 10,
-      assumed_boundaries: [1100, Time.zone.now.year + 2],
+      assumed_boundaries: [1100, Time.now.year + 2],
       segments: false,
       slider_js: false,
       maxlength: 4
@@ -148,7 +147,7 @@ class CatalogController < ApplicationController
     config.add_show_field solr_name('publisher', :stored_searchable, type: :string), label: 'Publisher', link_to_search: :publisher_sim
 
     # search fields
-    config.add_search_field('all_fields', label: 'All Fields', include_in_advanced_search: false) do |field|
+    config.add_search_field('all_fields', label: 'All Fields') do |field|
       all_names = config.show_fields.values.map(&:field).join(" ")
       title_name = 'title_tesim'
       field.solr_parameters = {
