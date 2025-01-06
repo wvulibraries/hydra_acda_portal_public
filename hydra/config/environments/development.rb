@@ -69,11 +69,11 @@ Rails.application.configure do
   config.action_mailer.perform_deliveries    = true
   config.action_mailer.delivery_method = :letter_opener_web
   config.action_mailer.default_url_options   = { :host => 'localhost:3000' }
-  # config.action_mailer.smtp_settings = {
-  #   address: "smtp.wvu.edu",
-  #   port: 25,
-  #   enable_starttls_auto: true
-  # }
+  config.action_mailer.smtp_settings = {
+    address: "smtp.wvu.edu",
+    port: 25,
+    enable_starttls_auto: true
+  }
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
