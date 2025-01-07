@@ -1,4 +1,4 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: 'libsys@mail.wvu.edu'
+  default from: 'libdev@mail.wvu.edu'
   layout 'mailer'
 end
