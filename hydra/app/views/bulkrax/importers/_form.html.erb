@@ -1,0 +1,36 @@
+<%#
+  OVERRIDE Bulkrax v8.3.0 to use Bootstrap 5
+%>
+
+<div class="card-body bulkrax_importer">
+  <% if importer.errors.any? %>
+    <div class="alert alert-danger" id="error_explanation">
+      <h2><%= pluralize(importer.errors.count, "error") %> prohibited this importer from being saved:</h2>
+      <ul class="mb-0">
+        <% importer.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= form.input :name, input_html: { class: 'form-control' } %>
+
+  <%= form.hidden_field :user_id, value: current_user.id %>
+
+  <%= form.input :frequency, collection: form.object.class.frequency_enums, input_html: { class: 'form-control' } %>
+
+  <%= form.input :limit, as: :integer, hint: 'leave blank or 0 for all records', input_html: { class: 'form-control'} %>
+
+  <%= form.input :parser_klass, collection: Bulkrax.parsers.map {|p| [p[:name], p[:class_name], {'data-partial' => p[:partial]}]}, label: "Parser", input_html: { class: 'form-control' } %>
+
+  <%= form.fields_for :parser_fields do |fi| %>
+    <div class='parser_fields'>
+      <p>Specific fields for each parser are available only when a parser is selected</p>
+      <% Bulkrax.parsers.map {|p| p[:partial]}.uniq.each do |partial| %>
+        <%= render partial: partial, locals: {form: form, fi: fi, importer: importer} %>
+      <% end %>
+    </div>
+  <% end %>
+
+</div>
