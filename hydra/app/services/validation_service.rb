@@ -22,7 +22,7 @@ class ValidationService
     'dcterms:http://purl.org/dc/terms/type' => -> { search_getty_aat },
     'dcterms:type' => -> { validate_local_authorities('types') },
     'dcterms:subject' => -> { validate_local_authorities('policy_area') if values.present? },
-    'http://lib.wvu.edu/hydra/subject' => -> { search_lc_linked_data_service('http://id.loc.gov/authorities/subjects') },
+    'http://purl.org/dc/elements/1.1/subject' => -> { search_lc_linked_data_service('http://id.loc.gov/authorities/subjects') },
     'dcterms:contributor' => -> { search_lc_linked_data_service('http://id.loc.gov/authorities/names') },
     'dcterms:spatial' => -> { search_getty_tgn if values.present? },
     'dcterms:format' => -> { validate_free_text if values.present? },
