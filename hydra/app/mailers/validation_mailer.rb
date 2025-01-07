@@ -9,8 +9,8 @@ class ValidationMailer < ApplicationMailer
     mail(
       :to => mail_to,
       :subject => "Validation results for file: #{file_name}",
-      date: Time.now,
+      :date => Time.now,
       content_type: 'text/html'
-    )
+    )   
   end
 end
