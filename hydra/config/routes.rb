@@ -18,7 +18,7 @@ Rails.application.routes.draw do
   get '/contribute' => 'catalog#contribute'
   get '/partners' => 'catalog#partners'
   get '/policies' => 'catalog#policies'
-  get '/contributingcollections' => 'catalog#contributingcollections'
+  # get '/contributingcollections' => 'catalog#contributingcollections'
   get '/validate' => 'validations#upload'
   post '/validate' => 'validations#show'
 
