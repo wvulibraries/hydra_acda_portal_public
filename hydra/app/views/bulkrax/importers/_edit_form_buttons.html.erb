@@ -1,0 +1,56 @@
+<%#
+  OVERRIDE Bulkrax v8.3.0 to use Bootstrap 5
+%>
+
+<div class="modal fade" id="bulkraxModal" tabindex="-1" aria-labelledby="bulkraxModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h5>Options for Updating the Importer</h5>
+        <hr>
+
+        <% if @importer.importer_runs.blank? %>
+          <p>Only update the values in the importer form. Do not import metadata or files for any works or collections.</p>
+          <%= form.button :submit, value: 'Update Importer', class: 'btn btn-primary' %>
+          <hr>
+          <p>Update the values in the importer form and run the importer for the first time.</p>
+          <%= form.button :submit, value: 'Update and Import', class: 'btn btn-primary' %>
+        <% elsif @importer.parser_klass.include?('Oai') %>
+          <p>Only update the values in the importer form. Do not update metadata or files for any works or collections.</p>
+            <%= form.button :submit, value: 'Update Importer', class: 'btn btn-primary' %>
+          <hr>
+          <p>Update the values in the importer form and update items that have changed at the source.</p>
+            <%= form.button :submit, value: 'Update and Harvest Updated Items', class: 'btn btn-primary' %>
+          <hr>
+          <p>Update the values in the importer form and recreate all items from the source.</p>
+            <%= form.button :submit, value: 'Update and Re-Harvest All Items', class: 'btn btn-primary' %>
+        <% else %>
+          <p>Only update the values in the importer form. Do not update metadata or files for any works or collections.</p>
+            <%= form.button :submit, value: 'Update Importer', class: 'btn btn-primary' %>
+          <hr>
+          <p>Update the values in the importer form and update the metadata for all works. Do not update any files.</p>
+            <%= form.button :submit, value: 'Update Metadata', class: 'btn btn-primary' %>
+          <hr>
+          <p>Update the values in the importer form and update the metadata and files for all works. Creates new versions of the files and retains the old versions.</p>
+            <%= form.button :submit, value: 'Update Metadata and Files', class: 'btn btn-primary' %>
+          <hr>
+          <p>Update the values in the importer form and update the metadata. Completely removes all files attached to works for this importer and recreates the files from scratch.</p>
+          <%= form.button :submit,
+                          value: 'Update and Replace Files',
+                          class: 'btn btn-primary',
+                          data: { "bs-confirm": "Are you sure? This will remove all files before adding them from the import." } %>
+          <hr>
+          <p>Remove all works and then run the import again from a clean slate. This will remove all files and associations and any edits made since the last import will be lost.</p>
+          <%= form.button :submit,
+                  value: 'Remove and Rerun',
+                  class: 'btn btn-primary',
+                  data: { "bs-confirm": "Are you sure? This will delete all the works and any associated files and relationships before re running." } %>
+        <% end %>
+        <hr>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= t('helpers.action.cancel') %></button>
+      </div>
+    </div>
+  </div>
+</div>
