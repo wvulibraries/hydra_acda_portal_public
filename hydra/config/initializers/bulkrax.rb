@@ -58,10 +58,10 @@ Rails.application.config.to_prepare do
         'collection_finding_aid' => { from: ['dcterms:source'] },
         'bulkrax_identifier' => { from: ['bulkrax_identifier'], source_identifier: true },
         'identifier' => { from: ['dcterms:identifier'] },
-        'topic' => { from: ['http://lib.wvu.edu/hydra/subject'], split: true },
+        'topic' => { from: ['http://purl.org/dc/elements/1.1/subject'], split: true },
         'preview' => { from: ['edm:preview'] },
         'available_at' => { from: ['edm:isShownAt'] },
-        'available_by' => { from: ['edm:isShownBy'] },       
+        'available_by' => { from: ['edm:isShownBy'] },
         'description' => { from: ['dcterms:description'] },
         'names' => { from: ['dcterms:contributor'], split: true },
         'dc_type' => { from: ['dcterms:type'] },
@@ -108,7 +108,7 @@ Rails.application.config.to_prepare do
     # config.qa_controlled_properties += ['my_field']
 
     # Specify the delimiter regular expression for splitting an attribute's values into a multi-value array.
-    # config.multi_value_element_split_on = /\s*[:;|]\s*/.freeze
+    config.multi_value_element_split_on = /\s*[;]\s*/.freeze
 
     # Specify the delimiter for joining an attribute's multi-value array into a string.  Note: the
     # specific delimeter should likely be present in the multi_value_element_split_on expression.

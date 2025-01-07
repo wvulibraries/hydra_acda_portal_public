@@ -48,7 +48,7 @@ class Acda < ActiveFedora::Base
     updated_preview = resolve_redirect(self.preview)
 
     # update preview if it has changed
-    self.preview = updated_preview if updated_preview != preview 
+    self.preview = updated_preview if updated_preview != preview
   end
 
   def generate_preview
@@ -61,7 +61,7 @@ class Acda < ActiveFedora::Base
     end
   end
 
-  def generate_or_download_thumbnail 
+  def generate_or_download_thumbnail
     if preview.present?
       # queue job to download and set the thumbnail
       # using the available_at url
@@ -235,7 +235,7 @@ class Acda < ActiveFedora::Base
   # Internal predicate of Subject
   # ==============================================================================================================
   # Topic property
-  property :topic, predicate: ::RDF::URI.intern('http://lib.wvu.edu/hydra/subject'), multiple: true do |index|
+  property :topic, predicate: ::RDF::URI.intern('http://purl.org/dc/elements/1.1/subject'), multiple: true do |index|
     index.as :stored_searchable, :stored_sortable, :facetable
   end
 

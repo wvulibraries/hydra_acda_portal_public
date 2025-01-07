@@ -1,0 +1,27 @@
+<%#
+  OVERRIDE Bulkrax v8.3.0 to use Bootstrap 5
+%>
+
+<% provide :page_header do %>
+  <h1><span class="fa fa-edit" aria-hidden="true"></span> Edit Importer</h1>
+<% end %>
+
+<div class="row">
+  <div class="col-md-8 offset-md-2">
+    <div class="card tabs importer-form">
+      <%= simple_form_for @importer, html: { multipart: true } do |form| %>
+        <%= render 'form', importer: @importer, form: form %>
+        <div class="card-footer">
+          <div class="float-end">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#bulkraxModal">
+              Update Importer
+            </button>
+            <%= render 'edit_form_buttons', form: form %>
+            <% cancel_path = form.object.persisted? ? importer_path(form.object) : importers_path %>
+            | <%= link_to t('bulkrax.cancel'), cancel_path, class: 'btn btn-secondary' %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
