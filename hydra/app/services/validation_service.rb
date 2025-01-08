@@ -238,7 +238,7 @@ class ValidationService
       next add_error(value:, message: "#{value} is not valid") unless match_data
 
       name, place_type = match_data[1], match_data[2]
-      url = "https://www.getty.edu/vow/TGNServlet?english=Y&find=\"#{name}\"&place=#{place_type}&page=1&nation="
+      url = "https://www.getty.edu/vow/TGNServlet?english=Y&find=#{name}&place=#{place_type}&page=1&nation="
       doc = Nokogiri::HTML(URI.open(url))
       selector = "//td[@valign='bottom' and @colspan='2']/span[@class='page'][contains(., '(#{place_type})') and .//a/b[text()='#{name}']]"
       element = doc.at_xpath(selector)
