@@ -96,10 +96,10 @@ module ApplicationHelper
     display_value.html_safe
   end
 
-  # Specifically used for date_ssi in conjunction with the range limit
+  # Specifically used for date_ssim in conjunction with the range limit
   def render_date_facet(**kwargs)
     values = kwargs[:value]
-    field = kwargs[:field].gsub('_tesim', '_ssi')
+    field = kwargs[:field].gsub('_tesim', '_ssim')
 
     display_value = ''
     values.each do |value|

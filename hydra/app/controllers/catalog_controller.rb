@@ -89,7 +89,7 @@ class CatalogController < ApplicationController
     config.add_facet_field solr_name('congress', :facetable), label: 'Congress', link_to_search: :coverage_congress_ssi, limit: true, show: true, component: true
     config.add_facet_field solr_name('contributing_institution', :facetable), label: 'Contributing Institution', link_to_search: :contributing_institution_ssi, limit: true, show: true, component: true
     config.add_facet_field solr_name('creator', :facetable), label: 'Creator', limit: true, show: true, component: true
-    config.add_facet_field 'date_ssi', label: 'Date', limit: true, show: true, range: {
+    config.add_facet_field 'date_ssim', label: 'Date', limit: true, show: true, range: {
       num_segments: 10,
       assumed_boundaries: [1100, Time.now.year + 2],
       segments: false,
@@ -214,8 +214,8 @@ class CatalogController < ApplicationController
   def index
     return super if params[:range].nil?
 
-    start_date = params[:range]["date_ssi"]["begin"]
-    end_date = params[:range]["date_ssi"]["end"]
+    start_date = params[:range]["date_ssim"]["begin"]
+    end_date = params[:range]["date_ssim"]["end"]
 
     if start_date.present? && end_date.present? && (start_date.to_i > end_date.to_i)
       flash[:error] = "The min date must be before the max date"
