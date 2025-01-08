@@ -111,42 +111,42 @@ class CatalogController < ApplicationController
     # Index ---------------------------------------------
     # The ordering of the field names is the order of the display
     config.add_index_field solr_name('identifier', :stored_searchable), label: 'Identifier'
-    config.add_index_field solr_name('contributing_institution', :stored_searchable, type: :string), label: 'Contributing Institution', helper_method: :render_html_safe_url
-    config.add_index_field solr_name('collection_title', :stored_searchable), label: 'Collection', helper_method: :render_html_safe_url
+    config.add_index_field solr_name('contributing_institution', :stored_searchable, type: :string), label: 'Contributing Institution', helper_method: :render_html_safe_facet
+    config.add_index_field solr_name('collection_title', :stored_searchable), label: 'Collection', helper_method: :render_html_safe_facet
     config.add_index_field solr_name('title', :stored_searchable, type: :string), label: 'Title'
-    config.add_index_field solr_name('date', :stored_searchable, type: :string), label: 'Date', helper_method: :render_html_safe_url
-    config.add_index_field solr_name('creator', :stored_searchable, type: :string), label: 'Creator', helper_method: :render_html_safe_url
-    config.add_index_field solr_name('publisher', :stored_searchable, type: :string), label: 'Publisher', helper_method: :render_html_safe_url
-    config.add_index_field solr_name('policy_area', :stored_searchable, type: :string), label: 'Policy Area', helper_method: :render_html_safe_url
-    config.add_index_field solr_name('names', :stored_searchable), label: 'Names', helper_method: :render_html_safe_url
-    config.add_index_field solr_name('topic', :stored_searchable, type: :string), label: 'Topic', helper_method: :render_html_safe_url
-    config.add_index_field solr_name('congress', :stored_searchable, type: :string), label: 'Congress', helper_method: :render_html_safe_url
-    config.add_index_field solr_name('location_respresented', :stored_searchable, type: :string), label: 'Location Respresented', helper_method: :render_html_safe_url
+    config.add_index_field solr_name('date', :stored_searchable, type: :string), label: 'Date', helper_method: :render_date_facet
+    config.add_index_field solr_name('creator', :stored_searchable, type: :string), label: 'Creator', helper_method: :render_html_safe_facet
+    config.add_index_field solr_name('publisher', :stored_searchable, type: :string), label: 'Publisher', helper_method: :render_html_safe_facet
+    config.add_index_field solr_name('policy_area', :stored_searchable, type: :string), label: 'Policy Area', helper_method: :render_html_safe_facet
+    config.add_index_field solr_name('names', :stored_searchable), label: 'Names', helper_method: :render_html_safe_facet
+    config.add_index_field solr_name('topic', :stored_searchable, type: :string), label: 'Topic', helper_method: :render_html_safe_facet
+    config.add_index_field solr_name('congress', :stored_searchable, type: :string), label: 'Congress', helper_method: :render_html_safe_facet
+    config.add_index_field solr_name('location_respresented', :stored_searchable, type: :string), label: 'Location Respresented', helper_method: :render_html_safe_facet
 
     # Show ---------------------------------------------
     # show fields in the objects
     # order is by the order you put them in
     config.add_show_field solr_name('identifier', :stored_searchable, type: :string), label: 'Identifier'
-    config.add_show_field solr_name('contributing_institution', :stored_searchable, type: :string), label: 'Contributing Institution', link_to_search: :contributing_institution_sim
+    config.add_show_field solr_name('contributing_institution', :stored_searchable, type: :string), label: 'Contributing Institution', helper_method: :render_html_safe_facet
     config.add_show_field solr_name('title', :stored_searchable, type: :string), label: 'Title'
-    config.add_show_field solr_name('date', :stored_searchable, type: :string), label: 'Date Created', link_to_search: :date_sim
+    config.add_show_field solr_name('date', :stored_searchable, type: :string), label: 'Date Created', helper_method: :render_date_facet
     config.add_show_field solr_name('edtf', :stored_searchable, type: :string), label: 'EDTF'
-    config.add_show_field solr_name('creator', :stored_searchable, type: :string), label: 'Creator', link_to_search: :creator_sim
+    config.add_show_field solr_name('creator', :stored_searchable, type: :string), label: 'Creator', helper_method: :render_html_safe_facet
     config.add_show_field solr_name('rights', :stored_searchable, type: :string), label: 'Rights', helper_method: :render_html_safe_url
     config.add_show_field solr_name('language', :stored_searchable, type: :string), label: 'Language'
     config.add_show_field solr_name('record_type', :stored_searchable, type: :string), label: 'Record Type'
-    config.add_show_field solr_name('collection_title', :stored_searchable, type: :string), label: 'Collection', link_to_search: :collection_title_sim
+    config.add_show_field solr_name('collection_title', :stored_searchable, type: :string), label: 'Collection', helper_method: :render_html_safe_facet
     config.add_show_field solr_name('collection_finding_aid', type: :string), label: 'Collection Finding Aid', helper_method: :render_html_safe_url
     config.add_show_field solr_name('description', :stored_searchable, type: :string), label: 'Description'
-    config.add_show_field solr_name('policy_area', :stored_searchable, type: :string), label: 'Policy Area', link_to_search: :policy_area_sim
-    config.add_show_field solr_name('names', :stored_searchable, type: :string), label: 'Names', link_to_search: :names_sim
-    config.add_show_field solr_name('topic', :stored_searchable, type: :string), label: 'Topic', link_to_search: :topic_sim
-    config.add_show_field solr_name('congress', :stored_searchable, type: :string), label: 'Congress', link_to_search: :congress_sim
-    config.add_show_field solr_name('physical_location', :stored_searchable, type: :string), label: 'Physical Location', link_to_search: :physical_location_ssi
-    config.add_show_field solr_name('location_represented', :stored_searchable, type: :string), label: 'Location Represented', link_to_search: :location_represented_sim
+    config.add_show_field solr_name('policy_area', :stored_searchable, type: :string), label: 'Policy Area', helper_method: :render_html_safe_facet
+    config.add_show_field solr_name('names', :stored_searchable, type: :string), label: 'Names', helper_method: :render_html_safe_facet
+    config.add_show_field solr_name('topic', :stored_searchable, type: :string), label: 'Topic', helper_method: :render_html_safe_facet
+    config.add_show_field solr_name('congress', :stored_searchable, type: :string), label: 'Congress', helper_method: :render_html_safe_facet
+    config.add_show_field solr_name('physical_location', :stored_searchable, type: :string), label: 'Physical Location', helper_method: :render_html_safe_facet
+    config.add_show_field solr_name('location_represented', :stored_searchable, type: :string), label: 'Location Represented', helper_method: :render_html_safe_facet
     config.add_show_field solr_name('dc_type', :stored_searchable, type: :string), label: 'Type'
     config.add_show_field solr_name('extent', :stored_searchable, type: :string), label: 'Extent'
-    config.add_show_field solr_name('publisher', :stored_searchable, type: :string), label: 'Publisher', link_to_search: :publisher_sim
+    config.add_show_field solr_name('publisher', :stored_searchable, type: :string), label: 'Publisher', helper_method: :render_html_safe_facet
 
     # search fields
     config.add_search_field('all_fields', label: 'All Fields') do |field|
