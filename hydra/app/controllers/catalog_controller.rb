@@ -236,6 +236,7 @@ class CatalogController < ApplicationController
   # end
 
   def export
+    blacklight_config.max_per_page = params[:rows]
     @response = search_service.search_results[0]
 
     respond_to do |format|
