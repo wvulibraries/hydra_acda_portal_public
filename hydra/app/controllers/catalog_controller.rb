@@ -46,7 +46,7 @@ class CatalogController < ApplicationController
         repository_name: 'American Congress Digital Archives Portal',
         repository_url: 'https://congressarchivesdev.lib.wvu.edu/catalog/oai',
         record_prefix: 'https://congressarchivesdev.lib.wvu.edu/catalog/',
-        admin_email: 'libsys@mail.wvu.edu'
+        admin_email: 'libdev@mail.wvu.edu'
       },
       document: {
         limit: 25,
