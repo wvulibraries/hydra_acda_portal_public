@@ -70,6 +70,7 @@ class CatalogController < ApplicationController
     config.index.partials = %i[index_header index] # remove default rendering of thumbnail because we want it in a different location
     config.index.thumbnail_method = :render_thumbnail # see ApplicationHelper#render_thumbnail
     config.index.search_bar_component = Wvu::SearchBarComponent
+    config.index.facet_group_component = Wvu::FacetGroupComponent
 
     # QF Builder
     config.default_solr_params = {
