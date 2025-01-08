@@ -88,7 +88,7 @@ class ExportResultsPresenter
     # These mappings are special cases that don't follow the normal pattern
     def special_xml_mappings
       {
-        'http://purl.org/dc/elements/1.1/subject' => 'dc:subject',
+        'dcterms:http://purl.org/dc/elements/1.1/subject' => 'dc:subject',
         'dcterms:http://purl.org/dc/terms/type' => 'dc:type'
       }
     end

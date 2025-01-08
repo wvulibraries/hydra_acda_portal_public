@@ -58,7 +58,7 @@ Rails.application.config.to_prepare do
         'collection_finding_aid' => { from: ['dcterms:source'] },
         'bulkrax_identifier' => { from: ['bulkrax_identifier'], source_identifier: true },
         'identifier' => { from: ['dcterms:identifier'] },
-        'topic' => { from: ['http://purl.org/dc/elements/1.1/subject'], split: true },
+        'topic' => { from: ['dcterms:http://purl.org/dc/elements/1.1/subject'], split: true },
         'preview' => { from: ['edm:preview'] },
         'available_at' => { from: ['edm:isShownAt'] },
         'available_by' => { from: ['edm:isShownBy'] },

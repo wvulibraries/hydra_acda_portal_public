@@ -7,12 +7,14 @@
     <li><%= link_to "Export to CSV", catalog_export_path(rows: @response.total,
                                                         format: :csv,
                                                         search_field: export_params[:search_field],
-                                                        q: export_params[:q]),
+                                                        q: export_params[:q],
+                                                        f: export_params[:f]&.permit!&.to_h),
                                                         class: "dropdown-item" %></li>
     <li><%= link_to "Export to XML", catalog_export_path(rows: @response.total,
                                                         format: :xml,
                                                         search_field: export_params[:search_field],
-                                                        q: export_params[:q]),
+                                                        q: export_params[:q],
+                                                        f: export_params[:f]&.permit!&.to_h),
                                                         class: "dropdown-item" %></li>
   </ul>
 </div>

@@ -1,0 +1,10 @@
+<%= content_tag :div, id: @id,  class: 'facets sidenav facets-toggleable-md' do %>
+  <div class="facets-header">
+    <%= content_tag :h2, @title, class: 'facets-heading' if @title %>
+  </div>
+  <%= content_tag :div, id: @panel_id, class: '' do %>
+    <% ::Deprecation.silence(Blacklight::FacetsHelperBehavior) do %>
+      <%= helpers.render_facet_partials @fields, response: @response %>
+    <% end %>
+  <% end %>
+<% end %>
