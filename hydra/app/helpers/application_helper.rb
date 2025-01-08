@@ -57,7 +57,7 @@ module ApplicationHelper
   def format_url(url)
     return url if url.blank?
     sanitized_url = sanitize_url(url)
-    sanitized_url =~ /\Ahttp(s)?:\/\// ? sanitized_url : "https://#{sanitized_url}" # Add scheme if missing
+    sanitized_url.match?(/\Ahttp(s)?:\/\//) ? sanitized_url : "https://#{sanitized_url}" # Add scheme if missing
   end
 
   def is_active_url?(url)
