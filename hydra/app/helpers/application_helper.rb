@@ -36,7 +36,7 @@ module ApplicationHelper
   def render_thumbnail(document, options = {})
     description = document[:description_tesim].to_s
     title = document[:title_tesim]&.first.to_s
-    preview = document[:preview_tesim]&.first.to_s 
+    preview = document[:preview_tesim]&.first.to_s
     id = document[:id]
 
     if is_active_url?(preview)
@@ -62,14 +62,14 @@ module ApplicationHelper
 
   def is_active_url?(url)
     return false if url.blank?
-  
+
     begin
       sanitized_url = sanitize_url(url) # Sanitize the URL
 
       resolved_url = resolve_redirect(sanitized_url) # Resolve any redirects
       uri = URI.parse(resolved_url)
       response = Net::HTTP.get_response(uri)
-  
+
       # Check if the response indicates success or redirection
       response.is_a?(Net::HTTPSuccess) || response.is_a?(Net::HTTPRedirection)
     rescue URI::InvalidURIError => e
@@ -83,13 +83,28 @@ module ApplicationHelper
 
   # Using this instead of #link_to_facet in the catalog_controller was giving us just strings instead of
   # html safe displays for some reason, so we're using this helper method instead.
-  def render_html_safe_url(**kwargs)
+  def render_html_safe_facet(**kwargs)
     values = kwargs[:value]
-    field = kwargs[:field]
+    field = kwargs[:field].gsub('_tesim', '_sim')
 
     display_value = ''
     values.each do |value|
-      display_value << link_to(value, search_action_path("f[#{field}][]" => value, search_field: 'all_fields'))
+      params = { q: '', f: { field => [value], search_field: 'all_fields' } }
+      display_value << link_to(value, search_action_path(params))
+    end
+
+    display_value.html_safe
+  end
+
+  # Specifically used for date_ssim in conjunction with the range limit
+  def render_date_facet(**kwargs)
+    values = kwargs[:value]
+    field = kwargs[:field].gsub('_tesim', '_ssim')
+
+    display_value = ''
+    values.each do |value|
+      params = { q: '', range: { field => { begin: value, end: value } } }
+      display_value << link_to(value, search_action_path(params))
     end
 
     display_value.html_safe
@@ -99,7 +114,7 @@ module ApplicationHelper
     sanitized_url = sanitize_url(url) # Sanitize the URL before parsing
     uri = URI.parse(sanitized_url)
     response = Net::HTTP.get_response(uri)
-  
+
     case response
     when Net::HTTPRedirection
       # Follow the redirect and resolve recursively

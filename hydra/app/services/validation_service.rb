@@ -22,7 +22,7 @@ class ValidationService
     'dcterms:http://purl.org/dc/terms/type' => -> { search_getty_aat },
     'dcterms:type' => -> { validate_local_authorities('types') },
     'dcterms:subject' => -> { validate_local_authorities('policy_area') if values.present? },
-    'http://purl.org/dc/elements/1.1/subject' => -> { search_lc_linked_data_service('http://id.loc.gov/authorities/subjects') },
+    'dcterms:http://purl.org/dc/elements/1.1/subject' => -> { search_lc_linked_data_service('http://id.loc.gov/authorities/subjects') },
     'dcterms:contributor' => -> { search_lc_linked_data_service('http://id.loc.gov/authorities/names') },
     'dcterms:spatial' => -> { search_getty_tgn if values.present? },
     'dcterms:format' => -> { validate_free_text if values.present? },
@@ -238,7 +238,7 @@ class ValidationService
       next add_error(value:, message: "#{value} is not valid") unless match_data
 
       name, place_type = match_data[1], match_data[2]
-      url = "https://www.getty.edu/vow/TGNServlet?english=Y&find=\"#{name}\"&place=#{place_type}&page=1&nation="
+      url = "https://www.getty.edu/vow/TGNServlet?english=Y&find=#{name}&place=#{place_type}&page=1&nation="
       doc = Nokogiri::HTML(URI.open(url))
       selector = "//td[@valign='bottom' and @colspan='2']/span[@class='page'][contains(., '(#{place_type})') and .//a/b[text()='#{name}']]"
       element = doc.at_xpath(selector)

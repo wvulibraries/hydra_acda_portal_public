@@ -11,14 +11,14 @@ terms:
   - id: Image
     term: Image
     active: true
-  - id: Interactive Resource
-    term: Interactive Resource
+  - id: InteractiveResource
+    term: InteractiveResource
     active: true
-  - id: Moving Image
-    term: Moving Image
+  - id: MovingImage
+    term: MovingImage
     active: true
-  - id: Physical Object
-    term: Physical Object
+  - id: PhysicalObject
+    term: PhysicalObject
     active: true
   - id: Service
     term: Service
@@ -29,8 +29,8 @@ terms:
   - id: Sound
     term: Sound
     active: true
-  - id: Still Image
-    term: Still Image
+  - id: StillImage
+    term: StillImage
     active: true
   - id: Text
     term: Text

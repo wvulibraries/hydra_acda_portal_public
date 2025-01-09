@@ -14,7 +14,7 @@ RSpec.describe ExportResultsPresenter do
     "title_tesim"=>["Dole and Goldwater shake hands"],
     "title_ssi"=>"Dole and Goldwater shake hands",
     "date_tesim"=>["1964"],
-    "date_ssi"=>"1964",
+    "date_ssim"=>["1964"],
     "edtf_tesim"=>["1964"],
     "edtf_ssi"=>"1964",
     "creator_tesim"=>["Unknown"],
@@ -40,11 +40,11 @@ RSpec.describe ExportResultsPresenter do
     "preview_ssi"=>
       "https://dolearchives.omeka.net/exhibits/show/voices-from-the-big-first/item/323",
     "available_at_tesim"=>
-      ["https://dolearchives.omeka.net/exhibits/show/voices-from-the-big-first/item/323"],      
+      ["https://dolearchives.omeka.net/exhibits/show/voices-from-the-big-first/item/323"],
     "available_at_ssi"=>
       "https://dolearchives.omeka.net/exhibits/show/voices-from-the-big-first/item/323",
       "available_by_tesim"=>
-      ["https://dolearchives.omeka.net/exhibits/show/voices-from-the-big-first/item/323"],      
+      ["https://dolearchives.omeka.net/exhibits/show/voices-from-the-big-first/item/323"],
     "available_by_ssi"=>
       "https://dolearchives.omeka.net/exhibits/show/voices-from-the-big-first/item/323",
     "record_type_tesim"=>["black-and-white photograph"],
@@ -76,7 +76,7 @@ RSpec.describe ExportResultsPresenter do
     "title_tesim"=>["Kassebaum-Baker, Sen. Nancy, 4/16/2009"],
     "title_ssi"=>"Kassebaum-Baker, Sen. Nancy, 4/16/2009",
     "date_tesim"=>["2009 April 16"],
-    "date_ssi"=>"2009 April 16",
+    "date_ssim"=>["2009"],
     "edtf_tesim"=>["2009-04-16"],
     "edtf_ssi"=>"2009-04-16",
     "creator_tesim"=>["Williams, Brien R."],
@@ -104,7 +104,7 @@ RSpec.describe ExportResultsPresenter do
     "available_at_tesim"=>["https://dolearchives.omeka.net/items/show/234"],
     "available_at_ssi"=>"https://dolearchives.omeka.net/items/show/234",
     "available_by_tesim"=>["https://dolearchives.omeka.net/items/show/234"],
-    "available_by_ssi"=>"https://dolearchives.omeka.net/items/show/234",    
+    "available_by_ssi"=>"https://dolearchives.omeka.net/items/show/234",
     "record_type_tesim"=>["moving image"],
     "record_type_ssi"=>"moving image",
     "policy_area_tesim"=>["Agriculture and Food, Health, International Affairs"],
