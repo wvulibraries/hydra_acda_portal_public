@@ -3,8 +3,8 @@
 class ValidateJob < ApplicationJob
   queue_as :default
 
-  def perform(path:, file_name:, mail_to:)
-    content = ValidationService.new(path:).validate
+  def perform(path:, file_name:, mail_to:, validate_urls: false)
+    content = ValidationService.new(path:, validate_urls:).validate
 
     email_depositor(mail_to:, file_name:, content:, path:)
   end

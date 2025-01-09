@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ValidationService
+  include ApplicationHelper
+
   class_attribute :split_on, default: ("\;")
 
   MAPPINGS = {
@@ -29,11 +31,16 @@ class ValidationService
     'dcterms:publisher' => -> { validate_free_text if values.present? },
     'dcterms:description' => -> { validate_free_text if values.present? }
   }
-  class_attribute :actions, default: MAPPINGS
-  attr_accessor :path, :row, :row_number, :results, :validated_values, :header, :values
 
-  def initialize(path:)
+  EDTF_EXCEPTION = 'undated'.freeze
+  CREATOR_EXCEPTION = 'unknown'.freeze
+
+  class_attribute :actions, default: MAPPINGS
+  attr_accessor :path, :validate_urls, :row, :row_number, :results, :validated_values, :header, :values
+
+  def initialize(path:, validate_urls: false)
     @path = path
+    @validate_urls = validate_urls
     @results = []
     @validated_values = []
   end
@@ -133,8 +140,12 @@ class ValidationService
     values.each do |value|
       next if already_validated?(value)
 
-      add_error(value:, message: "<strong>#{value}</strong> is not a valid EDTF") if EDTF.parse(value).nil?
+      add_error(value:, message: "<strong>#{value}</strong> is not a valid EDTF") if invalid_edtf?(value)
     end
+  end
+
+  def invalid_edtf?(date)
+    date != EDTF_EXCEPTION && EDTF.parse(date).nil?
   end
 
   def validate_local_authorities(authority)
@@ -159,13 +170,20 @@ class ValidationService
     values.each do |value|
       next if already_validated?(value)
 
-      add_error(value:, message: "<strong>#{value}</strong> is an invalid URL format") unless value.starts_with?('http')
+      add_error(value:, message: "<strong>#{value}</strong> is an invalid URL format") unless is_active_url?(value)
     end
+  end
+
+  def is_active_url?(value)
+    return value.starts_with?('http') unless validate_urls
+
+    super
   end
 
   def search_lc_linked_data_service(linked_data_service)
     values.each do |value|
       next if already_validated?(value)
+      next if header == 'dcterms:creator' && value == CREATOR_EXCEPTION
 
       base_url = "https://id.loc.gov/search/"
       lds = "cs:#{linked_data_service}" if linked_data_service.present?
