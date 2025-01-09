@@ -143,7 +143,7 @@ class CatalogController < ApplicationController
     config.add_show_field solr_name('names', :stored_searchable, type: :string), label: 'Names', helper_method: :render_html_safe_facet
     config.add_show_field solr_name('topic', :stored_searchable, type: :string), label: 'Topic', helper_method: :render_html_safe_facet
     config.add_show_field solr_name('congress', :stored_searchable, type: :string), label: 'Congress', helper_method: :render_html_safe_facet
-    config.add_show_field solr_name('physical_location', :stored_searchable, type: :string), label: 'Physical Location', helper_method: :render_html_safe_facet
+    config.add_show_field solr_name('physical_location', :stored_searchable, type: :string), label: 'Physical Location'
     config.add_show_field solr_name('location_represented', :stored_searchable, type: :string), label: 'Location Represented', helper_method: :render_html_safe_facet
     config.add_show_field solr_name('dc_type', :stored_searchable, type: :string), label: 'Type'
     config.add_show_field solr_name('extent', :stored_searchable, type: :string), label: 'Extent'
