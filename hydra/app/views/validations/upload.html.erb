@@ -6,6 +6,10 @@
       <%= form.label :csv_file, "Upload CSV" %>
       <%= form.file_field :csv_file, accept: ".csv" %>
       <div>
+        <%= form.check_box :validate_urls?, id: 'validate_urls' %>
+        <%= form.label :validate_urls, "Validate URLs to ensure successful resolution (much slower)", for: 'checkbox' %>
+      </div>
+      <div>
         <%= form.check_box :background_job?, id: 'checkbox' %>
         <%= form.label :background_job, "Run as Background Job and email results to ", for: 'checkbox' %>
         <%= form.email_field :mail_to, placeholder: "Enter your email", id: 'mail_to' %>
