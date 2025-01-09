@@ -73,7 +73,7 @@ Rails.application.configure do
   config.action_mailer.smtp_settings = {
     address: "smtp.wvu.edu",
     port: 25,
-    enable_starttls_auto: true
+    enable_starttls_auto: false
   }
 
   # Raises error for missing translations
