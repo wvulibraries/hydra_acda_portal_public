@@ -72,7 +72,7 @@ Rails.application.configure do
   config.action_mailer.default_url_options   = { :host => 'congressarchivesdev.lib.wvu.edu' }
   config.action_mailer.smtp_settings = {
     address: "bulkmail.wvu.edu",
-    port: 25,
+    port: 465,
     enable_starttls_auto: true
   }
 
