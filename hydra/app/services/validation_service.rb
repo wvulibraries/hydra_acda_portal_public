@@ -10,7 +10,7 @@ class ValidationService
     'dcterms:title' => -> { validate_free_text },
     'dcterms:date' => -> { validate_free_text },
     'dcterms:created' => -> { validate_edtf },
-    'dcterms:creator' => -> { search_lc_linked_data_service('http://id.loc.gov/authorities/names') },
+    'dcterms:creator' => -> { search_lc_linked_data_service('http://id.loc.gov/authorities/names', 'LCNAF') },
     'dcterms:rights' => -> { validate_local_authorities('rights') },
     'dcterms:language' => -> { validate_iso_639_2 },
     'dcterms:temporal' => -> { validate_local_authorities('congress') },
@@ -24,8 +24,8 @@ class ValidationService
     'dcterms:http://purl.org/dc/terms/type' => -> { search_getty_aat },
     'dcterms:type' => -> { validate_local_authorities('types') },
     'dcterms:subject' => -> { validate_local_authorities('policy_area') if values.present? },
-    'dcterms:http://purl.org/dc/elements/1.1/subject' => -> { search_lc_linked_data_service('http://id.loc.gov/authorities/subjects') },
-    'dcterms:contributor' => -> { search_lc_linked_data_service('http://id.loc.gov/authorities/names') },
+    'dcterms:http://purl.org/dc/elements/1.1/subject' => -> { search_lc_linked_data_service('http://id.loc.gov/authorities/subjects', 'LCSH') },
+    'dcterms:contributor' => -> { search_lc_linked_data_service('http://id.loc.gov/authorities/names', 'LCNAF') },
     'dcterms:spatial' => -> { search_getty_tgn if values.present? },
     'dcterms:format' => -> { validate_free_text if values.present? },
     'dcterms:publisher' => -> { validate_free_text if values.present? },
@@ -180,7 +180,7 @@ class ValidationService
     super
   end
 
-  def search_lc_linked_data_service(linked_data_service)
+  def search_lc_linked_data_service(linked_data_service, dataset)
     values.each do |value|
       next if already_validated?(value)
       next if header == 'dcterms:creator' && value == CREATOR_EXCEPTION
@@ -198,7 +198,7 @@ class ValidationService
         entry.at_xpath('atom:title', 'atom' => 'http://www.w3.org/2005/Atom')&.text == value
       end
 
-      add_error(value:, message: "<strong>#{value}</strong> was not found in LC Linked Data Service") if result.empty?
+      add_error(value:, message: "<strong>#{value}</strong> was not found in LC Linked Data Service (#{dataset})") if result.empty?
     end
   end
 
@@ -206,15 +206,15 @@ class ValidationService
     values.each do |value|
       next if already_validated?(value)
 
-      results = search_getty(value)
+      results = search_getty_aat_sparql(value) || search_getty_aat_online_tool(value) || {}
 
-      if results.empty? || !results['concept']['value'].include?('http://vocab.getty.edu/aat/')
+      unless results.present? || results.fetch('concept', nil)&.fetch('value', nil)&.include?('http://vocab.getty.edu/aat/')
         add_error(value:, message: "<strong>#{value}</strong> was not found in Getty AAT")
       end
     end
   end
 
-  def search_getty(value)
+  def search_getty_aat_sparql(value)
     endpoint = "https://vocab.getty.edu/sparql"
     query = <<~SPARQL
       SELECT ?concept {
@@ -237,7 +237,19 @@ class ValidationService
       return
     end
 
-    JSON.parse(response.body)['results']['bindings'][0] || {}
+    JSON.parse(response.body)['results']['bindings'][0]
+  end
+
+  # If the sqarql query doesn't return with results we have this scraper as a backup.
+  # Sometimes we're finding things in one place and not the other.
+  def search_getty_aat_online_tool(value)
+    match_data = value.match(/^(.*?)\s*\((.*?)\)$/)
+    find, note = match_data ? [match_data[1], match_data[2]] : [value, '']
+
+    url = "https://www.getty.edu/vow/AATServlet?english=N&find=#{find}&logic=AND&page=1&note=#{note}"
+    doc = Nokogiri::HTML(URI.open(url))
+    selector = "//td[@valign='bottom' and @colspan='2']/span[@class='page']/a/b[text()='#{value}']"
+    doc.at_xpath(selector)
   end
 
   # This is a very fragile approach to parsing the Getty TGN because
