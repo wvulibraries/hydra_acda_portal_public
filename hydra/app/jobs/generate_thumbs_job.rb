@@ -128,6 +128,10 @@ class GenerateThumbsJob < ApplicationJob
   # Check if the URL points directly to a supported file type
   def direct_file?(url)
     return false if url.nil?  # Ensure we handle nil gracefully
+
+    # if path ends with /download or /download/ or /download? or /download/? then it's a direct file link
+    return true if url.match?(/\/download\/?(\?|$)/)
+
     FILE_EXTENSIONS.any? { |ext| url.downcase.end_with?(ext) }
   end
 end
