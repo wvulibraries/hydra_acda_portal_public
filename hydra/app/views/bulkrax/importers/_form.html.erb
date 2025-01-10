@@ -22,11 +22,11 @@
 
   <%= form.input :limit, as: :integer, hint: 'leave blank or 0 for all records', input_html: { class: 'form-control'} %>
 
-  <%= form.input :parser_klass, collection: Bulkrax.parsers.map {|p| [p[:name], p[:class_name], {'data-partial' => p[:partial]}]}, label: "Parser", input_html: { class: 'form-control' } %>
+  <%# Instead of having a select since there is only ever one option, we use a hidden field %>
+  <%= hidden_field_tag 'importer[parser_klass]', 'Bulkrax::CsvParser', id: 'importer_parser_klass', data: { gtm_form_interact_field_id: '0' } %>
 
   <%= form.fields_for :parser_fields do |fi| %>
     <div class='parser_fields'>
-      <p>Specific fields for each parser are available only when a parser is selected</p>
       <% Bulkrax.parsers.map {|p| p[:partial]}.uniq.each do |partial| %>
         <%= render partial: partial, locals: {form: form, fi: fi, importer: importer} %>
       <% end %>
