@@ -1,50 +1,27 @@
-# https://gist.github.com/wbotelhos/fb865fba2b4f3518c8e533c7487d5354
-# script has sh on the end but it's not a shell script changed it to rb
-
 require 'sidekiq/api'
 require 'redis'
 
-# 1. Clear retry set
-
+# Clear Sidekiq jobs and related data
+puts "Clearing Sidekiq RetrySet..."
 Sidekiq::RetrySet.new.clear
 
-# 2. Clear scheduled jobs 
-
+puts "Clearing Sidekiq ScheduledSet..."
 Sidekiq::ScheduledSet.new.clear
 
-# 3. Clear 'Processed' and 'Failed' jobs
-
-Sidekiq::Stats.new.reset
-
-# 3. Clear 'Dead' jobs statistics
-
+puts "Clearing Sidekiq DeadSet..."
 Sidekiq::DeadSet.new.clear
 
-# Stats
+puts "Clearing all Sidekiq queues..."
+Sidekiq::Queue.all.each(&:clear)
 
-stats = Sidekiq::Stats.new
-stats.queues
-# {"production_mailers"=>25, "production_default"=>1}
+# Resetting Sidekiq stats is redundant since we are clearing the database, but kept for completeness
+puts "Resetting Sidekiq stats..."
+Sidekiq::Stats.new.reset
 
-# Queue
-
-queue = Sidekiq::Queue.new('default')
-puts "Queue count: #{queue.count}"
-queue.clear
-queue.each { |job| puts job.item } # hash content
-
-# Redis Access
+# Clear Redis (if used exclusively for Sidekiq)
+puts "Flushing Redis database..."
 redis = Redis.new(url: ENV['REDIS_URL_SIDEKIQ'])
-begin
-  puts redis.keys('*')
-rescue => e
-  puts "An error occurred: #{e.message}"
-end
+redis.flushdb
 
-Sidekiq.redis do |conn|
-  begin
-    puts conn.keys('*')
-  rescue => e
-    puts "An error occurred: #{e.message}"
-  end
-end
+puts "Sidekiq and Redis clearing completed."
+
