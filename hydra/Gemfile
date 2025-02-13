@@ -29,7 +29,7 @@ gem 'blacklight_oai_provider'
 
 # Blacklight Range Limit for date searches
 # =====================================================
-gem 'blacklight_range_limit'
+gem 'blacklight_range_limit', '>= 7.2.0'
 
 # Automatic Import
 # =====================================================
