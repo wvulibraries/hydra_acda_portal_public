@@ -1,3 +1,9 @@
+# Congress Archives Portal (ACDA) 
+[![CircleCI](https://circleci.com/gh/wvulibraries/hydra_acda_portal_public.svg?style=svg)](https://circleci.com/gh/wvulibraries/hydra_acda_portal_public)
+
+
+# below needs refactored from the original template may not be needed
+
 # WVU Hydra Repo (Hydra 11)
 
 This repo was created with the intention of being our main hydra head for while.  The goal is to implement hydra 11 in a docker container while also scripting in things to generate our new hydra heads every time we have to make a new "head" or repository.
