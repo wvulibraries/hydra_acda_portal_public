@@ -37,6 +37,7 @@ gem 'bootsnap', '>= 1.4.2', require: false
 
 gem 'twitter-typeahead-rails', '0.11.1.pre.corejavascript'
 
+gem 'mime-types'
 
 # OAI-PMH
 # =====================================================
@@ -104,6 +105,7 @@ gem 'iso-639'
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
+  gem 'pry-byebug'
   gem 'rspec-rails'
   gem 'jettywrapper'
   gem 'listen'
@@ -113,6 +115,7 @@ end
 
 group :test do
   gem 'factory_bot_rails'
+  gem 'webmock'
 end
 
 group :development do

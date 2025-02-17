@@ -1,0 +1,2 @@
+dcterms:title,dcterms:creator,dcterms:created,dcterms:language,dcterms:rights,dcterms:type,dcterms:format,dcterms:spatial,dcterms:source,dcterms:http://purl.org/dc/terms/type
+Title,Invalid Creator,not-a-date,xyz,Invalid Rights,invalid-type,Invalid Format,Invalid Place (invalid),not-a-url, wrong

@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'blacklight'
 
 RSpec.describe Blacklight::AdvancedSearchHelper do
   include described_class
