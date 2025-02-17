@@ -4,7 +4,7 @@ ruby '3.3.5'
 
 # Rails Dependencies
 # =====================================================
-gem "rails", "~> 7.0.8"
+gem "rails", "~> 7.2.0"
 gem 'bundler'
 gem 'rake', '~> 13.0.1'
 gem 'puma', '~> 6.4.0'
