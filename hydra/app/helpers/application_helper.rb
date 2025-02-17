@@ -56,17 +56,14 @@ module ApplicationHelper
 
   def format_url(url)
     return url if url.blank?
-    sanitized_url = sanitize_url(url)
-    sanitized_url.match?(/\Ahttp(s)?:\/\//) ? sanitized_url : "https://#{sanitized_url}" # Add scheme if missing
+    url.match?(/\Ahttp(s)?:\/\//) ? sanitize_url(url) : "https://#{sanitize_url(url)}" # Add scheme if missing
   end
 
   def is_active_url?(url)
     return false if url.blank?
 
     begin
-      sanitized_url = sanitize_url(url) # Sanitize the URL
-
-      resolved_url = resolve_redirect(sanitized_url) # Resolve any redirects
+      resolved_url = resolve_redirect(url) # Resolve any redirects
       uri = URI.parse(resolved_url)
       response = Net::HTTP.get_response(uri)
 

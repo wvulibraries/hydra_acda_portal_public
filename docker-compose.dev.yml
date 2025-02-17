@@ -44,6 +44,8 @@ services:
         condition: service_started
       workers:
         condition: service_started
+    networks:
+      - hydra
 
   workers:
     extends: app
@@ -60,6 +62,8 @@ services:
         condition: service_started
     stdin_open: true
     tty: true
+    networks:
+      - hydra
 
   memcached:
     image: bitnami/memcached
@@ -91,15 +95,17 @@ services:
       - hydra
 
   fcrepo:
-    image: fcrepo/fcrepo:6.4.0
+    image: fcrepo/fcrepo:6.5.1-tomcat9
     container_name: fcrepo
+    command: bash -c "/usr/local/tomcat/bin/catalina.sh run"  
     restart: always
     ports:
       - "8080:8080"
     env_file:
-      - './env/env.fedora'
+      - './env/env.fedora' 
     volumes:
-      - fcrepo:/usr/local/tomcat/fcrepo-home
+      - ./data/logs/fcrepo:/usr/local/tomcat/log   
+      - fcrepo:/usr/local/tomcat/fcrepo-home  
     logging:
       options:
         max-size: 50m
@@ -109,9 +115,9 @@ services:
       timeout: 5s
       retries: 20
     depends_on:
-      - db
+      - db      
     networks:
-      - hydra
+      - hydra      
 
   solr:
     container_name: solr
