@@ -6,7 +6,8 @@ require_relative '../config/environment'
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
-
+require 'factory_bot_rails'
+require 'devise'
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
 # run as spec files by default. This means that files in spec/support that end
@@ -31,6 +32,8 @@ rescue ActiveRecord::PendingMigrationError => e
   exit 1
 end
 RSpec.configure do |config|
+  config.include ActiveJob::TestHelper
+  config.include ActionDispatch::TestProcess
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
 
@@ -38,6 +41,23 @@ RSpec.configure do |config|
   # examples within a transaction, remove the following line or assign false
   # instead of true.
   config.use_transactional_fixtures = true
+
+  config.include Devise::Test::IntegrationHelpers, type: :request
+  config.include Warden::Test::Helpers
+
+  config.before(:suite) do
+    Warden.test_mode!
+  end
+
+  config.after(:each) do
+    Warden.test_reset!
+  end
+
+  config.before(:each, type: :request) do
+    allow_any_instance_of(ActionController::Base).to receive(:protect_against_forgery?).and_return(false)
+  end
+
+  config.include FactoryBot::Syntax::Methods
 
   # You can uncomment this line to turn off ActiveRecord support entirely.
   # config.use_active_record = false
