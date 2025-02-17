@@ -1,31 +1,85 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/configuration-reference
 version: 2.1
 
-# Define a job to be invoked later in a workflow.
-# See: https://circleci.com/docs/jobs-steps/#jobs-overview & https://circleci.com/docs/configuration-reference/#jobs
 jobs:
-  say-hello:
-    # Specify the execution environment. You can specify an image from Docker Hub or use one of our convenience images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/executor-intro/ & https://circleci.com/docs/configuration-reference/#executor-job
+  build-and-test:
     docker:
-      # Specify the version you desire here
-      # See: https://circleci.com/developer/images/image/cimg/base
-      - image: cimg/base:current
+      - image: cimg/ruby:3.3.5-browsers
+        environment:
+          RAILS_ENV: test
+          RACK_ENV: test
+          PGHOST: 127.0.0.1
+          PGUSER: root
+      
+      - image: postgres:16-alpine
+        environment:
+          POSTGRES_USER: root
+          POSTGRES_DB: circle_test
+          POSTGRES_PASSWORD: circleci
+      
+      - image: redis:alpine
+      
+      - image: solr:9.8.0
+        environment:
+          SOLR_HEAP: "512m"
+          SOLR_PORT: 8983
+      
+      - image: fcrepo/fcrepo:6.5.1-tomcat9
+      
+      - image: bitnami/memcached
+        environment:
+          MEMCACHED_PORT: 11211
 
-    # Add steps to the job
-    # See: https://circleci.com/docs/jobs-steps/#steps-overview & https://circleci.com/docs/configuration-reference/#steps
     steps:
-      # Checkout the code as the first step.
       - checkout
+      
+      - setup_remote_docker
+      
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "hydra/Gemfile.lock" }}
+            - v1-dependencies-
+      
       - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
+          name: Install Dependencies
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y postgresql-client
+      
+      - run:
+          name: Bundle Install
+          command: |
+            cd hydra
+            gem install bundler
+            bundle config set --local path 'vendor/bundle'
+            bundle install --jobs=4 --retry=3
+      
+      - save_cache:
+          paths:
+            - ./hydra/vendor/bundle
+          key: v1-dependencies-{{ checksum "hydra/Gemfile.lock" }}
+      
+      - run:
+          name: Wait for Services
+          command: |
+            dockerize -wait tcp://localhost:5432 -timeout 1m
+            dockerize -wait tcp://localhost:6379 -timeout 1m
+            dockerize -wait tcp://localhost:8983 -timeout 1m
+            dockerize -wait tcp://localhost:8080 -timeout 1m
+      
+      - run:
+          name: Setup Database
+          command: |
+            cd hydra
+            bundle exec rake db:create db:schema:load
+      
+      - run:
+          name: Run Tests
+          command: |
+            cd hydra
+            bundle exec rspec
 
-# Orchestrate jobs using workflows
-# See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
 workflows:
-  say-hello-workflow: # This is the name of the workflow, feel free to change it to better match your workflow.
-    # Inside the workflow, you define the jobs you want to run.
+  version: 2
+  build-test-deploy:
     jobs:
-      - say-hello
+      - build-and-test
