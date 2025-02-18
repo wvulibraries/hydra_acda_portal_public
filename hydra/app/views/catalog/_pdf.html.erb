@@ -10,8 +10,8 @@
       <a class="document-image-full" href="<%= available %>">
         <% if is_active_url?(preview) %>
           <%= image_tag(preview, title:"#{title}", alt:description, class:"full-size-responsive") %>
-        <% elsif @document.thumbnail_file? %>
-          <%= image_tag("/thumb/#{id}.jpg", title:"#{title}", alt:description, class:"full-size-responsive") %>
+        <% elsif @document.image_file? %>
+          <%= image_tag("/image/#{id}.jpg", title:"#{title}", alt:description, class:"full-size-responsive") %>
         <% else %>
           <span class="fa fa-file-pdf-o fa-5x" aria-hidden="true"></span>
         <% end %>

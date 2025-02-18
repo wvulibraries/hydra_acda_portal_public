@@ -31,16 +31,12 @@ class GenerateImageThumbsJob < ApplicationJob
       thumbnail_path = "/home/hydra/tmp/thumbnails"
 
       MiniMagick::Tool::Convert.new do |convert|
-        # prep format
-        convert.thumbnail '150x150'
+        convert.thumbnail '400x400>'  # Larger size with aspect ratio preservation
         convert.format 'jpg'
         convert.background "white"
-        # convert.flatten
-        convert.density 300
-        convert.quality 100
-        # add page to be converted
+        convert.density 300          # Keep high DPI for better quality
+        convert.quality 95           # High quality, reasonable file size
         convert << image_path
-        # add path of page to be converted
         convert << "#{thumbnail_path}/#{id}.jpg"
       end
     end
