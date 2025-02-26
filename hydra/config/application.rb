@@ -9,8 +9,13 @@ Bundler.require(*Rails.groups)
 module Hydra
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 5.2
+    config.load_defaults 7.0
 
+    # Add these performance optimizations
+    config.cache_classes = true
+    config.eager_load = true
+    config.autoloader = :zeitwerk  # Use the newer autoloader
+      
     # Autoload lib/ folder including all subdirectories
     config.autoload_paths << Rails.root.join('lib')
 
@@ -34,5 +39,8 @@ module Hydra
     # the framework and any gems in your application.
 
     config.hosts << ".lib.wvu.edu"
+
+    # Add this line to use the new connection handling
+    config.active_record.legacy_connection_handling = false
   end
 end
