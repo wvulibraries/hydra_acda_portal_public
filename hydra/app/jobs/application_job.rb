@@ -6,15 +6,13 @@ class ApplicationJob < ActiveJob::Base
 
   # Set timeouts using ActiveFedora configuration
   around_perform do |_job, block|
-    ActiveFedora.fedora.connection.client.options.merge!(
-      timeout: ENV.fetch('FEDORA_TIMEOUT', 60).to_i
-    )
+    original_timeout = ActiveFedora.fedora.connection.http.read_timeout
+    ActiveFedora.fedora.connection.http.read_timeout = ENV.fetch('FEDORA_TIMEOUT', 60).to_i
+    
     block.call
   ensure
     # Reset timeout after job completes
-    ActiveFedora.fedora.connection.client.options.merge!(
-      timeout: 60
-    )
+    ActiveFedora.fedora.connection.http.read_timeout = original_timeout
   end
 
   private
