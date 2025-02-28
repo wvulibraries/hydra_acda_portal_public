@@ -61,19 +61,34 @@ module ApplicationHelper
 
   def is_active_url?(url)
     return false if url.blank?
-
+  
+    # Try to get cached result first
+    url_check = UrlCheck.find_or_create_by(url: url)
+  
+    # Return cached result if recent
+    return url_check.active unless url_check.needs_recheck?
+  
     begin
-      resolved_url = resolve_redirect(url) # Resolve any redirects
+      resolved_url = resolve_redirect(url)
       uri = URI.parse(resolved_url)
       response = Net::HTTP.get_response(uri)
-
-      # Check if the response indicates success or redirection
-      response.is_a?(Net::HTTPSuccess) || response.is_a?(Net::HTTPRedirection)
+      is_active = response.is_a?(Net::HTTPSuccess) || response.is_a?(Net::HTTPRedirection)
+  
+      # Update the database with new check result
+      url_check.update(
+        active: is_active,
+        last_checked_at: Time.current
+      )
+  
+      is_active
     rescue URI::InvalidURIError => e
       Rails.logger.error "Invalid URL: #{url}. #{e.message}"
+      url_check.update(active: false, last_checked_at: Time.current)
       false
     rescue StandardError => e
       Rails.logger.error "Failed to check URL activity for #{url}: #{e.message}"
+      # Don't update last_checked_at on error to allow retry sooner
+      url_check.update(active: false)
       false
     end
   end

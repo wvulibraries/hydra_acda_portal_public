@@ -18,6 +18,7 @@ set :environment, ENV['RAILS_ENV']
 
 # clobber the tmp folder daily and logs to keep files small 
 every 1.day do
+  rake "url_checks:cleanup"
   command "cd #{path} && bundle exec rake log:clear"
   command "cd #{path} && bin/rails tmp:clear"
   command "cd #{path} && bin/rails tmp:create"  
