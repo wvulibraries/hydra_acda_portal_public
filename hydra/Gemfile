@@ -65,6 +65,7 @@ gem 'open-uri'
 gem 'sidekiq'
 gem "sidekiq-cron"
 gem 'sidekiq-failures'
+gem 'sidekiq-unique-jobs'
 
 # Hydra Dependencies
 # =====================================================
