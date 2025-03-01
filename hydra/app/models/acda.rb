@@ -9,12 +9,12 @@ class Acda < ActiveFedora::Base
   include ApplicationHelper
 
   before_save :format_urls
-  after_save :clear_empty_fields_and_generate_thumbnail
+  after_save :clear_empty_fields
+  after_save :generate_or_download_thumbnail, if: :should_process_thumbnail?
 
-  def clear_empty_fields_and_generate_thumbnail
-    clear_empty_fields
-    generate_or_download_thumbnail if saved_change_to_available_by? || saved_change_to_preview?
-  end
+  def should_process_thumbnail?
+    saved_change_to_available_by? || saved_change_to_preview?
+  end  
 
   def saved_change_to_preview?
     previous_changes['preview'].present?
@@ -25,11 +25,13 @@ class Acda < ActiveFedora::Base
   end
 
   def format_urls
-    # insure all urls are formatted correctly
-    self.available_at = format_url(self.available_at)
-    self.preview = update_preview if self.preview.blank?
-    self.preview = format_url(self.preview)
-    self.available_by = format_url(self.available_by)
+    # Use tap for cleaner assignment
+    self.tap do |record|
+      record.available_at = format_url(available_at)
+      record.preview = format_url(update_preview) if preview.blank?
+      record.preview = format_url(preview)
+      record.available_by = format_url(available_by)
+    end
   end
 
   self.indexer = ::Indexer
@@ -62,39 +64,53 @@ class Acda < ActiveFedora::Base
   end
 
   def generate_or_download_thumbnail
+    return if thumbnail_processing? # Add a flag to prevent duplicate processing
+    
     if preview.present?
-      # queue job to download and set the thumbnail
-      # using the available_at url
       DownloadAndSetThumbsJob.perform_later(id)
     else
-      # queue job to generate thumbnail
       GenerateThumbsJob.perform_later(id)
     end
   end
+  
+  def thumbnail_processing?
+    Rails.cache.exist?("thumbnail_processing_#{id}")
+  end
+
+  # def clear_empty_fields
+  #   # temporary fix for bulkrax import setting some empty strings into the Relation
+  #   # reported issue to on slack on 6-20-2023 tam0013@mail.wvu.edu
+
+  #   # get keys
+  #   keys = self.attributes.keys
+  #   # loop over keys skipping id and visibility fields
+  #   keys.each do |key|
+  #     # skip id
+  #     next if key == 'id' || key == 'visibility'
+  #     # if class is a relation and has only one element and that element is blank
+  #     if self[key].class == ActiveTriples::Relation && self[key].to_a.count == 1
+  #       # convert to array
+  #       temp_array = self[key].to_a
+  #       # delete first element if it is blank
+  #       if temp_array.to_a.first == ""
+  #         temp_array.delete_at(0)
+  #         # set array back to relation
+  #         self[key] = temp_array
+  #       end
+  #     end
+  #   end
+  # end
 
   def clear_empty_fields
-    # temporary fix for bulkrax import setting some empty strings into the Relation
-    # reported issue to on slack on 6-20-2023 tam0013@mail.wvu.edu
-
-    # get keys
-    keys = self.attributes.keys
-    # loop over keys skipping id and visibility fields
-    keys.each do |key|
-      # skip id
-      next if key == 'id' || key == 'visibility'
-      # if class is a relation and has only one element and that element is blank
-      if self[key].class == ActiveTriples::Relation && self[key].to_a.count == 1
-        # convert to array
-        temp_array = self[key].to_a
-        # delete first element if it is blank
-        if temp_array.to_a.first == ""
-          temp_array.delete_at(0)
-          # set array back to relation
-          self[key] = temp_array
-        end
+    attributes.each do |key, value|
+      next if %w[id visibility].include?(key)
+      next unless value.is_a?(ActiveTriples::Relation)
+      
+      if value.to_a == [""]
+        self[key] = []
       end
     end
-  end
+  end  
 
   # Minting ID
   # Overriding Fedoras LONG URI NOT FRIENDLY ID

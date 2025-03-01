@@ -2,11 +2,11 @@ class DownloadAndSetThumbsJob < ApplicationJob
   queue_as :import
   
   # Add sidekiq options for uniqueness
-  include Sidekiq::Worker
-  sidekiq_options queue: 'import', 
-                  unique: :until_executed,
-                  unique_expiration: 24.hours.to_i,
-                  retry: 3
+  # include Sidekiq::Worker
+  # sidekiq_options queue: 'import', 
+  #                 unique: :until_executed,
+  #                 unique_expiration: 24.hours.to_i,
+  #                 retry: 3
 
   retry_on OpenURI::HTTPError, wait: :exponentially_longer, attempts: 3
   retry_on Errno::ENOENT, wait: :exponentially_longer, attempts: 3
