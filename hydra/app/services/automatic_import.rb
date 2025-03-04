@@ -99,5 +99,4 @@ class AutomaticImport
       abort "No data file found"
     end
   end
-
 end
