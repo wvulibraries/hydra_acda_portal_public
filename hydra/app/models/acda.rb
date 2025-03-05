@@ -23,7 +23,7 @@ class Acda < ActiveFedora::Base
     
     # Set queued flag with retry logic for Fedora conflicts
     set_queued_job_flag
-  
+
     if saved_change_to_preview? && is_active_url?(preview) && image_file.blank?
       queue_thumbnail_job(:download)
     elsif saved_change_to_available_by? || saved_change_to_available_at?
@@ -46,22 +46,26 @@ class Acda < ActiveFedora::Base
   def format_urls
     # insure all urls are formatted correctly
     self.available_at = format_url(self.available_at)
-    self.preview = update_preview if self.preview.blank?
-    self.preview = format_url(self.preview)
+    self.preview = format_url(update_preview)
     self.available_by = format_url(self.available_by)
   end
 
   self.indexer = ::Indexer
 
   def update_preview
+    url = self.preview unless self.preview.blank?
+    
     # check if preview is blank
     if self.preview.blank?
-      # lets try to find the preview (thumbnail) from available_at
-      self.preview = generate_preview
-
-      # if preview is still blank, return
-      return if self.preview.blank?
+      # set preview to available_by or available_at
+      url = self.available_by || self.available_at 
     end
+
+    # lets try to correctly format the url
+    self.preview = generate_preview(url)
+
+    # if preview is still blank, return
+    return if self.preview.blank?
 
     # resolve redirect for preview
     updated_preview = resolve_redirect(self.preview)
@@ -70,11 +74,11 @@ class Acda < ActiveFedora::Base
     self.preview = updated_preview if updated_preview != preview
   end
 
-  def generate_preview
+  def generate_preview(url)
     # check and see if available_at is a preservica.com address
-    if available_at.include?('preservica.com')
+    if url.include?('preservica.com')
       # add download/thumbnail/ after the preservica.com to the url
-      preservica_url = available_at.gsub('preservica.com', 'preservica.com/download/thumbnail')
+      preservica_url = url.gsub('preservica.com', 'preservica.com/download/thumbnail')
       # return the new url
       return preservica_url
     end
