@@ -44,17 +44,21 @@ class Acda < ActiveFedora::Base
   end
 
   def format_urls
-    # insure all urls are formatted correctly
+    Rails.logger.debug "Formatting URLs for #{id}:"
+    Rails.logger.debug "  Before - preview: #{preview}, available_at: #{available_at}, available_by: #{available_by}"
+    
     self.available_at = format_url(self.available_at)
     self.preview = format_url(update_preview)
     self.available_by = format_url(self.available_by)
+    
+    Rails.logger.debug "  After - preview: #{preview}, available_at: #{available_at}, available_by: #{available_by}"
   end
 
   self.indexer = ::Indexer
 
   def update_preview
     url = self.preview unless self.preview.blank?
-    
+
     # check if preview is blank
     if self.preview.blank?
       # set preview to available_by or available_at
@@ -75,6 +79,8 @@ class Acda < ActiveFedora::Base
   end
 
   def generate_preview(url)
+    return nil if url.blank?
+
     # check and see if available_at is a preservica.com address
     if url.include?('preservica.com')
       # add download/thumbnail/ after the preservica.com to the url
