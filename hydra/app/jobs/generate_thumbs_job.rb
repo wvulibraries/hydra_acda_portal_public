@@ -4,51 +4,14 @@ class GenerateThumbsJob < ApplicationJob
   FILE_EXTENSIONS = %w[.jpg .jpeg .png .gif .pdf].freeze
 
   def perform(id)
-    # Set logger to new log file for each record - useful for debugging
-    log_directory = "#{Rails.root}/log/generate_thumbs"
-    FileUtils.mkdir_p(log_directory) unless File.exist?(log_directory)
-
-    logger = Logger.new("#{log_directory}/thumbnail_#{id}.log")
-
-    # Log the start of the job
-    logger.info "Starting thumbnail generation for Acda #{id}"
-
-    # find record    
     record = Acda.where(id: id).first
+    return unless record&.should_process_thumbnail?
 
-    # Log if record not found
-    if record.nil?
-      logger.error "Record with id #{id} not found."
-      return
-    end
+    source_url = record.get_source_url
+    return unless source_url
 
-    return if record.dc_type.nil?
-    return if ['Sound', 'Moving'].include?(record.dc_type)
-
-    # Log dc_type
-    logger.info "dc_type: #{record.dc_type}"
-
-    # temp folder to store downloaded files
-    file_path = "/home/hydra/tmp/download"
-
-    # make folder if it doesn't exist
-    FileUtils.mkdir_p(file_path) unless File.exist?(file_path)
-
-    # add id to file path so we have full path and file name.
-    download_path = "#{file_path}/#{id}"
-
-    # Determine which URL to use: priority on `available_by`, fallback to `available_at`
-    if record.available_by.present?
-      logger.info "Using available_by for download: #{record.available_by}"
-      process_url(record.available_by, download_path, logger)
-    elsif record.available_at.present?
-      logger.info "Using available_at for external resource: #{record.available_at}"
-      process_url(record.available_at, download_path, logger)
-    else
-      logger.error "No available_by or available_at URL found for record #{id}."
-      return
-    end
-
+    download_path = setup_download_path(id)
+    process_url(source_url, download_path, logger)
     handle_downloaded_file(record, download_path, logger)
   end
 
@@ -116,12 +79,21 @@ class GenerateThumbsJob < ApplicationJob
   # Handle the downloaded file based on its mime type
   def handle_downloaded_file(record, download_path, logger)
     mime_type = `file --brief --mime-type #{Shellwords.escape(download_path)}`.strip
-    if mime_type.include?('pdf')
-      GeneratePdfThumbsJob.perform_later(record.id, download_path)
-    elsif mime_type.include?('image')
-      GenerateImageThumbsJob.perform_later(record.id, download_path)
+    
+    # Log the processing chain
+    Rails.logger.info "Processing chain for #{record.id}: DownloadAndSetThumbsJob -> GenerateThumbsJob -> #{mime_type.include?('pdf') ? 'GeneratePdfThumbsJob' : 'GenerateImageThumbsJob'}"
+    
+    job_class = case mime_type
+                when /pdf/ then GeneratePdfThumbsJob
+                when /image/ then GenerateImageThumbsJob
+                end
+    
+    if job_class
+      job_class.perform_later(record.id, download_path)
     else
-      logger.info "Unsupported MIME type for record #{record.id}: #{mime_type}"
+      # Reset flag if we can't process this type
+      record.queued_job = 'false'
+      record.save!
     end
   end
 

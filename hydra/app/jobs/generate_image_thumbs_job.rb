@@ -47,6 +47,7 @@ class GenerateImageThumbsJob < ApplicationJob
       ImportLibrary.set_file(record.build_thumbnail_file, 'application/jpg', "#{thumbnail_path}/#{id}.jpg")
     end
 
+    record.queued_job = 'false'
     record.save!
 
     # delete temp files

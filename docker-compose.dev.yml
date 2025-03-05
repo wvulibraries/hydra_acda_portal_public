@@ -12,9 +12,6 @@ services:
       - ./scripts:/home/hydra/scripts
       # map in various persistent directories in the data folder
       - ./data/logs:/home/hydra/log
-      - ./data/pdf:/home/hydra/tmp/pdf
-      - ./data/thumbnails:/home/hydra/tmp/thumbnails
-      - ./data/images:/home/hydra/tmp/images
       - ./data/bundle:/usr/local/bundle # cache bundle install
       - ./data/node_modules:/home/hydra/node_modules
       # map in various persistent directories in the tmp folder
@@ -22,8 +19,12 @@ services:
       - ./data/exports:/home/hydra/tmp/exports
       - ./data/validations:/home/hydra/tmp/validations
       - ./data/letter_opener:/home/hydra/tmp/letter_opener
-      # don't mount tmp directory
-      - /home/hydra/tmp
+      # map in various persistent directories in the tmp folder
+      # so we can see the files being created
+      - ./data/downloads:/home/hydra/tmp/download
+      - ./data/images:/home/hydra/tmp/images
+      - ./data/thumbnails:/home/hydra/tmp/thumbnails
+      - ./data/pdf:/home/hydra/tmp/pdf
     networks:
       - hydra
 

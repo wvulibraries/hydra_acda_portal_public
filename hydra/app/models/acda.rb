@@ -7,31 +7,48 @@ class Acda < ActiveFedora::Base
 
   include ImportLibrary
   include ApplicationHelper
+  include ThumbnailProcessable
 
-  before_save :format_urls
-  after_save :clear_empty_fields
-  after_save :generate_or_download_thumbnail, if: :should_process_thumbnail?
+  before_create :prepare_record
+  after_create :generate_or_download_thumbnail
+  after_save :update_thumbnail_and_image, unless: :new_record?
 
-  def should_process_thumbnail?
-    saved_change_to_available_by? || saved_change_to_preview?
-  end  
+  def prepare_record
+    format_urls
+    clear_empty_fields
+  end
+
+  def update_thumbnail_and_image
+    return if queued_job.present? && queued_job == 'true'
+    
+    # Set queued flag with retry logic for Fedora conflicts
+    set_queued_job_flag
+  
+    if saved_change_to_preview? && is_active_url?(preview) && image_file.blank?
+      queue_thumbnail_job(:download)
+    elsif saved_change_to_available_by? || saved_change_to_available_at?
+      queue_thumbnail_job(:generate)
+    end
+  end
 
   def saved_change_to_preview?
     previous_changes['preview'].present?
   end
 
   def saved_change_to_available_by?
-    previous_changes['available_by'].present? || thumbnail_file.blank?
+    previous_changes['available_by'].present?
+  end
+
+  def saved_change_to_available_at?
+    previous_changes['available_at'].present?
   end
 
   def format_urls
-    # Use tap for cleaner assignment
-    self.tap do |record|
-      record.available_at = format_url(available_at)
-      record.preview = format_url(update_preview) if preview.blank?
-      record.preview = format_url(preview)
-      record.available_by = format_url(available_by)
-    end
+    # insure all urls are formatted correctly
+    self.available_at = format_url(self.available_at)
+    self.preview = update_preview if self.preview.blank?
+    self.preview = format_url(self.preview)
+    self.available_by = format_url(self.available_by)
   end
 
   self.indexer = ::Indexer
@@ -64,53 +81,41 @@ class Acda < ActiveFedora::Base
   end
 
   def generate_or_download_thumbnail
-    return if thumbnail_processing? # Add a flag to prevent duplicate processing
+    return if queued_job.present? && queued_job == 'true'
     
-    if preview.present?
-      DownloadAndSetThumbsJob.perform_later(id)
+    # Set queued flag with retry logic for Fedora conflicts
+    set_queued_job_flag
+    
+    if preview.present? && is_active_url?(preview)
+      queue_thumbnail_job(:download)
     else
-      GenerateThumbsJob.perform_later(id)
+      queue_thumbnail_job(:generate)
     end
   end
-  
-  def thumbnail_processing?
-    Rails.cache.exist?("thumbnail_processing_#{id}")
-  end
-
-  # def clear_empty_fields
-  #   # temporary fix for bulkrax import setting some empty strings into the Relation
-  #   # reported issue to on slack on 6-20-2023 tam0013@mail.wvu.edu
-
-  #   # get keys
-  #   keys = self.attributes.keys
-  #   # loop over keys skipping id and visibility fields
-  #   keys.each do |key|
-  #     # skip id
-  #     next if key == 'id' || key == 'visibility'
-  #     # if class is a relation and has only one element and that element is blank
-  #     if self[key].class == ActiveTriples::Relation && self[key].to_a.count == 1
-  #       # convert to array
-  #       temp_array = self[key].to_a
-  #       # delete first element if it is blank
-  #       if temp_array.to_a.first == ""
-  #         temp_array.delete_at(0)
-  #         # set array back to relation
-  #         self[key] = temp_array
-  #       end
-  #     end
-  #   end
-  # end
 
   def clear_empty_fields
-    attributes.each do |key, value|
-      next if %w[id visibility].include?(key)
-      next unless value.is_a?(ActiveTriples::Relation)
-      
-      if value.to_a == [""]
-        self[key] = []
+    # temporary fix for bulkrax import setting some empty strings into the Relation
+    # reported issue to on slack on 6-20-2023 tam0013@mail.wvu.edu
+
+    # get keys
+    keys = self.attributes.keys
+    # loop over keys skipping id and visibility fields
+    keys.each do |key|
+      # skip id
+      next if key == 'id' || key == 'visibility'
+      # if class is a relation and has only one element and that element is blank
+      if self[key].class == ActiveTriples::Relation && self[key].to_a.count == 1
+        # convert to array
+        temp_array = self[key].to_a
+        # delete first element if it is blank
+        if temp_array.to_a.first == ""
+          temp_array.delete_at(0)
+          # set array back to relation
+          self[key] = temp_array
+        end
       end
     end
-  end  
+  end
 
   # Minting ID
   # Overriding Fedoras LONG URI NOT FRIENDLY ID
@@ -127,6 +132,11 @@ class Acda < ActiveFedora::Base
     # Replaces periods with empty strings to maintain the original functionality
     cleaned_identifier.gsub('.', '').to_s
   end
+
+  # Queued Job
+  # ==============================================================================================================
+  # field to manage processing of queued jobs
+  property :queued_job, predicate: ::RDF::URI.new('http://acda.lib.wvu.edu/ns#queued_job'), multiple: false
 
   # DC provenance
   # ==============================================================================================================
@@ -333,4 +343,38 @@ class Acda < ActiveFedora::Base
   # video property
   directly_contains_one :video_file, through: :files, type: ::RDF::URI('http://pcdm.org/file-format-types#Video'),
                                      class_name: 'AcdaFile'
+
+  private
+
+  def set_queued_job_flag
+    retries = 0
+    begin
+      self.queued_job = 'true'
+      save!
+    rescue Ldp::Conflict => e
+      retries += 1
+      if retries < 3
+        Rails.logger.info "Retrying save after LDP conflict for #{id} (attempt #{retries})"
+        sleep(rand(0.1..0.5))
+        retry
+      else
+        Rails.logger.error "Failed to save after #{retries} attempts for #{id}"
+        raise
+      end
+    end
+  end
+
+  def queue_thumbnail_job(type)
+    Rails.logger.info "Queueing thumbnail #{type} for #{id}. " \
+                     "Preview: #{preview.present?}, " \
+                     "Available By: #{available_by.present?}, " \
+                     "Available At: #{available_at.present?}"
+    
+    case type
+    when :download
+      DownloadAndSetThumbsJob.perform_later(id)
+    when :generate
+      GenerateThumbsJob.perform_later(id)
+    end
+  end
 end

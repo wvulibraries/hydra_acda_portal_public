@@ -139,6 +139,7 @@ class GeneratePdfThumbsJob < ApplicationJob
       
       Rails.logger.info "Thumbnail created successfully at: #{output_path}"
       ImportLibrary.set_file(record.build_thumbnail_file, 'application/jpg', output_path)
+      record.queued_job = 'false'
       record.save!
     rescue MiniMagick::Error => e
       Rails.logger.error "Thumbnail conversion failed for #{id}: #{e.message}"
