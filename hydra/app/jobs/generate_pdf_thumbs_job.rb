@@ -152,19 +152,19 @@ class GeneratePdfThumbsJob < ApplicationJob
 
   def cleanup_files(id, original_path)
     Rails.logger.info "not cleaning up files while testing"
-    # paths = [
-    #   "/home/hydra/tmp/pdf/#{id}.pdf",
-    #   Dir.glob("/home/hydra/tmp/images/#{id}*"),
-    #   Dir.glob("/home/hydra/tmp/thumbnails/#{id}*")
-    # ].flatten
+    paths = [
+      "/home/hydra/tmp/pdf/#{id}.pdf",
+      Dir.glob("/home/hydra/tmp/images/#{id}*"),
+      Dir.glob("/home/hydra/tmp/thumbnails/#{id}*")
+    ].flatten
     
-    # Rails.logger.info "Starting cleanup for ID: #{id}"
-    # paths.each do |path|
-    #   if File.exist?(path)
-    #     Rails.logger.info "Removing temporary file: #{path}"
-    #     File.delete(path)
-    #   end
-    # end
-    # Rails.logger.info "Cleanup completed for ID: #{id}"
+    Rails.logger.info "Starting cleanup for ID: #{id}"
+    paths.each do |path|
+      if File.exist?(path)
+        Rails.logger.info "Removing temporary file: #{path}"
+        File.delete(path)
+      end
+    end
+    Rails.logger.info "Cleanup completed for ID: #{id}"
   end
 end

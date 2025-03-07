@@ -25,9 +25,11 @@ class Acda < ActiveFedora::Base
     set_queued_job_flag
 
     if saved_change_to_preview? && is_active_url?(preview) && image_file.blank?
-      queue_thumbnail_job(:download)
-    elsif saved_change_to_available_by? || saved_change_to_available_at?
-      queue_thumbnail_job(:generate)
+      # Direct thumbnail download if we have a preview URL
+      DownloadAndSetThumbsJob.perform_later(id)
+    else
+      # Generate from PDF in available_by
+      GenerateThumbsJob.perform_later(id)
     end
   end
 
@@ -97,9 +99,11 @@ class Acda < ActiveFedora::Base
     set_queued_job_flag
     
     if preview.present? && is_active_url?(preview)
-      queue_thumbnail_job(:download)
+      # Direct thumbnail download if we have a preview URL
+      DownloadAndSetThumbsJob.perform_later(id)
     else
-      queue_thumbnail_job(:generate)
+      # Generate from PDF in available_by
+      GenerateThumbsJob.perform_later(id)
     end
   end
 
@@ -371,20 +375,6 @@ class Acda < ActiveFedora::Base
         Rails.logger.error "Failed to save after #{retries} attempts for #{id}"
         raise
       end
-    end
-  end
-
-  def queue_thumbnail_job(type)
-    Rails.logger.info "Queueing thumbnail #{type} for #{id}. " \
-                     "Preview: #{preview.present?}, " \
-                     "Available By: #{available_by.present?}, " \
-                     "Available At: #{available_at.present?}"
-    
-    case type
-    when :download
-      DownloadAndSetThumbsJob.perform_later(id)
-    when :generate
-      GenerateThumbsJob.perform_later(id)
     end
   end
 end

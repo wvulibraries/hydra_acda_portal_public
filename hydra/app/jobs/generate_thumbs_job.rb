@@ -5,13 +5,29 @@ class GenerateThumbsJob < ApplicationJob
 
   def perform(id)
     record = Acda.where(id: id).first
-    return unless record&.should_process_thumbnail?
+    return unless record # Guard against deleted records
+    
+    # Early returns for unsupported types
+    return if record.dc_type.nil?
+    return if ['Sound', 'Moving'].include?(record.dc_type)
 
-    source_url = record.get_source_url
-    return unless source_url
+    # Set up logging
+    log_directory = "#{Rails.root}/log/generate_thumbs"
+    FileUtils.mkdir_p(log_directory) unless File.exist?(log_directory)
+    logger = Logger.new("#{log_directory}/thumbnail_#{id}.log")
 
-    download_path = setup_download_path(id)
-    process_url(source_url, download_path, logger)
+    download_path = "#{Rails.root}/tmp/downloads/#{id}"
+    FileUtils.mkdir_p(File.dirname(download_path)) unless File.exist?(File.dirname(download_path))
+
+    # Clear URL selection logic
+    if record.available_by.present?
+      logger.info "Using available_by for download: #{record.available_by}"
+      process_url(record.available_by, download_path, logger)
+    elsif record.available_at.present?
+      logger.info "Using available_at for external resource: #{record.available_at}"
+      process_url(record.available_at, download_path, logger)
+    end
+
     handle_downloaded_file(record, download_path, logger)
   end
 
@@ -79,21 +95,10 @@ class GenerateThumbsJob < ApplicationJob
   # Handle the downloaded file based on its mime type
   def handle_downloaded_file(record, download_path, logger)
     mime_type = `file --brief --mime-type #{Shellwords.escape(download_path)}`.strip
-    
-    # Log the processing chain
-    Rails.logger.info "Processing chain for #{record.id}: DownloadAndSetThumbsJob -> GenerateThumbsJob -> #{mime_type.include?('pdf') ? 'GeneratePdfThumbsJob' : 'GenerateImageThumbsJob'}"
-    
-    job_class = case mime_type
-                when /pdf/ then GeneratePdfThumbsJob
-                when /image/ then GenerateImageThumbsJob
-                end
-    
-    if job_class
-      job_class.perform_later(record.id, download_path)
-    else
-      # Reset flag if we can't process this type
-      record.queued_job = 'false'
-      record.save!
+    if mime_type.include?('pdf')
+      GeneratePdfThumbsJob.perform_later(record.id, download_path)
+    elsif mime_type.include?('image')
+      GenerateImageThumbsJob.perform_later(record.id, download_path)
     end
   end
 
