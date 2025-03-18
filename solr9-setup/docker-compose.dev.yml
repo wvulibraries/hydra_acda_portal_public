@@ -101,12 +101,9 @@ services:
       - hydra
 
   fcrepo:
-    #image: fcrepo/fcrepo:6.5.1-tomcat9
-    build:
-      context: ./
-      dockerfile: Dockerfile.fcrepo
+    image: fcrepo/fcrepo:6.5.1-tomcat9
     container_name: fcrepo
-    # command: bash -c "/usr/local/tomcat/bin/catalina.sh run"  
+    command: bash -c "/usr/local/tomcat/bin/catalina.sh run"  
     restart: always
     ports:
       - "8080:8080"

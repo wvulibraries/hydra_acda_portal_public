@@ -1,0 +1,40 @@
+# 
+FROM tomcat:9-jdk17
+
+# Install required packages
+RUN apt-get update && apt-get install -y \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Environment variables
+ENV FCREPO_VERSION=6.5.1
+ENV FCREPO_HOME=/usr/local/tomcat/fcrepo-home
+
+# Create directories with correct permissions
+RUN mkdir -p ${FCREPO_HOME} && \
+    mkdir -p /usr/local/tomcat/log && \
+    mkdir -p /usr/local/tomcat/conf/Catalina/localhost
+
+# Download and install Fcrepo WAR file
+RUN curl -fSL https://github.com/fcrepo/fcrepo/releases/download/fcrepo-${FCREPO_VERSION}/fcrepo-webapp-${FCREPO_VERSION}.war \
+    -o /usr/local/tomcat/webapps/fcrepo.war
+
+# Copy configuration files
+COPY --chown=1000:1000 fcrepo/tomcat-users.xml /usr/local/tomcat/conf/
+COPY --chown=1000:1000 fcrepo/context.xml /usr/local/tomcat/conf/Catalina/localhost/fcrepo.xml
+COPY --chown=1000:1000 fcrepo/logging.properties /usr/local/tomcat/conf/
+
+# Set permissions
+RUN chown -R 1000:1000 ${FCREPO_HOME} \
+    /usr/local/tomcat/webapps \
+    /usr/local/tomcat/log \
+    /usr/local/tomcat/conf
+
+# Switch to tomcat user
+USER 1000:1000
+
+# Expose default port
+EXPOSE 8080
+
+# Start Tomcat
+CMD ["catalina.sh", "run"]
