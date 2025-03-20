@@ -64,38 +64,48 @@ module ApplicationHelper
     url.match?(/\Ahttp(s)?:\/\//) ? sanitize_url(url) : "https://#{sanitize_url(url)}"
   end
 
-  def is_active_url?(url)
+  def is_active_url?(url, retries = 3)
     return false if url.blank?
+    return true if url.include?('dlg.usg.edu/thumbnails/')  # Always consider DLG thumbnail URLs active
   
     # Try to get cached result first
     url_check = UrlCheck.find_or_create_by(url: url)
+    
+    # Return cached result if recent and not failed
+    return url_check.active if !url_check.needs_recheck? && url_check.active
   
-    # Return cached result if recent
-    return url_check.active unless url_check.needs_recheck?
+    retries.times do |i|
+      begin
+        resolved_url = resolve_redirect(url)
+        uri = URI.parse(resolved_url)
+        
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = (uri.scheme == 'https')
+        http.read_timeout = 10
+        http.open_timeout = 5
+        
+        response = http.head(uri.request_uri)  # Use HEAD request instead of GET
+        is_active = response.is_a?(Net::HTTPSuccess) || response.is_a?(Net::HTTPRedirection)
   
-    begin
-      resolved_url = resolve_redirect(url)
-      uri = URI.parse(resolved_url)
-      response = Net::HTTP.get_response(uri)
-      is_active = response.is_a?(Net::HTTPSuccess) || response.is_a?(Net::HTTPRedirection)
+        # Update cache on success
+        url_check.update(
+          active: is_active,
+          last_checked_at: Time.current
+        )
   
-      # Update the database with new check result
-      url_check.update(
-        active: is_active,
-        last_checked_at: Time.current
-      )
-  
-      is_active
-    rescue URI::InvalidURIError => e
-      Rails.logger.error "Invalid URL: #{url}. #{e.message}"
-      url_check.update(active: false, last_checked_at: Time.current)
-      false
-    rescue StandardError => e
-      Rails.logger.error "Failed to check URL activity for #{url}: #{e.message}"
-      # Don't update last_checked_at on error to allow retry sooner
-      url_check.update(active: false)
-      false
+        return is_active
+      rescue URI::InvalidURIError => e
+        Rails.logger.error "Invalid URL: #{url}. #{e.message}"
+        break  # Don't retry on invalid URLs
+      rescue StandardError => e
+        Rails.logger.error "Attempt #{i + 1}/#{retries} failed for URL #{url}: #{e.message}"
+        sleep(1) unless i == retries - 1  # Sleep between retries
+      end
     end
+  
+    # If we get here, all retries failed
+    url_check.update(active: false)
+    false
   end
 
   # Using this instead of #link_to_facet in the catalog_controller was giving us just strings instead of

@@ -61,12 +61,20 @@ class GeneratePdfThumbsJob < ApplicationJob
     final_image_path = find_image_path(id, image_path)
     
     if final_image_path
-      Rails.logger.info "Image generated successfully at: #{final_image_path}"
-      ImportLibrary.set_file(record.build_image_file, 'application/jpg', final_image_path)
-      create_thumbnail(id, final_image_path, record)
-    else
-      Rails.logger.error "Failed to generate image for ID: #{id}"
-      return false
+      Rails.logger.info "Setting image file for #{id} from #{final_image_path}"
+      begin
+        # Build and save image file
+        image_file = record.build_image_file
+        ImportLibrary.set_file(image_file, 'application/jpg', final_image_path)
+        record.save!
+        Rails.logger.info "Image file set successfully"
+        
+        # Create thumbnail from the image
+        create_thumbnail(id, final_image_path, record)
+      rescue => e
+        Rails.logger.error "Failed to set image file: #{e.message}\n#{e.backtrace.join("\n")}"
+        raise e
+      end
     end
   end
 
@@ -125,28 +133,25 @@ class GeneratePdfThumbsJob < ApplicationJob
     begin
       Rails.logger.info "Starting thumbnail creation for ID: #{id}"
       MiniMagick::Tool::Convert.new do |convert|
-        convert.resize '150x150>' # Back to smaller size for thumbnails
+        convert.resize '150x150>' 
         convert.quality '100'
         convert << image_path
         convert << output_path
       end
       
-      # Verify thumbnail was created successfully
-      unless File.exist?(output_path) && File.size(output_path) > 0
+      if File.exist?(output_path) && File.size(output_path) > 0
+        Rails.logger.info "Thumbnail created successfully at: #{output_path}"
+        ImportLibrary.set_file(record.build_thumbnail_file, 'application/jpg', output_path)
+        record.queued_job = 'false'
+        record.save!
+        true
+      else
         Rails.logger.error "Failed to create thumbnail at: #{output_path}"
-        return false
+        false
       end
-      
-      Rails.logger.info "Thumbnail created successfully at: #{output_path}"
-      ImportLibrary.set_file(record.build_thumbnail_file, 'application/jpg', output_path)
-      record.queued_job = 'false'
-      record.save!
-    rescue MiniMagick::Error => e
-      Rails.logger.error "Thumbnail conversion failed for #{id}: #{e.message}"
-      return false
     rescue StandardError => e
-      Rails.logger.error "Unexpected error creating thumbnail for #{id}: #{e.message}"
-      return false
+      Rails.logger.error "Error in create_thumbnail for #{id}: #{e.message}\n#{e.backtrace.join("\n")}"
+      false
     end
   end
 

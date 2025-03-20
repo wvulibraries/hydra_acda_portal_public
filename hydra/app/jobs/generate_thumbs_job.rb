@@ -111,5 +111,49 @@ class GenerateThumbsJob < ApplicationJob
 
     FILE_EXTENSIONS.any? { |ext| url.downcase.end_with?(ext) }
   end
+
+  def handle_dlg_record(url, download_path, logger)
+    logger.info "Processing DLG record: #{url}"
+    record = Acda.where(id: id).first
+    
+    html = URI.open(url).read
+    doc = Nokogiri::HTML(html)
+    
+    # Check for PDF first
+    pdf_url = doc.css('a[href*="/download/pdf/"]').attr('href')&.value ||
+              doc.css('a[href$=".pdf"]').attr('href')&.value
+              
+    if pdf_url
+      logger.info "Found PDF URL: #{pdf_url}"
+      pdf_url = URI.join(url, pdf_url).to_s unless pdf_url.start_with?('http')
+      download_resource(pdf_url, download_path, logger)
+      record.dc_type = "Text"
+      record.save!
+      return
+    end
+    
+    # If no PDF, look for image
+    image_url = doc.css('img.image-large').attr('src')&.value ||
+                doc.css('meta[property="og:image"]').attr('content')&.value ||
+                doc.css('a[href*="/download/image/"]').attr('href')&.value
+    
+    if image_url
+      logger.info "Found DLG image URL: #{image_url}"
+      image_url = URI.join(url, image_url).to_s unless image_url.start_with?('http')
+      download_resource(image_url, download_path, logger)
+      record.dc_type = "Image"
+      record.save!
+    else
+      # Try IIIF URL construction as last resort
+      id = url.split('/').last
+      iiif_url = "https://dlg.usg.edu/images/iiif/2/#{id}/full/800,/0/default.jpg"
+      logger.info "Attempting IIIF URL: #{iiif_url}"
+      download_resource(iiif_url, download_path, logger)
+      record.dc_type = "Image"
+      record.save!
+    end
+  rescue StandardError => e
+    logger.error "Failed to process DLG record #{url}: #{e.message}"
+  end
 end
 

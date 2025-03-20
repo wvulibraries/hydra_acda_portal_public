@@ -22,6 +22,11 @@ Rails.application.routes.draw do
   get '/validate' => 'validations#upload'
   post '/validate' => 'validations#show'
 
+  # Add routes for the HTML pages
+  # partner archived pages?
+  # get '/newsletter' => 'pages#newsletter'
+  # get '/press-release' => 'pages#press_release'
+
   # featured
   get '/featured' => 'featured#index'
 

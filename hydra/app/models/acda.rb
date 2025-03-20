@@ -10,27 +10,13 @@ class Acda < ActiveFedora::Base
   include ThumbnailProcessable
 
   before_create :prepare_record
-  after_create :generate_or_download_thumbnail
-  after_save :update_thumbnail_and_image, unless: :new_record?
+  after_save :handle_thumbnail_generation, unless: :skip_thumbnail_update
+
+  attr_accessor :skip_thumbnail_update
 
   def prepare_record
     format_urls
     clear_empty_fields
-  end
-
-  def update_thumbnail_and_image
-    return if queued_job.present? && queued_job == 'true'
-    
-    # Set queued flag with retry logic for Fedora conflicts
-    set_queued_job_flag
-
-    if saved_change_to_preview? && is_active_url?(preview) && image_file.blank?
-      # Direct thumbnail download if we have a preview URL
-      DownloadAndSetThumbsJob.perform_later(id)
-    else
-      # Generate from PDF in available_by
-      GenerateThumbsJob.perform_later(id)
-    end
   end
 
   def saved_change_to_preview?
@@ -49,61 +35,41 @@ class Acda < ActiveFedora::Base
     Rails.logger.debug "Formatting URLs for #{id}:"
     Rails.logger.debug "  Before - preview: #{preview}, available_at: #{available_at}, available_by: #{available_by}"
     
+    # Format basic URLs
     self.available_at = format_url(self.available_at)
-    self.preview = format_url(update_preview)
     self.available_by = format_url(self.available_by)
+    
+    # Handle preview URL
+    if self.preview.blank?
+      # For Hawaii records - use available_by as source for preview
+      url = self.available_by || self.available_at
+      self.preview = format_url(generate_preview(url))
+    else
+      # For RBL records - use existing preview URL
+      self.preview = format_url(self.preview)
+    end
+
+    # Check for redirects
+    updated_preview = resolve_redirect(self.preview)
+    self.preview = updated_preview if updated_preview != preview
     
     Rails.logger.debug "  After - preview: #{preview}, available_at: #{available_at}, available_by: #{available_by}"
   end
 
   self.indexer = ::Indexer
 
-  def update_preview
-    url = self.preview unless self.preview.blank?
-
-    # check if preview is blank
-    if self.preview.blank?
-      # set preview to available_by or available_at
-      url = self.available_by || self.available_at 
-    end
-
-    # lets try to correctly format the url
-    self.preview = generate_preview(url)
-
-    # if preview is still blank, return
-    return if self.preview.blank?
-
-    # resolve redirect for preview
-    updated_preview = resolve_redirect(self.preview)
-
-    # update preview if it has changed
-    self.preview = updated_preview if updated_preview != preview
-  end
-
   def generate_preview(url)
     return nil if url.blank?
-
-    # check and see if available_at is a preservica.com address
+    
     if url.include?('preservica.com')
-      # add download/thumbnail/ after the preservica.com to the url
-      preservica_url = url.gsub('preservica.com', 'preservica.com/download/thumbnail')
-      # return the new url
-      return preservica_url
-    end
-  end
-
-  def generate_or_download_thumbnail
-    return if queued_job.present? && queued_job == 'true'
-    
-    # Set queued flag with retry logic for Fedora conflicts
-    set_queued_job_flag
-    
-    if preview.present? && is_active_url?(preview)
-      # Direct thumbnail download if we have a preview URL
-      DownloadAndSetThumbsJob.perform_later(id)
+      # Only transform Preservica URLs
+      url.gsub('preservica.com', 'preservica.com/download/thumbnail')
+    elsif url.include?('/download') || url.end_with?('.pdf')
+      # For downloadable content that needs thumbnail generation
+      nil
     else
-      # Generate from PDF in available_by
-      GenerateThumbsJob.perform_later(id)
+      # For all other URLs, return as-is
+      url
     end
   end
 
@@ -116,7 +82,7 @@ class Acda < ActiveFedora::Base
     # loop over keys skipping id and visibility fields
     keys.each do |key|
       # skip id
-      next if key == 'id' || key == 'visibility'
+      next if key == 'id' || 'visibility'
       # if class is a relation and has only one element and that element is blank
       if self[key].class == ActiveTriples::Relation && self[key].to_a.count == 1
         # convert to array
@@ -358,18 +324,80 @@ class Acda < ActiveFedora::Base
   directly_contains_one :video_file, through: :files, type: ::RDF::URI('http://pcdm.org/file-format-types#Video'),
                                      class_name: 'AcdaFile'
 
-  private
+  def self.queue_pending_thumbnails
+    where(queued_job: nil).find_each(batch_size: 1) do |record|
+      next unless record.preview.present?
+      begin
+        record.queued_job = 'true'
+        record.save_with_retry!(validate: false)
+        DownloadAndSetThumbsJob.set(wait: 2.seconds).perform_later(record.id)
+      rescue Ldp::Conflict => e
+        Rails.logger.error "LDP Conflict for #{record.id}: #{e.message}"
+        retry_count = 0
+        begin
+          retry_count += 1
+          sleep(rand(1..3))  # Increased backoff
+          retry if retry_count < 3
+        end
+      end
+    end
+  end
 
-  def set_queued_job_flag
-    retries = 0
+  def handle_thumbnail_generation
+    return if queued_job.present? && queued_job == 'true'
+    return unless needs_thumbnail_update?
+    
+    self.skip_thumbnail_update = true
     begin
       self.queued_job = 'true'
-      save!
+      save_with_retry!(validate: false)
+      
+      if preview.present?
+        # Try to use existing preview first
+        DownloadAndSetThumbsJob.perform_later(id)
+        Rails.logger.info "Queued DownloadAndSetThumbsJob for #{id} with preview URL"
+      elsif available_by.present?
+        if dc_type == 'Image' && !available_by.end_with?('.pdf')
+          # For image files, generate thumbnail directly
+          GenerateImageThumbsJob.perform_later(id)
+          Rails.logger.info "Queued GenerateImageThumbsJob for #{id} - type: Image"
+        elsif available_by.include?('/download') || available_by.end_with?('.pdf')
+          # For PDFs, generate both image and thumbnail
+          GenerateThumbsJob.perform_later(id)
+          Rails.logger.info "Queued GenerateThumbsJob for #{id} - PDF processing"
+        end
+      end
+    rescue Ldp::Conflict => e
+      Rails.logger.error "LDP Conflict in handle_thumbnail_generation for #{id}: #{e.message}"
+      retry_count ||= 0
+      retry_count += 1
+      sleep(1 + retry_count)
+      retry if retry_count < 3
+    ensure
+      self.skip_thumbnail_update = false
+    end
+  end
+
+  def needs_thumbnail_update?
+    return true if image_file.blank? && thumbnail_file.blank?
+    return true if saved_change_to_preview? || saved_change_to_available_by? || saved_change_to_available_at?
+    false
+  end
+
+  def save_with_retry!(opts = {})
+    retries = 0
+    max_retries = 3
+    begin
+      if opts[:validate] == false
+        save!(validate: false)
+      else
+        save!
+      end
     rescue Ldp::Conflict => e
       retries += 1
-      if retries < 3
+      if retries < max_retries
         Rails.logger.info "Retrying save after LDP conflict for #{id} (attempt #{retries})"
-        sleep(rand(0.1..0.5))
+        sleep(1 + retries)  # Progressive backoff
         retry
       else
         Rails.logger.error "Failed to save after #{retries} attempts for #{id}"

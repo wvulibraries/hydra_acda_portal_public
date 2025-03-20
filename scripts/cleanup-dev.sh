@@ -19,7 +19,7 @@ rm -rf ./data/imports
 rm -rf ./data/pdf
 # remove thumbnails directory
 rm -rf ./data/thumbnails
-# remove tmp directory
-rm -rf ./data/tmp
+# remove downloads directory
+rm -rf ./data/downloads
 # remove logs validations directory
 rm -rf ./data/logs/validations
