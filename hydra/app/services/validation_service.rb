@@ -1,4 +1,6 @@
 class ValidationService
+    include ApplicationHelper
+    
     def self.new(path:, validate_urls: false)
         ValidationFactory.create(
             path: path,
