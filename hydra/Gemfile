@@ -62,7 +62,7 @@ gem 'open-uri'
 # background jobs
 # =====================================================
 # sidekiq 7 is not compatible with rails 5.2
-gem 'sidekiq'
+gem 'sidekiq', '>= 8.0.0'
 gem "sidekiq-cron"
 gem 'sidekiq-failures'
 gem 'sidekiq-unique-jobs'
