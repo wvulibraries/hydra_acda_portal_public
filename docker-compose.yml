@@ -73,7 +73,7 @@ services:
     ports:
       - "127.0.0.1:6379:6379"
     env_file:
-      - './env/env.dev.redis'
+      - './env/env.redis'
     volumes:
       - ./data/redis:/var/lib/redis/data
       # - ./config/redis.conf:/usr/local/etc/redis/redis.conf
