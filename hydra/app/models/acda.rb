@@ -343,39 +343,17 @@ class Acda < ActiveFedora::Base
     end
   end
 
+  # Modified thumbnail generation method in Acda model
   def handle_thumbnail_generation
-    return if queued_job.present? && queued_job == 'true'
+    return if queued_job.present? && ['true', 'completed'].include?(queued_job)
     return unless needs_thumbnail_update?
     
+    # Prevent callbacks from triggering during thumbnail generation
     self.skip_thumbnail_update = true
-    begin
-      self.queued_job = 'true'
-      save_with_retry!(validate: false)
-      
-      if preview.present?
-        # Try to use existing preview first
-        DownloadAndSetThumbsJob.perform_later(id)
-        Rails.logger.info "Queued DownloadAndSetThumbsJob for #{id} with preview URL"
-      elsif available_by.present?
-        if dc_type == 'Image' && !available_by.end_with?('.pdf')
-          # For image files, generate thumbnail directly
-          GenerateImageThumbsJob.perform_later(id)
-          Rails.logger.info "Queued GenerateImageThumbsJob for #{id} - type: Image"
-        elsif available_by.include?('/download') || available_by.end_with?('.pdf')
-          # For PDFs, generate both image and thumbnail
-          GenerateThumbsJob.perform_later(id)
-          Rails.logger.info "Queued GenerateThumbsJob for #{id} - PDF processing"
-        end
-      end
-    rescue Ldp::Conflict => e
-      Rails.logger.error "LDP Conflict in handle_thumbnail_generation for #{id}: #{e.message}"
-      retry_count ||= 0
-      retry_count += 1
-      sleep(1 + retry_count)
-      retry if retry_count < 3
-    ensure
-      self.skip_thumbnail_update = false
-    end
+    
+    # Queue a single job type regardless of content type
+    ProcessThumbnailJob.perform_once(id)
+    Rails.logger.info "Queued ProcessThumbnailJob for #{id}"
   end
 
   def needs_thumbnail_update?
@@ -403,6 +381,43 @@ class Acda < ActiveFedora::Base
         Rails.logger.error "Failed to save after #{retries} attempts for #{id}"
         raise
       end
+    end
+  end
+
+  # Add to Acda model
+  def self.with_lock(id)
+    transaction do
+      record = find(id)
+      record.lock!  # Acquire a database lock
+      yield record
+    end
+  rescue ActiveRecord::RecordNotFound
+    Rails.logger.error "Record #{id} not found for locking"
+    false
+  end
+
+  # Add to Acda model
+  def self.with_thumbnail_lock(id)
+    record = find(id)
+    return false if record.queued_job == 'true' # Already being processed
+    
+    # Set a lock
+    record.queued_job = 'true'
+    record.save_with_retry!(validate: false)
+    
+    begin
+      # Run the provided block
+      yield record
+      # Mark as completed
+      record.queued_job = 'completed'
+      record.save_with_retry!(validate: false)
+      return true
+    rescue => e
+      # On failure, still mark as completed to prevent infinite retries
+      record.queued_job = 'completed' 
+      record.save_with_retry!(validate: false)
+      Rails.logger.error "Error in thumbnail processing: #{e.message}"
+      return false
     end
   end
 end
