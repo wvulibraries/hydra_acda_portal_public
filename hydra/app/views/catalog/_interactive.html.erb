@@ -1,0 +1,31 @@
+
+<% id = @document[:id] %>
+<% available = @document[:available_at_ssi] %>
+<% title = @document[:title_ssi] %>
+<% description = @document[:description_tesim]&.first || "Interactive content preview" %>
+
+<div class="row">
+  <div class="col-lg-4 text-center">
+    <a class="document-image-full" href="<%= available %>" target="_blank" style="text-decoration: none;">
+      <div style="border: 1px solid #ccc; border-radius: 8px; padding: 15px; background-color: #f8f9fa; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <div style="font-size: 48px; color: #17a2b8;">
+          <i class="fa fa-globe"></i>
+        </div>
+
+
+        <div style="margin-top: 10px; font-size: 13px; color: #007bff;">
+          <i class="fa fa-external-link-alt"></i> Click to open Archived Site
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-lg-8">
+    <div id="document" class="document <%= render_document_class %>" itemscope itemtype="<%= @document.itemtype %>">
+      <div id="doc_<%= @document.id.to_s.parameterize %>">
+        <%= render_document_partials(@document, blacklight_config.view_config(:show).partials).html_safe %>
+      </div>
+    </div>
+  </div>
+</div>
+
