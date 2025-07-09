@@ -39,7 +39,9 @@ module ApplicationHelper
     preview = document[:preview_tesim]&.first.to_s
     id = document[:id]
 
-    if is_active_url?(preview)
+    if document[:dc_type_ssi] == "Interactive Resource" || document[:dc_type_ssi] == "InteractiveResource"
+      link_to_document document, render(partial: 'catalog/interactive_button'), class: "button interactive-button"
+    elsif is_active_url?(preview)
       image_tag(preview, title: title, alt: description, class: "full-size-responsive")
     elsif document.thumbnail_file?
       image_tag("/thumb/#{id}.jpg", title: title, alt: description, class: "full-size-responsive")
@@ -49,8 +51,6 @@ module ApplicationHelper
       link_to_document document, render(partial: 'catalog/video_button'), class: "button video-button"
     elsif !document.image_file? && document[:dc_type_ssi] == "Text"
       link_to_document document, render(partial: 'catalog/pdf_button'), class: "button pdf-button"
-    elsif document[:dc_type_ssi] == "Interactive Resource" || document[:dc_type_ssi] == "InteractiveResource"
-      link_to_document document, render(partial: 'catalog/interactive_button'), class: "button interactive-button"
     else
       link_to_document document, render(partial: 'catalog/image_slash'), class: "button image-slash"
     end
