@@ -39,6 +39,7 @@ module Hydra
     # the framework and any gems in your application.
 
     config.hosts << ".lib.wvu.edu"
+    config.hosts << "congressarchives.org"
 
     # Add this line to use the new connection handling
     config.active_record.legacy_connection_handling = false
