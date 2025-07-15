@@ -101,9 +101,9 @@ jobs :
                               -- ${TESTFILES}
 
       - run:
-          name: Upload coverage to Qlty
-          command: |
-            qlty coverage upload coverage/.resultset.json --format simplecov
+          name: Upload coverage
+          command: qlty coverage publish coverage/lcov.info
+          
 
 
       # - run:
