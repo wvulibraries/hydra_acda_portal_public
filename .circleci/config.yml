@@ -67,11 +67,7 @@ jobs :
 
       - run:
           name: Install Qlty CLI
-          command: |
-            curl -sSL https://get.qlty.sh | bash
-            echo 'export PATH=$HOME/.qlty/bin:$PATH' >> $BASH_ENV
-            source $BASH_ENV
-            qlty --version
+          command: curl https://qlty.sh | sh
 
 
       # - run:
