@@ -58,6 +58,9 @@ RSpec.describe Acda, type: :model do
     before do
       acda.available_at = "http://example.com"
 
+  
+      allow_any_instance_of(ActiveFedora::Persistence).to receive(:save).and_return(true)
+
       stub_request(:head, "http://fcrepo:8080/fcrepo/rest/dev")
         .with(
           headers: {
