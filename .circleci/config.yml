@@ -1,0 +1,158 @@
+version : 2
+jobs : 
+  build:
+    working_directory: ~/circleci-hydra-acda-portal-public/hydra
+    parallelism: 1
+    shell: /bin/bash --login
+    environment:
+      RAILS_ENV: test
+      RACK_ENV: test
+      COVERAGE: true
+      TZ: /usr/share/zoneinfo/America/New_York
+    docker:
+      - image: cimg/ruby:3.3.5-browsers
+        environment:
+          PGHOST: 127.0.0.1
+          PGUSER: fcrepo
+      - image: postgres:16-alpine
+        environment:
+          POSTGRES_USER: fcrepo
+          POSTGRES_DB: fcrepo
+          POSTGRES_PASSWORD: PASSWORD
+      - image: redis:alpine
+      - image: bitnami/memcached
+      - image: solr:9.8.0
+        environment:
+          SOLR_HEAP: "512m"
+          SOLR_HOME: ./solr
+          SOLR_LOGS: /opt/solr/logs
+          SOLR_PID: /opt/solr/solr.pid
+          SOLR_PORT: 8983
+      - image: fcrepo/fcrepo:6.5.1-tomcat9
+      
+
+    steps:
+      - checkout:
+          path: ~/circleci-hydra-acda-portal-public
+      - run:
+          name: apt update
+          command: sudo apt update
+
+      - restore_cache:
+          keys:
+            - hydra-bundle-{{ checksum "Gemfile.lock" }}
+
+
+      - run:
+          name: install dockerize
+          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+          environment:
+            DOCKERIZE_VERSION: v0.6.1
+
+      - run:
+          name: Wait for PostgreSQL to start
+          command: dockerize -wait tcp://localhost:5432 -timeout 60s
+
+      - run:
+          name: Force Bundler Version
+          command: |
+            sudo gem update --system
+            echo 'export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")' >> $BASH_ENV
+            source $BASH_ENV
+            gem install bundler
+    
+      - run:
+          name: bundle install gems
+          command: bundle install --jobs=4 --retry=3
+
+
+      # - run:
+      #     name: Install Code Climate Test Reporter
+      #     command: |
+      #       curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+      #       chmod +x ./cc-test-reporter
+
+      # Store bundle cache
+      - type: cache-save
+        key: hyrax-bundle-{{ checksum "Gemfile.lock" }}
+        paths:
+          - vendor/bundle
+
+      - run:
+          name: Setup Database
+          command: |
+            bundle exec rake db:create db:schema:load
+
+      - run:
+          name: Run tests
+          command: |
+            mkdir -p test-results/rspec test-artifacts
+            ./cc-test-reporter before-build
+            TESTFILES=$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
+            bundle exec rspec --profile 10 \
+                              --color \
+                              --order random \
+                              --out test-results/rspec/rspec.xml \
+                              --format progress \
+                              -- ${TESTFILES}
+
+
+      # - run:
+      #     name: Code Climate Test Coverage
+      #     command: |
+      #       ./cc-test-reporter format-coverage -t simplecov -o "coverage/codeclimate.$CIRCLE_NODE_INDEX.json"
+      # - persist_to_workspace:
+      #     root: coverage
+      #     paths:
+      #       - codeclimate.*.json
+
+
+      - store_test_results:
+          path: test-results
+      - store_artifacts:
+          path: test-artifacts
+
+
+  # upload-coverage:
+  #   docker:
+  #     - image: cimg/ruby:3.3.5-browsers
+  #   environment:
+  #      CC_TEST_REPORTER_ID: "your_code_climate_test_reporter_id_here"
+  #   working_directory: ~/circleci-hydra-acda-portal-public
+
+  #   steps:
+  #     - attach_workspace:
+  #         at: ~/circleci-hydra-acda-portal-public
+  #     - run:
+  #         name: Install Code Climate Test Reporter
+  #         command: |
+  #           curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  #           chmod +x ./cc-test-reporter
+  #     - run:
+  #         command: |
+  #           ./cc-test-reporter sum-coverage --output - codeclimate.*.json | ./cc-test-reporter upload-coverage --debug --input -
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+
+      
+
+      
+
+      
+
+      
+
+      
+      
+
+      
+        
+
+      
+      
+    
+

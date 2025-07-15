@@ -14,7 +14,7 @@ RSpec.describe Acda, type: :model do
   describe "#format_urls" do
     before do
       allow(acda).to receive(:format_url).and_return("http://formatted.com")
-      allow(acda).to receive(:update_preview)
+      # allow(acda).to receive(:update_preview)
     end
  
     it "formats available_at, preview and available_by URLs" do
