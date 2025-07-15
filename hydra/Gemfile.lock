@@ -198,6 +198,7 @@ GEM
     devise-guests (0.8.3)
       devise
     diff-lcs (1.5.1)
+    docile (1.4.1)
     docopt (0.5.0)
     ebnf (2.4.0)
       htmlentities (~> 4.3)
@@ -640,6 +641,13 @@ GEM
     simple_form (5.3.1)
       actionpack (>= 5.2)
       activemodel (>= 5.2)
+    simplecov (0.22.0)
+      docile (~> 1.1)
+      simplecov-html (~> 0.11)
+      simplecov_json_formatter (~> 0.1)
+    simplecov-html (0.13.1)
+    simplecov-lcov (0.8.0)
+    simplecov_json_formatter (0.1.4)
     sinatra (2.2.4)
       mustermann (~> 2.0)
       rack (~> 2.2)
@@ -783,6 +791,8 @@ DEPENDENCIES
   sidekiq
   sidekiq-cron
   sidekiq-failures
+  simplecov
+  simplecov-lcov
   solr_wrapper (~> 2.0)
   solrizer
   speedy-af (~> 0.3)
