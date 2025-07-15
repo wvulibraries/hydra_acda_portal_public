@@ -65,6 +65,14 @@ jobs :
           name: bundle install gems
           command: bundle install --jobs=4 --retry=3
 
+      - run:
+          name: Install Qlty CLI
+          command: |
+            curl -sSL https://get.qlty.sh | bash
+            echo 'export PATH=$HOME/.qlty/bin:$PATH' >> $BASH_ENV
+            source $BASH_ENV
+            qlty --version
+
 
       # - run:
       #     name: Install Code Climate Test Reporter
@@ -95,6 +103,11 @@ jobs :
                               --out test-results/rspec/rspec.xml \
                               --format progress \
                               -- ${TESTFILES}
+
+      - run:
+          name: Upload coverage to Qlty
+          command: |
+            qlty coverage upload coverage/.resultset.json --format simplecov
 
 
       # - run:
