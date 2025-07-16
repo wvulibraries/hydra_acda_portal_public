@@ -1,3 +1,11 @@
+
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/wvulibraries/hydra_acda_portal_public/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/wvulibraries/hydra_acda_portal_public/tree/main)
+
+[![Maintainability](https://qlty.sh/gh/wvulibraries/projects/hydra_acda_portal_public/maintainability.svg)](https://qlty.sh/gh/wvulibraries/projects/hydra_acda_portal_public)
+
+[![Code Coverage](https://qlty.sh/gh/wvulibraries/projects/hydra_acda_portal_public/coverage.svg)](https://qlty.sh/gh/wvulibraries/projects/hydra_acda_portal_public)
+
+
 # WVU Hydra Repo (Hydra 11)
 
 This repo was created with the intention of being our main hydra head for while.  The goal is to implement hydra 11 in a docker container while also scripting in things to generate our new hydra heads every time we have to make a new "head" or repository.
