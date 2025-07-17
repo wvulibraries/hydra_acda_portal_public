@@ -14,36 +14,44 @@ RSpec.describe Acda, type: :model do
   describe "#format_urls" do
     before do
       allow(acda).to receive(:format_url).and_return("http://formatted.com")
-      # allow(acda).to receive(:update_preview)
+      allow(acda).to receive(:resolve_redirect).and_return("http://formatted.com")
     end
+
  
     it "formats available_at, preview and available_by URLs" do
       acda.format_urls
       expect(acda).to have_received(:format_url).exactly(3).times
+      expect(acda).to have_received(:resolve_redirect).once
     end
   end
  
   describe "#generate_preview" do
     context "with preservica URL" do
       it "generates thumbnail URL" do
-        acda.available_at = "https://test.preservica.com/doc"
-        expect(acda.generate_preview).to eq "https://test.preservica.com/download/thumbnail/doc"
+        expect(acda.generate_preview("https://test.preservica.com/doc")).to eq "https://test.preservica.com/download/thumbnail/doc"
       end
     end
  
     context "without preservica URL" do
       it "returns nil" do
-        acda.available_at = "https://other.com"
-        expect(acda.generate_preview).to be_nil
+        expect(acda.generate_preview("https://other.com")).to eq "https://other.com"
       end
     end
   end
  
   describe "#clear_empty_fields" do
     it "removes empty strings from relations" do
+      acda = Acda.new
       acda.creator = [""]
       acda.clear_empty_fields
       expect(acda.creator).to be_empty
+    end
+
+    it "keeps non-blank values but removes empty ones" do
+      acda = Acda.new
+      acda.creator = ["", "John Doe", ""]
+      acda.clear_empty_fields
+      expect(acda.creator).to eq(["John Doe"])
     end
   end
  

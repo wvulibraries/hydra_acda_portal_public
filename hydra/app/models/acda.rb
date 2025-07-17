@@ -82,17 +82,17 @@ class Acda < ActiveFedora::Base
     # loop over keys skipping id and visibility fields
     keys.each do |key|
       # skip id
-      next if key == 'id' || 'visibility'
+      next if key == 'id' || key == 'visibility'
       # if class is a relation and has only one element and that element is blank
-      if self[key].class == ActiveTriples::Relation && self[key].to_a.count == 1
-        # convert to array
-        temp_array = self[key].to_a
-        # delete first element if it is blank
-        if temp_array.to_a.first == ""
-          temp_array.delete_at(0)
-          # set array back to relation
-          self[key] = temp_array
-        end
+      value = self[key]
+
+      # Only process ActiveTriples::Relation (or similar array-like) values
+      if value.is_a?(ActiveTriples::Relation)
+        # Convert to array and reject blank values
+        cleaned_values = value.to_a.reject(&:blank?)
+
+        # If all were blank, it becomes []
+        self[key] = cleaned_values
       end
     end
   end
