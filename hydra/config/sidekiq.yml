@@ -1,18 +1,32 @@
-:verbose: true
+# Logging configuration
+:verbose: true  # Set to false in production for better performance
+:logfile: ./log/sidekiq.log  # Central log file
 
-:timeout: 30
+# Job processing settings
+:timeout: 25  # Reduced from 30 for faster failure detection
+:max_retries: 3  # Add retry limit
+:concurrency: <%= ENV.fetch("SIDEKIQ_WORKERS", 5) %>  # Default to 5 workers
 
+# Queue configuration with priorities
 :queues:
-  - [default, 4]
-  - [import, 1] # This is for bulkrax
-  - [export, 1] # This is for bulkrax  
+  - [critical, 3]  # Add critical queue for high-priority jobs
+  - [default, 2]   # Reduced priority from 4
+  - [import, 1]    # Bulkrax imports
+  - [export, 1]    # Bulkrax exports
 
-test: # n/a
-  :concurrency: 1
-
+# Environment specific settings
 development:
-  :concurrency: <%= ENV['SIDEKIQ_WORKERS'] || 1 %>
+  :concurrency: <%= ENV.fetch("SIDEKIQ_WORKERS", 2) %>
   :logfile: ./log/sidekiq_development.log
+  :verbose: true   # Keep verbose in development
+
+test:
+  :concurrency: 1
+  :verbose: false
 
 production:
-  :concurrency: <%= ENV['SIDEKIQ_WORKERS'] || 2 %>
+  :concurrency: <%= ENV.fetch("SIDEKIQ_WORKERS", 10) %>
+  :verbose: false
+  # Add some production optimizations
+  :max_retries: 5
+  :poll_interval_average: 15  # Poll interval in seconds

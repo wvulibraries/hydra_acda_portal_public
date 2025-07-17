@@ -12,9 +12,6 @@ services:
       - ./scripts:/home/hydra/scripts
       # map in various persistent directories in the data folder
       - ./data/logs:/home/hydra/log
-      - ./data/pdf:/home/hydra/tmp/pdf
-      - ./data/thumbnails:/home/hydra/tmp/thumbnails
-      - ./data/images:/home/hydra/tmp/images
       - ./data/bundle:/usr/local/bundle # cache bundle install
       - ./data/node_modules:/home/hydra/node_modules
       # map in various persistent directories in the tmp folder
@@ -22,8 +19,12 @@ services:
       - ./data/exports:/home/hydra/tmp/exports
       - ./data/validations:/home/hydra/tmp/validations
       - ./data/letter_opener:/home/hydra/tmp/letter_opener
-      # don't mount tmp directory
-      - /home/hydra/tmp
+      # map in various persistent directories in the tmp folder
+      # so we can see the files being created
+      - ./data/downloads:/home/hydra/tmp/download
+      - ./data/images:/home/hydra/tmp/images
+      - ./data/thumbnails:/home/hydra/tmp/thumbnails
+      - ./data/pdf:/home/hydra/tmp/pdf
     networks:
       - hydra
 
@@ -44,11 +45,18 @@ services:
         condition: service_started
       workers:
         condition: service_started
+    networks:
+      - hydra
 
   workers:
     extends: app
     container_name: sidekiq
     command:  bash -c "bundle install; bundle exec sidekiq -C config/sidekiq.yml"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G    
     depends_on:
       redis:
         condition: service_started
@@ -60,6 +68,8 @@ services:
         condition: service_started
     stdin_open: true
     tty: true
+    networks:
+      - hydra
 
   memcached:
     image: bitnami/memcached
@@ -91,15 +101,20 @@ services:
       - hydra
 
   fcrepo:
-    image: fcrepo/fcrepo:6.4.0
+    image: fcrepo/fcrepo:6.5.1-tomcat9
+    # build:
+    #   context: ./
+    #   dockerfile: Dockerfile.fcrepo
     container_name: fcrepo
+    # command: bash -c "/usr/local/tomcat/bin/catalina.sh run"  
     restart: always
     ports:
       - "8080:8080"
     env_file:
-      - './env/env.fedora'
+      - './env/env.fedora' 
     volumes:
-      - fcrepo:/usr/local/tomcat/fcrepo-home
+      - ./data/logs/fcrepo:/usr/local/tomcat/log   
+      - fcrepo:/usr/local/tomcat/fcrepo-home  
     logging:
       options:
         max-size: 50m
@@ -109,13 +124,13 @@ services:
       timeout: 5s
       retries: 20
     depends_on:
-      - db
+      - db      
     networks:
-      - hydra
+      - hydra      
 
   solr:
     container_name: solr
-    image: solr:9.5.0
+    image: solr:9.8.0
     restart: on-failure
     env_file:
       - './env/env.solr'

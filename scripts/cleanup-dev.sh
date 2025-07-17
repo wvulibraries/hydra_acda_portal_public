@@ -9,3 +9,17 @@ rm -rf ./data/solr
 rm -rf ./data/postgres
 # remove fcrepo data directory
 rm -rf ./data/fcrepo
+# remove exports directory
+rm -rf ./data/exports
+# remove images directory
+rm -rf ./data/images
+# remove imports directory
+rm -rf ./data/imports
+# remove pdfs directory
+rm -rf ./data/pdf
+# remove thumbnails directory
+rm -rf ./data/thumbnails
+# remove downloads directory
+rm -rf ./data/downloads
+# remove logs validations directory
+rm -rf ./data/logs/validations

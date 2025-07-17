@@ -3,17 +3,95 @@
 <% project = @document[:project_ssi] %>
 <% num_files = @document[:num_files_isi] %>
 <% description = @document[:description_tesim] %>
-<% youtube_id = @document[:preview_ssi].match /(?<==).*/ %>
+<% preview_url = @document[:preview_ssi] %>
+<% available_by = @document[:available_by_ssi] %>
+<% available_at = @document[:available_at_ssi] %>
 
 <div class="row">
   <div class="col-md-4">           
-      <a class="document-image-full">
-        <iframe src="https://www.youtube.com/embed/<%= youtube_id %>" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-        <br><br>
-      </a>
+    <% if preview_url&.include?('youtube') || available_by&.include?('youtube') || available_at&.include?('youtube') %>
+      <% youtube_id = nil %>
+      <% video_url = preview_url || available_by || available_at %>
+      <% if video_url.include?('youtube.com/watch?v=') %>
+        <% youtube_id = video_url.match(/(?:youtube\.com\/watch\?v=)([^&]+)/) && $1 %>
+      <% elsif video_url.include?('youtu.be/') %>
+        <% youtube_id = video_url.match(/(?:youtu\.be\/)([^?]+)/) && $1 %>
+      <% end %>
+      
+      <%# For YouTube videos %>
+      <% if youtube_id.present? %>
+        <div class="video-container">
+          <div class="embed-responsive">
+            <iframe class="embed-responsive-item" 
+                    src="https://www.youtube.com/embed/<%= youtube_id %>" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                    allowfullscreen></iframe>
+          </div>
+          <div class="video-link">
+            <a href="<%= video_url %>" target="_blank" class="btn btn-sm">Open video in new window</a>
+          </div>
+        </div>
+      <% else %>
+        <img src="<%= preview_url %>" alt="Video thumbnail" class="img-responsive">
+      <% end %>
+    
+    <% elsif preview_url&.include?('vimeo') || available_by&.include?('vimeo') || available_at&.include?('vimeo') %>
+      <% vimeo_id = nil %>
+      <% video_url = available_by || available_at || preview_url %>
+      
+      <!-- Debug output -->
+      <% if false %>
+        <div class="alert alert-info">
+          Video URL: <%= video_url %><br>
+          Preview URL: <%= preview_url %><br>
+          Available By: <%= available_by %><br>
+          Available At: <%= available_at %><br>
+        </div>
+      <% end %>
+      
+      <% # Improved Vimeo ID extraction - handles more URL formats %>
+      <% if video_url =~ /vimeo\.com\/(\d+)/ %>
+        <% vimeo_id = $1 %>
+      <% elsif video_url =~ /player\.vimeo\.com\/video\/(\d+)/ %>
+        <% vimeo_id = $1 %>
+      <% end %>
+      
+      <!-- Debug output -->
+      <% if false %>
+        <div class="alert alert-info">
+          Extracted Vimeo ID: <%= vimeo_id || 'None' %>
+        </div>
+      <% end %>
+      
+      <%# For Vimeo videos %>
+      <% if vimeo_id.present? %>
+        <div class="video-container">
+          <div class="embed-responsive">
+            <iframe class="embed-responsive-item"
+                    src="https://player.vimeo.com/video/<%= vimeo_id %>?title=0&byline=0&portrait=0&badge=0" 
+                    frameborder="0" 
+                    allow="autoplay; fullscreen; picture-in-picture" 
+                    allowfullscreen
+                    title="Vimeo Video"></iframe>
+          </div>
+          <!-- Ensure this is properly aligned with the video above -->
+          <div class="video-link">
+            <a href="<%= video_url %>" target="_blank" class="btn btn-sm">Open video in new window</a>
+          </div>
+        </div>
+      <% else %>
+        <img src="<%= preview_url %>" alt="Video thumbnail" class="img-responsive">
+      <% end %>
+    
+    <% else %>
+      <% # Fallback to preview image if no video embed is possible %>
+      <img src="<%= preview_url %>" alt="Video thumbnail" class="img-responsive">
+    <% end %>
+    <br><br>
   </div>   
   <div class="col-md-8">
-    <div id="document" class="document <%= render_document_class %>" itemscope  itemtype="<%= @document.itemtype %>">
+    <div id="document" class="document <%= render_document_class %>" itemscope itemtype="<%= @document.itemtype %>">
       <div id="doc_<%= @document.id.to_s.parameterize %>">
         <% # bookmark/folder functions -%>
         <%= render_document_partials @document, blacklight_config.view_config(:show).partials %>
@@ -22,3 +100,7 @@
   </div>
 </div>
 <br><br>
+
+<% content_for :head do %>
+  <script src="https://player.vimeo.com/api/player.js"></script>
+<% end %>

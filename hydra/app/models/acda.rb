@@ -7,13 +7,16 @@ class Acda < ActiveFedora::Base
 
   include ImportLibrary
   include ApplicationHelper
+  include ThumbnailProcessable
 
-  before_save :format_urls
-  after_save :clear_empty_fields_and_generate_thumbnail
+  before_create :prepare_record
+  after_save :handle_thumbnail_generation, unless: :skip_thumbnail_update
 
-  def clear_empty_fields_and_generate_thumbnail
+  attr_accessor :skip_thumbnail_update
+
+  def prepare_record
+    format_urls
     clear_empty_fields
-    generate_or_download_thumbnail if saved_change_to_available_by? || saved_change_to_preview?
   end
 
   def saved_change_to_preview?
@@ -21,54 +24,52 @@ class Acda < ActiveFedora::Base
   end
 
   def saved_change_to_available_by?
-    previous_changes['available_by'].present? || thumbnail_file.blank?
+    previous_changes['available_by'].present?
+  end
+
+  def saved_change_to_available_at?
+    previous_changes['available_at'].present?
   end
 
   def format_urls
-    # insure all urls are formatted correctly
+    Rails.logger.debug "Formatting URLs for #{id}:"
+    Rails.logger.debug "  Before - preview: #{preview}, available_at: #{available_at}, available_by: #{available_by}"
+    
+    # Format basic URLs
     self.available_at = format_url(self.available_at)
-    self.preview = update_preview if self.preview.blank?
-    self.preview = format_url(self.preview)
     self.available_by = format_url(self.available_by)
+    
+    # Handle preview URL
+    if self.preview.blank?
+      # For Hawaii records - use available_by as source for preview
+      url = self.available_by || self.available_at
+      self.preview = format_url(generate_preview(url))
+    else
+      # For RBL records - use existing preview URL
+      self.preview = format_url(self.preview)
+    end
+
+    # Check for redirects
+    updated_preview = resolve_redirect(self.preview)
+    self.preview = updated_preview if updated_preview != preview
+    
+    Rails.logger.debug "  After - preview: #{preview}, available_at: #{available_at}, available_by: #{available_by}"
   end
 
   self.indexer = ::Indexer
 
-  def update_preview
-    # check if preview is blank
-    if self.preview.blank?
-      # lets try to find the preview (thumbnail) from available_at
-      self.preview = generate_preview
-
-      # if preview is still blank, return
-      return if self.preview.blank?
-    end
-
-    # resolve redirect for preview
-    updated_preview = resolve_redirect(self.preview)
-
-    # update preview if it has changed
-    self.preview = updated_preview if updated_preview != preview
-  end
-
-  def generate_preview
-    # check and see if available_at is a preservica.com address
-    if available_at.include?('preservica.com')
-      # add download/thumbnail/ after the preservica.com to the url
-      preservica_url = available_at.gsub('preservica.com', 'preservica.com/download/thumbnail')
-      # return the new url
-      return preservica_url
-    end
-  end
-
-  def generate_or_download_thumbnail
-    if preview.present?
-      # queue job to download and set the thumbnail
-      # using the available_at url
-      DownloadAndSetThumbsJob.perform_later(id)
+  def generate_preview(url)
+    return nil if url.blank?
+    
+    if url.include?('preservica.com')
+      # Only transform Preservica URLs
+      url.gsub('preservica.com', 'preservica.com/download/thumbnail')
+    elsif url.include?('/download') || url.end_with?('.pdf')
+      # For downloadable content that needs thumbnail generation
+      nil
     else
-      # queue job to generate thumbnail
-      GenerateThumbsJob.perform_later(id)
+      # For all other URLs, return as-is
+      url
     end
   end
 
@@ -81,7 +82,7 @@ class Acda < ActiveFedora::Base
     # loop over keys skipping id and visibility fields
     keys.each do |key|
       # skip id
-      next if key == 'id' || key == 'visibility'
+      next if key == 'id' || 'visibility'
       # if class is a relation and has only one element and that element is blank
       if self[key].class == ActiveTriples::Relation && self[key].to_a.count == 1
         # convert to array
@@ -111,6 +112,11 @@ class Acda < ActiveFedora::Base
     # Replaces periods with empty strings to maintain the original functionality
     cleaned_identifier.gsub('.', '').to_s
   end
+
+  # Queued Job
+  # ==============================================================================================================
+  # field to manage processing of queued jobs
+  property :queued_job, predicate: ::RDF::URI.new('http://acda.lib.wvu.edu/ns#queued_job'), multiple: false
 
   # DC provenance
   # ==============================================================================================================
@@ -317,4 +323,101 @@ class Acda < ActiveFedora::Base
   # video property
   directly_contains_one :video_file, through: :files, type: ::RDF::URI('http://pcdm.org/file-format-types#Video'),
                                      class_name: 'AcdaFile'
+
+  def self.queue_pending_thumbnails
+    where(queued_job: nil).find_each(batch_size: 1) do |record|
+      next unless record.preview.present?
+      begin
+        record.queued_job = 'true'
+        record.save_with_retry!(validate: false)
+        DownloadAndSetThumbsJob.set(wait: 2.seconds).perform_later(record.id)
+      rescue Ldp::Conflict => e
+        Rails.logger.error "LDP Conflict for #{record.id}: #{e.message}"
+        retry_count = 0
+        begin
+          retry_count += 1
+          sleep(rand(1..3))  # Increased backoff
+          retry if retry_count < 3
+        end
+      end
+    end
+  end
+
+  # Modified thumbnail generation method in Acda model
+  def handle_thumbnail_generation
+    return if queued_job.present? && ['true', 'completed'].include?(queued_job)
+    return unless needs_thumbnail_update?
+    
+    # Prevent callbacks from triggering during thumbnail generation
+    self.skip_thumbnail_update = true
+    
+    # Queue a single job type regardless of content type
+    ProcessThumbnailJob.perform_once(id)
+    Rails.logger.info "Queued ProcessThumbnailJob for #{id}"
+  end
+
+  def needs_thumbnail_update?
+    return true if image_file.blank? && thumbnail_file.blank?
+    return true if saved_change_to_preview? || saved_change_to_available_by? || saved_change_to_available_at?
+    false
+  end
+
+  def save_with_retry!(opts = {})
+    retries = 0
+    max_retries = 3
+    begin
+      if opts[:validate] == false
+        save!(validate: false)
+      else
+        save!
+      end
+    rescue Ldp::Conflict => e
+      retries += 1
+      if retries < max_retries
+        Rails.logger.info "Retrying save after LDP conflict for #{id} (attempt #{retries})"
+        sleep(1 + retries)  # Progressive backoff
+        retry
+      else
+        Rails.logger.error "Failed to save after #{retries} attempts for #{id}"
+        raise
+      end
+    end
+  end
+
+  # Add to Acda model
+  def self.with_lock(id)
+    transaction do
+      record = find(id)
+      record.lock!  # Acquire a database lock
+      yield record
+    end
+  rescue ActiveRecord::RecordNotFound
+    Rails.logger.error "Record #{id} not found for locking"
+    false
+  end
+
+  # Add to Acda model
+  def self.with_thumbnail_lock(id)
+    record = find(id)
+    return false if record.queued_job == 'true' # Already being processed
+    
+    # Set a lock
+    record.queued_job = 'true'
+    record.save_with_retry!(validate: false)
+    
+    begin
+      # Run the provided block
+      yield record
+      # Mark as completed
+      record.queued_job = 'completed'
+      record.save_with_retry!(validate: false)
+      return true
+    rescue => e
+      # On failure, still mark as completed to prevent infinite retries
+      record.queued_job = 'completed' 
+      record.save_with_retry!(validate: false)
+      Rails.logger.error "Error in thumbnail processing: #{e.message}"
+      return false
+    end
+  end
 end

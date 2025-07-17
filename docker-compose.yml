@@ -6,7 +6,6 @@ services:
       dockerfile: Dockerfile
     env_file:
       - './env/env.hydra'
-    restart: always
     volumes:
       - ./hydra:/home/hydra
       # map node_modules to a persistent volume
@@ -22,8 +21,6 @@ services:
       - ./data/imports:/home/hydra/tmp/imports
       - ./data/exports:/home/hydra/tmp/exports
       - ./data/validations:/home/hydra/tmp/validations
-      # don't mount tmp directory
-      - /home/hydra/tmp
     networks:
       - hydra
 
@@ -39,6 +36,8 @@ services:
       - fcrepo
       - db
       - workers
+    networks:
+      - hydra
 
   workers:
     extends: app
@@ -52,6 +51,8 @@ services:
       - db
     stdin_open: true
     tty: true
+    networks:
+      - hydra
 
   memcached:
     image: bitnami/memcached
@@ -69,9 +70,9 @@ services:
     ports:
       - "127.0.0.1:6379:6379"
     env_file:
-      - './env/env.dev.redis'
+      - './env/env.redis'
     volumes:
-      - redis:/var/lib/redis/data
+      - ./data/redis:/var/lib/redis/data
       # - ./config/redis.conf:/usr/local/etc/redis/redis.conf
     restart: unless-stopped
     healthcheck:
@@ -83,15 +84,17 @@ services:
       - hydra
 
   fcrepo:
-    image: fcrepo/fcrepo:6.4.0
+    image: fcrepo/fcrepo:6.5.1-tomcat9
     container_name: fcrepo
+    command: bash -c "/usr/local/tomcat/bin/catalina.sh run"  
     restart: always
     ports:
       - "8080:8080"
     env_file:
-      - './env/env.fedora'
+      - './env/env.fedora' 
     volumes:
-      - ./data/fcrepo:/usr/local/tomcat/fcrepo-home
+      - ./data/logs/fcrepo:/usr/local/tomcat/log   
+      - ./data/fcrepo:/usr/local/tomcat/fcrepo-home  
     logging:
       options:
         max-size: 50m
@@ -101,13 +104,13 @@ services:
       timeout: 5s
       retries: 20
     depends_on:
-      - db
+      - db      
     networks:
-      - hydra
+      - hydra       
 
   solr:
     container_name: solr
-    image: solr:9.5.0
+    image: solr:9.8.0
     restart: on-failure
     env_file:
       - './env/env.solr'

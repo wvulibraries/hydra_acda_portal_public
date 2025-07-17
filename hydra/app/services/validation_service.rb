@@ -132,7 +132,7 @@ class ValidationService
 
   def validate_free_text
     values.each do |value|
-      add_error("Missing required value") if value.empty?
+      add_error(value: value, message: "Missing required value") if value.empty?
     end
   end
 
