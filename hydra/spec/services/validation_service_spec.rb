@@ -444,4 +444,150 @@ RSpec.describe ValidationService do
       expect(service.send(:already_validated?, 'test_value')).to be false
     end
   end
+
+  describe '#search_getty_tgn with empty HTML' do
+    let(:service) { described_class.new(path: valid_csv_path) }
+
+    before do
+      service.instance_variable_set(:@header, 'dcterms:spatial')
+      service.instance_variable_set(:@row_number, 1)
+      service.instance_variable_set(:@values, ['Maryland (state)'])
+    end
+
+    it 'adds an error if no element found' do
+      stub_request(:get, %r{https://www\.getty\.edu/vow/TGNServlet.*})
+        .to_return(status: 200, body: "<html></html>")
+
+      service.send(:search_getty_tgn)
+
+      expect(service.results).to include(
+        hash_including(
+          header: 'dcterms:spatial',
+          message: '<strong>Maryland (state)</strong> was not found in Getty TGN'
+        )
+      )
+    end
+  end
+
+  describe '#search_getty_aat_sparql' do
+    let(:service) { described_class.new(path: valid_csv_path) }
+
+    it 'returns nil on timeout' do
+      stub_request(:get, %r{https://vocab\.getty\.edu/sparql.*}).to_timeout
+
+      expect(Rails.logger).to receive(:warn).with(/Getty AAT SPARQL timeout/)
+      result = service.send(:search_getty_aat_sparql, 'Oil paintings')
+      expect(result).to eq(nil)
+    end
+
+
+    it 'returns nil on generic error' do
+      stub_request(:get, %r{https://vocab\.getty\.edu/sparql.*})
+        .to_return(status: 500, body: "Internal Error")
+
+      result = service.send(:search_getty_aat_sparql, 'Oil paintings')
+      expect(result).to eq(nil)
+    end
+
+  end
+
+  describe '#invalid_edtf?' do
+    let(:service) { described_class.new(path: valid_csv_path) }
+
+    it 'returns false for undated exception' do
+      expect(service.send(:invalid_edtf?, 'undated')).to eq(false)
+    end
+
+    it 'returns true for non-parsable date' do
+      allow(EDTF).to receive(:parse).and_return(nil)
+      expect(service.send(:invalid_edtf?, 'bad-date')).to eq(true)
+    end
+  end
+
+  describe '#add_error' do
+    let(:service) { described_class.new(path: 'dummy.csv') }
+
+    before do
+      service.instance_variable_set(:@header, 'dcterms:title')
+      service.instance_variable_set(:@row_number, 2)
+    end
+
+    it 'adds a new error for a value' do
+      service.send(:add_error, value: nil, message: 'Missing value')
+
+      # ✅ Check results (used in final validation output)
+      expect(service.results).to include(
+        hash_including(header: 'dcterms:title', message: 'Missing value', row: 2)
+      )
+
+      # ✅ Check validated_values (used for avoiding duplicate validation)
+      expect(service.validated_values).to include(
+        hash_including(header: 'dcterms:title', value: nil, message: 'Missing value')
+      )
+    end
+  end
+
+  describe '#is_active_url?' do
+    let(:url) { 'http://example.com' }
+
+    it 'returns true for simple http check when validate_urls is false' do
+      service = described_class.new(path: valid_csv_path, validate_urls: false)
+      expect(service.send(:is_active_url?, url)).to eq(true)
+    end
+
+    it 'uses parent validation when validate_urls is true' do
+      service = described_class.new(path: valid_csv_path, validate_urls: true)
+
+      # Stub the parent helper logic
+      allow_any_instance_of(ApplicationHelper).to receive(:is_active_url?).and_return('parent_logic')
+
+      expect(service.send(:is_active_url?, url)).to eq('parent_logic')
+    end
+  end
+
+
+  describe '#split_term' do
+    let(:service) { described_class.new(path: valid_csv_path) }
+
+    it 'splits on default delimiter when header allows split' do
+      # force header to split
+      allow(service).to receive(:check_split).and_return({ 'header1' => true })
+
+      service.instance_variable_set(:@header, 'header1')
+
+      expect(service.send(:split_term, value: 'a; b; c')).to eq(['a', 'b', 'c'])
+    end
+
+    it 'does NOT split when header does not allow split' do
+      allow(service).to receive(:check_split).and_return({ 'header1' => false })
+
+      service.instance_variable_set(:@header, 'header1')
+
+      expect(service.send(:split_term, value: 'a; b; c')).to eq(['a; b; c'])
+    end
+
+    it 'returns [] for nil values' do
+      service.instance_variable_set(:@header, 'header1')
+      allow(service).to receive(:check_split).and_return({ 'header1' => true })
+
+      expect(service.send(:split_term, value: nil)).to eq([])
+    end
+  end
+
+  describe '#validate when file is missing' do
+    it 'adds a missing file error' do
+      service = described_class.new(path: 'non_existent.csv')
+
+      results = service.validate
+
+      expect(results).to include(
+        hash_including(
+          row: 1,
+          header: "",
+          message: "File missing at non_existent.csv"
+        )
+      )
+    end
+  end
+
 end

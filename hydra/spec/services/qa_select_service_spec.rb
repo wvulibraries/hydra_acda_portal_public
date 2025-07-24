@@ -23,6 +23,12 @@ RSpec.describe QaSelectService do
     it 'will be Array of Arrays<label, id>' do
       expect(subject).to eq([['Active Label', 'active-id'], ['Inactive Label', 'inactive-id'], ['Active No Term', 'active-no-term-id']])
     end
+
+    it 'returns empty array when no authorities' do
+      allow(qa_select_service.authority).to receive(:all).and_return([])
+      expect(qa_select_service.select_all_options).to eq([])
+    end
+
   end
 
   describe '#select_active_options' do
@@ -40,6 +46,11 @@ RSpec.describe QaSelectService do
       it 'raises KeyError' do
         expect { subject }.to raise_error(KeyError)
       end
+    end
+
+    it 'returns only elements with active true' do
+      expect(qa_select_service.active_elements.map { |e| e[:id] })
+        .to contain_exactly('active-id', 'active-no-term-id')
     end
   end
 
@@ -106,6 +117,10 @@ RSpec.describe QaSelectService do
     it 'does not add an active current value' do
       expect(qa_select_service.include_current_value('active-id', :idx, render_opts.dup, html_opts.dup))
         .to eq [render_opts, html_opts]
+    end
+    it 'returns unchanged when value is blank' do
+      result = qa_select_service.include_current_value(nil, :idx, render_opts.dup, html_opts.dup)
+      expect(result).to eq([render_opts, html_opts])
     end
   end
 end
