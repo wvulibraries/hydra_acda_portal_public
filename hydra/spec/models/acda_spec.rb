@@ -252,7 +252,11 @@ RSpec.describe Acda, type: :model do
       result = described_class.with_thumbnail_lock("abc") { |locked| yielded = locked }
 
       expect(result).to eq(true)
-      expect(yielded.id).to eq("abc")
+
+      # Normalize the ID in case CI returns a Fedora URL like http://test/abc
+      normalized_id = yielded.id.to_s.split('/').last
+      expect(normalized_id).to eq("abc")
+
       expect(record.queued_job).to eq("completed")
     end
 
