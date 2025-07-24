@@ -30,7 +30,7 @@ RSpec.describe ProcessThumbnailJob, type: :job do
 
     # Default lock stub
     allow(Acda).to receive(:with_thumbnail_lock).and_yield(record)
-    
+
     allow(Logger).to receive(:new).and_return(Logger.new($stdout))
   end
 
@@ -125,7 +125,6 @@ RSpec.describe ProcessThumbnailJob, type: :job do
       fake_pdf.close!
     end
 
-    
     it "check_image_quality classifies based on size" do
       # Stub MiniMagick::Image to fake width/height
       fake_image = double(width: 800, height: 800)
@@ -170,6 +169,150 @@ RSpec.describe ProcessThumbnailJob, type: :job do
       expect(
         job.send(:download_file, "https://error.com/file.jpg", "/tmp/test.jpg", logger)
       ).to eq(false)
+    end
+  end
+
+  describe "video thumbnail processing" do
+    let(:job) { described_class.new }
+    let(:logger) { Logger.new(nil) }
+
+    it "downloads high-quality Vimeo image first" do
+      record.available_by = "https://vimeo.com/12345"
+      allow(job).to receive(:extract_vimeo_id).and_return("12345")
+      allow(job).to receive(:download_vimeo_high_quality).and_return(true)
+      expect(job).to receive(:attach_images_to_record)
+      job.send(:process_video_thumbnail, record, logger)
+    end
+
+    it "falls back to Vimeo standard thumbnail" do
+      record.available_by = "https://vimeo.com/12345"
+      allow(job).to receive(:extract_vimeo_id).and_return("12345")
+      allow(job).to receive(:download_vimeo_high_quality).and_return(false)
+      allow(job).to receive(:download_vimeo_thumbnail).and_return(true)
+      expect(job).to receive(:attach_thumbnail_to_record)
+      job.send(:process_video_thumbnail, record, logger)
+    end
+
+    it "falls back to YouTube HQ then standard thumbnail" do
+      record.available_by = "https://youtube.com/watch?v=abc123"
+      allow(job).to receive(:extract_youtube_id).and_return("abc123")
+      allow(job).to receive(:download_file).and_return(false, true) # first fails, second succeeds
+      expect(job).to receive(:attach_thumbnail_to_record)
+      job.send(:process_video_thumbnail, record, logger)
+    end
+
+    it "falls back to preview thumbnail if no video id" do
+      record.available_by = "https://unknownvideo.com"
+      record.preview = "https://example.com/preview.jpg"
+      expect(job).to receive(:process_preview_thumbnail)
+      job.send(:process_video_thumbnail, record, logger)
+    end
+
+    it "falls back to default video thumbnail if all else fails" do
+      record.available_by = "https://unknownvideo.com"
+      record.preview = nil
+      expect(job).to receive(:create_default_video_thumbnail)
+      job.send(:process_video_thumbnail, record, logger)
+    end
+  end
+
+  describe "PDF thumbnail processing" do
+    let(:job) { described_class.new }
+    let(:logger) { Logger.new(nil) }
+
+    it "handles valid PDF URL" do
+      record.available_by = "https://example.com/file.pdf"
+      allow(job).to receive(:download_file).and_return(true)
+      allow(job).to receive(:verify_pdf).and_return(true)
+      expect(job).to receive(:generate_thumbnail_from_pdf)
+      job.send(:process_pdf_thumbnail, record, logger)
+    end
+
+    it "handles invalid PDF after download" do
+      record.available_by = "https://example.com/file.pdf"
+      allow(job).to receive(:download_file).and_return(true)
+      allow(job).to receive(:verify_pdf).and_return(false)
+      expect(job).to receive(:create_placeholder_thumbnail)
+      job.send(:process_pdf_thumbnail, record, logger)
+    end
+
+    it "handles PDF download failure" do
+      record.available_by = "https://example.com/file.pdf"
+      allow(job).to receive(:download_file).and_return(false)
+      expect(job).to receive(:create_placeholder_thumbnail)
+      job.send(:process_pdf_thumbnail, record, logger)
+    end
+
+    it "handles missing PDF URL" do
+      record.available_by = nil
+      record.available_at = nil
+      expect(job).to receive(:create_placeholder_thumbnail)
+      job.send(:process_pdf_thumbnail, record, logger)
+    end
+  end
+
+  
+
+  describe "thumbnail generation from PDF" do
+    let(:job) { described_class.new }
+    let(:logger) { Logger.new(nil) }
+
+    it "generate_thumbnail_from_pdf handles successful conversion" do
+      pdf_path = "/tmp/fake.pdf"
+      output_path = "#{pdf_path}_page1.jpg"
+      FileUtils.touch(pdf_path)
+      FileUtils.touch(output_path) # simulate convert success
+
+      allow(job).to receive(:valid_image?).and_return(true)
+      expect(job).to receive(:attach_images_to_record)
+      job.send(:generate_thumbnail_from_pdf, record, pdf_path, logger)
+
+      FileUtils.rm_f(pdf_path)
+      FileUtils.rm_f(output_path)
+    end
+
+    it "generate_thumbnail_from_pdf handles failed conversion" do
+      pdf_path = "/tmp/fake.pdf"
+      FileUtils.touch(pdf_path)
+      allow(job).to receive(:valid_image?).and_return(false)
+      expect(job).to receive(:create_placeholder_thumbnail)
+      job.send(:generate_thumbnail_from_pdf, record, pdf_path, logger)
+      FileUtils.rm_f(pdf_path)
+    end
+  end
+
+  describe "valid_image? helper" do
+    let(:job) { described_class.new }
+    let(:logger) { Logger.new(nil) }
+
+    it "valid_image? returns true for valid image" do
+      fake_img = double(width: 100, height: 100)
+      allow(MiniMagick::Image).to receive(:open).and_return(fake_img)
+      expect(job.send(:valid_image?, "fake.jpg", logger)).to eq(true)
+    end
+
+    it "valid_image? returns false on exception" do
+      allow(MiniMagick::Image).to receive(:open).and_raise("error")
+      expect(job.send(:valid_image?, "fake.jpg", logger)).to eq(false)
+    end
+  end
+
+  describe "placeholder generation" do
+    let(:job) { described_class.new }
+    let(:logger) { Logger.new(nil) }
+
+    it "create_text_image creates a file" do
+      out_path = "/tmp/test_placeholder.jpg"
+      job.send(:create_text_image, "Hello", out_path)
+      expect(File.exist?(out_path)).to eq(true)
+      FileUtils.rm_f(out_path)
+    end
+
+    it "create_video_placeholder creates a file" do
+      out_path = "/tmp/test_video_placeholder.jpg"
+      job.send(:create_video_placeholder, "Video", out_path)
+      expect(File.exist?(out_path)).to eq(true)
+      FileUtils.rm_f(out_path)
     end
   end
 end
