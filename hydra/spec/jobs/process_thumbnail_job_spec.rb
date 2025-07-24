@@ -30,6 +30,8 @@ RSpec.describe ProcessThumbnailJob, type: :job do
 
     # Default lock stub
     allow(Acda).to receive(:with_thumbnail_lock).and_yield(record)
+    
+    allow(Logger).to receive(:new).and_return(Logger.new($stdout))
   end
 
   describe ".perform_once" do
@@ -124,8 +126,6 @@ RSpec.describe ProcessThumbnailJob, type: :job do
     end
 
     
-
-
     it "check_image_quality classifies based on size" do
       # Stub MiniMagick::Image to fake width/height
       fake_image = double(width: 800, height: 800)
