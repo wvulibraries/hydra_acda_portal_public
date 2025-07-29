@@ -17,29 +17,33 @@
     </style>
   </head>
   <body>
-    <% if @content.any? %>
+    <% if @content.respond_to?(:any?) ? @content.any? : @content.present? %>
       <div class="alert alert-warning">
-        Found <%= pluralize(@content.size, 'issue') %>
+        Found <%= @content.respond_to?(:size) ? pluralize(@content.size, 'issue') : 'issue(s) found' %>
       </div>
 
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Row</th>
-            <th>Field</th>
-            <th>Issue</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @content.each do |result| %>
+      <% if @content.is_a?(Array) %>
+        <table class="table">
+          <thead>
             <tr>
-              <td><%= result[:row] %></td>
-              <td><%= result[:header] %></td>
-              <td><%= result[:message].html_safe %></td>
+              <th>Row</th>
+              <th>Field</th>
+              <th>Issue</th>
             </tr>
-          <% end %>
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            <% @content.each do |result| %>
+              <tr>
+                <td><%= result[:row] %></td>
+                <td><%= result[:header] %></td>
+                <td><%= result[:message].html_safe %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <div><%= @content %></div>
+      <% end %>
     <% else %>
       <div class="alert alert-success">
         No validation issues found!

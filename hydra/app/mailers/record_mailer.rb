@@ -22,5 +22,15 @@ class RecordMailer < ActionMailer::Base
       date: Time.now,
       content_type: 'text/html'
     )
-    end
+  end
+
+  def record_notification(mail_to:, record_id:, message:)
+    @message = message
+    mail(
+      to: mail_to,
+      subject: "Notification for record: #{record_id}",
+      date: Time.now,
+      content_type: 'text/html'
+    )
+  end
 end
