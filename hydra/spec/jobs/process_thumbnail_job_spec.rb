@@ -1,15 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe ProcessThumbnailJob, type: :job do
-  let(:record) do
-    build_stubbed(:acda,
-      id: "abc",
-      dc_type: "Image",
-      title: "Test Image",
-      preview: "https://example.com/preview.jpg",
-      available_by: "https://example.com/image.jpg"
-    )
-  end
+  let(:record) { build_stubbed(:acda) }
 
   before do
     # Prevent actual HTTP calls
@@ -19,9 +11,7 @@ RSpec.describe ProcessThumbnailJob, type: :job do
       headers: { "Content-Type" => "image/jpeg" }
     )
 
-    # Avoid MiniMagick + file writes
-    allow_any_instance_of(ProcessThumbnailJob).to receive(:attach_thumbnail_to_record)
-    allow_any_instance_of(ProcessThumbnailJob).to receive(:attach_images_to_record)
+    # Avoid MiniMagick + file writes — but DO NOT stub attach_* methods globally
     allow_any_instance_of(ProcessThumbnailJob).to receive(:create_placeholder_thumbnail)
     allow_any_instance_of(ProcessThumbnailJob).to receive(:create_default_video_thumbnail)
 
@@ -33,6 +23,7 @@ RSpec.describe ProcessThumbnailJob, type: :job do
 
     allow(Logger).to receive(:new).and_return(Logger.new($stdout))
   end
+
 
   describe ".perform_once" do
     it "enqueues when not already queued" do
@@ -301,6 +292,11 @@ RSpec.describe ProcessThumbnailJob, type: :job do
     let(:job) { described_class.new }
     let(:logger) { Logger.new(nil) }
 
+    before do
+      allow(record).to receive(:image_file=)
+      allow(record).to receive(:thumbnail_file=)
+    end
+
     it "create_text_image creates a file (stubbed)" do
       out_path = "/tmp/test_placeholder.jpg"
       allow(MiniMagick::Tool::Convert).to receive(:new) # don’t run real convert
@@ -318,6 +314,113 @@ RSpec.describe ProcessThumbnailJob, type: :job do
       expect(File.exist?(out_path)).to eq(true)
       FileUtils.rm_f(out_path)
     end
+
+    it "attaches full image and thumbnail to record" do
+      tmp = "/tmp/test_image.jpg"
+      FileUtils.touch(tmp)
+      allow(job).to receive(:generate_thumbnail).and_return(tmp)
+      expect(record).to receive(:save_with_retry!).with(validate: false)
+      expect {
+        job.send(:attach_images_to_record, record, tmp, logger)
+      }.not_to raise_error
+      FileUtils.rm_f(tmp)
+    end
+
+    it "attaches only thumbnail to record" do
+      tmp = "/tmp/test_thumb.jpg"
+      FileUtils.touch(tmp)
+      allow(job).to receive(:generate_thumbnail).and_return(tmp)
+      expect(record).to receive(:save_with_retry!).with(validate: false)
+      expect {
+        job.send(:attach_thumbnail_to_record, record, tmp, logger)
+      }.not_to raise_error
+      FileUtils.rm_f(tmp)
+    end
+
+    it "generates a thumbnail from an image" do
+      original = "/tmp/fake.jpg"
+      FileUtils.touch(original)
+      fake_img = double(resize: true, format: true, write: true)
+      allow(MiniMagick::Image).to receive(:open).and_return(fake_img)
+
+      result = job.send(:generate_thumbnail, original, 250, logger)
+      expect(result).to eq("#{original}_thumb.jpg")
+      FileUtils.rm_f(original)
+    end
+
+    it "delegates to attach_images_to_record from generate_thumbnail_from_image" do
+      expect(job).to receive(:attach_images_to_record)
+      job.send(:generate_thumbnail_from_image, record, "/tmp/fake.jpg", logger)
+    end
+
+    it "processes image thumbnail and attaches it" do
+      record.available_by = "https://example.com/image.jpg"
+      allow(job).to receive(:download_file).and_return(true)
+      expect(job).to receive(:attach_images_to_record)
+      job.send(:process_image_thumbnail, record, logger)
+    end
+
+    it "creates placeholder if image download fails" do
+      record.available_by = "https://example.com/image.jpg"
+      allow(job).to receive(:download_file).and_return(false)
+      expect(job).to receive(:create_placeholder_thumbnail)
+      job.send(:process_image_thumbnail, record, logger)
+    end
+
+
+    it "processes preview thumbnail with high quality image" do
+      record.preview = "https://example.com/preview.jpg"
+      allow(job).to receive(:download_file).and_return(true)
+      allow(job).to receive(:check_image_quality).and_return(true)
+      expect(job).to receive(:attach_images_to_record)
+      job.send(:process_preview_thumbnail, record, logger)
+    end
+
+    it "processes preview thumbnail with low quality image" do
+      record.preview = "https://example.com/preview.jpg"
+      allow(job).to receive(:download_file).and_return(true)
+      allow(job).to receive(:check_image_quality).and_return(false)
+      expect(job).to receive(:attach_thumbnail_to_record)
+      job.send(:process_preview_thumbnail, record, logger)
+    end
+
+    it "creates placeholder if preview fails" do
+      record.preview = "https://example.com/preview.jpg"
+      allow(job).to receive(:download_file).and_return(false)
+      expect(job).to receive(:create_placeholder_thumbnail)
+      job.send(:process_preview_thumbnail, record, logger)
+    end
+
+    it "creates placeholder thumbnail" do
+      allow(job).to receive(:create_text_image)
+      allow(job).to receive(:attach_thumbnail_to_record)
+      expect {
+        job.send(:create_placeholder_thumbnail, record, logger)
+      }.not_to raise_error
+    end
+
+    it "creates default video thumbnail" do
+      allow(job).to receive(:create_video_placeholder)
+      allow(job).to receive(:attach_thumbnail_to_record)
+      expect {
+        job.send(:create_default_video_thumbnail, record, logger)
+      }.not_to raise_error
+    end
+
+    it "downloads standard Vimeo thumbnail" do
+      stub_request(:get, /api\/oembed/)
+        .to_return(status: 200, body: { thumbnail_url: "https://example.com/preview.jpg" }.to_json)
+      expect(job.send(:download_vimeo_thumbnail, "12345", "/tmp/test.jpg", logger)).to eq(true)
+    end
+
+    it "downloads high-quality Vimeo image" do
+      stub_request(:get, /api\/v2\/video/)
+        .to_return(status: 200, body: [{ thumbnail_large: "https://example.com/image.jpg" }].to_json)
+      expect(job.send(:download_vimeo_high_quality, "12345", "/tmp/test.jpg", logger)).to eq(true)
+    end
+
+
+
   end
 
 end
