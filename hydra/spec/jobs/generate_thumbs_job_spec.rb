@@ -127,4 +127,109 @@ RSpec.describe GenerateThumbsJob, type: :job do
       expect(job.send(:extract_youtube_id, 'https://example.com')).to be_nil
     end
   end
+
+
+  describe '#handle_downloaded_file' do
+    let(:record) { double(id: 'abc123') }
+    let(:logger) { Logger.new(nil) }
+
+    it 'calls GeneratePdfThumbsJob for PDF files' do
+      allow(Open3).to receive(:capture2).and_return(['application/pdf', nil])
+      allow_any_instance_of(GenerateThumbsJob).to receive(:`).and_return('application/pdf')
+      expect(GeneratePdfThumbsJob).to receive(:perform_later).with(record.id, anything)
+      described_class.new.send(:handle_downloaded_file, record, '/tmp/file.pdf', logger)
+    end
+
+    it 'calls GenerateImageThumbsJob for image files' do
+      allow_any_instance_of(GenerateThumbsJob).to receive(:`).and_return('image/png')
+      expect(GenerateImageThumbsJob).to receive(:perform_later).with(record.id, anything)
+      described_class.new.send(:handle_downloaded_file, record, '/tmp/file.png', logger)
+    end
+  end
+
+  describe '#download_resource' do
+    let(:logger) { Logger.new(nil) }
+
+    it 'downloads and writes binary file' do
+      url = 'https://example.com/image.jpg'
+      path = '/tmp/image.jpg'
+      fake_data = 'FAKE_BINARY_DATA'
+
+      allow(URI).to receive(:open).with(url).and_return(StringIO.new(fake_data))
+      expect(File).to receive(:open).with(path, 'wb')
+      described_class.new.send(:download_resource, url, path, logger)
+    end
+  end
+
+  describe '#extract_and_download_embedded_file' do
+    let(:logger) { Logger.new(nil) }
+    let(:html) { '<html><body><a class="new-primary" href="/download/file/sample.pdf">Download</a></body></html>' }
+
+    it 'extracts embedded file and downloads it' do
+      url = 'https://example.com/page'
+      allow(URI).to receive(:open).with(url).and_return(StringIO.new(html))
+      allow_any_instance_of(GenerateThumbsJob).to receive(:download_resource).and_return(true)
+      expect_any_instance_of(GenerateThumbsJob).to receive(:download_resource).with('https://example.com/download/file/sample.pdf', anything, logger)
+      described_class.new.send(:extract_and_download_embedded_file, url, '/tmp/sample.pdf', logger)
+    end
+  end
+
+  describe '#handle_downloaded_file' do
+    let(:record) { double(id: 'abc') }
+    let(:logger) { Logger.new(nil) }
+
+    it 'calls GeneratePdfThumbsJob for PDFs' do
+      allow(job).to receive(:`).and_return("application/pdf\n")
+      expect(GeneratePdfThumbsJob).to receive(:perform_later).with('abc', '/tmp/file.pdf')
+      job.send(:handle_downloaded_file, record, '/tmp/file.pdf', logger)
+    end
+
+    it 'calls GenerateImageThumbsJob for images' do
+      allow(job).to receive(:`).and_return("image/jpeg\n")
+      expect(GenerateImageThumbsJob).to receive(:perform_later).with('abc', '/tmp/image.jpg')
+      job.send(:handle_downloaded_file, record, '/tmp/image.jpg', logger)
+    end
+  end
+
+  describe '#extract_and_download_embedded_file' do
+    let(:logger) { Logger.new(nil) }
+
+    it 'downloads embedded file when link is found' do
+      html = '<html><body><a class="new-primary" href="/download/file/sample.pdf">Download</a></body></html>'
+      allow(URI).to receive(:open).and_return(StringIO.new(html))
+      expect(job).to receive(:download_resource).with("http://example.com/download/file/sample.pdf", "/tmp/path", logger).and_return(true)
+      result = job.send(:extract_and_download_embedded_file, "http://example.com/page", "/tmp/path", logger)
+      expect(result).to be true
+    end
+
+    it 'returns false when no download link is found' do
+      html = '<html><body><p>No links here</p></body></html>'
+      allow(URI).to receive(:open).and_return(StringIO.new(html))
+      result = job.send(:extract_and_download_embedded_file, "http://example.com/page", "/tmp/path", logger)
+      expect(result).to be false
+    end
+  end
+
+  describe '#download_resource' do
+    let(:logger) { Logger.new(nil) }
+
+    it 'downloads and writes file successfully' do
+      file = StringIO.new("binary data")
+      allow(URI).to receive(:open).and_return(file)
+      expect(File).to receive(:open).with("/tmp/file", 'wb')
+      job.send(:download_resource, "http://example.com/file.jpg", "/tmp/file", logger)
+    end
+
+    it 'logs error and returns false on failure' do
+      allow(URI).to receive(:open).and_raise(StandardError.new("fail"))
+      expect(logger).to receive(:error).with(/fail/)
+      result = job.send(:download_resource, "http://bad-url.com", "/tmp/file", logger)
+      expect(result).to eq(false)
+    end
+  end
+
+
+
+
+
 end
