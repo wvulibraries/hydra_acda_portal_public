@@ -30,6 +30,8 @@ Rails.application.routes.draw do
   # featured
   get '/featured' => 'featured#index'
 
+  get 'record' => 'record#index'
+
   # export search results
   get 'catalog_export', to: 'catalog#export'
 

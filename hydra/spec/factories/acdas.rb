@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :acda do
-    # Basic metadata
+    # Required metadata
     title                { "Sample ACDA Record" }
     creator              { ["John Doe"] }
     date                 { ["2024-01-01"] }
@@ -13,14 +13,27 @@ FactoryBot.define do
     preview              { "https://example.com/thumbnail.jpg" }
     record_type          { ["Image"] }
     policy_area          { ["History"] }
+    dc_type              { "Image" }
 
     # Optional metadata
     publisher            { ["Sample Publisher"] }
     project              { ["Test Project"] }
+    contributing_institution { "Sample Institution" }
+    collection_title     { "Test Collection" }
+    physical_location    { "Sample Library" }
+    collection_finding_aid { "https://example.com/finding_aid" }
+    extent               { "1 item" }
+    congress             { [] }
+    names                { [] }
+    topic                { [] }
+    location_represented { [] }
+    bulkrax_identifier   { "bulkrax-123" }
 
-    # Ensures default ActiveFedora callbacks still run
+    # Required field for job tracking logic (can override in tests)
+    queued_job           { nil }
+
+    # Assign a unique Fedora-style ID
     after(:build) do |acda|
-      # Simulate Fedora ID assignment if needed
       acda.id ||= SecureRandom.uuid
     end
   end
