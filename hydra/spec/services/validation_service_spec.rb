@@ -443,6 +443,13 @@ RSpec.describe ValidationService do
       service.instance_variable_set(:@header, 'dcterms:format')
       expect(service.send(:already_validated?, 'test_value')).to be false
     end
+
+    it 'adds error if already validated with a message' do
+      service.validated_values << { header: 'foo', value: 'bar', message: 'bad' }
+      service.instance_variable_set(:@header, 'foo')
+      expect(service).to receive(:add_error).with(value: 'bar', message: 'bad')
+      service.send(:already_validated?, 'bar')
+    end
   end
 
   describe '#search_getty_tgn with empty HTML' do
@@ -525,6 +532,14 @@ RSpec.describe ValidationService do
         hash_including(header: 'dcterms:title', value: nil, message: 'Missing value')
       )
     end
+
+    it 'updates message if value already exists' do
+      service.instance_variable_set(:@header, 'foo')
+      service.instance_variable_set(:@row_number, 1)
+      service.validated_values << { header: 'foo', value: 'bar', message: 'old' }
+      service.send(:add_error, value: 'bar', message: 'new')
+      expect(service.validated_values.find { |h| h[:value] == 'bar' }[:message]).to eq('new')
+    end
   end
 
   describe '#is_active_url?' do
@@ -590,4 +605,38 @@ RSpec.describe ValidationService do
     end
   end
 
+  describe '#search_getty_aat_online_tool' do
+    let(:service) { described_class.new(path: valid_csv_path) }
+    it 'returns nil if no match in HTML' do
+      html = '<html><body></body></html>'
+      allow(URI).to receive(:open).and_return(StringIO.new(html))
+      expect(service.send(:search_getty_aat_online_tool, 'Not Found')).to be_nil
+    end
+    it 'returns element if match in HTML' do
+      html = '<html><body><td valign="bottom" colspan="2"><span class="page"><a><b>Oil paintings</b></a></span></td></body></html>'
+      allow(URI).to receive(:open).and_return(StringIO.new(html))
+      expect(service.send(:search_getty_aat_online_tool, 'Oil paintings')).not_to be_nil
+    end
+  end
+
+  describe '#validate_free_text' do
+    let(:service) { described_class.new(path: valid_csv_path) }
+    it 'adds error for empty value' do
+      service.instance_variable_set(:@values, [''])
+      service.instance_variable_set(:@header, 'dcterms:title')
+      service.instance_variable_set(:@row_number, 1)
+      expect { service.send(:validate_free_text) }.to change { service.results.size }.by(1)
+    end
+  end
+
+  describe '#validate_url' do
+    let(:service) { described_class.new(path: valid_csv_path) }
+    it 'calls is_active_url? for each value' do
+      service.instance_variable_set(:@values, ['http://example.com'])
+      service.instance_variable_set(:@header, 'dcterms:source')
+      service.instance_variable_set(:@row_number, 1)
+      expect(service).to receive(:is_active_url?).with('http://example.com').and_return(true)
+      service.send(:validate_url, required: true)
+    end
+  end
 end
