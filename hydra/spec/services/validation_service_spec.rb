@@ -749,4 +749,37 @@ RSpec.describe ValidationService do
       expect { service.send(:search_getty_tgn) }.not_to raise_error
     end
   end
+
+  describe 'MAPPINGS hash coverage' do
+    let(:service) { described_class.new(path: 'dummy.csv') }
+    before do
+      service.instance_variable_set(:@row_number, 1)
+      service.instance_variable_set(:@header, 'dcterms:title')
+      service.instance_variable_set(:@values, ['foo'])
+      allow(service).to receive(:validate_free_text)
+      allow(service).to receive(:validate_edtf)
+      allow(service).to receive(:search_lc_linked_data_service)
+      allow(service).to receive(:validate_local_authorities)
+      allow(service).to receive(:validate_iso_639_2)
+      allow(service).to receive(:validate_url)
+      allow(service).to receive(:search_getty_aat)
+      allow(service).to receive(:search_getty_tgn)
+    end
+    it 'calls every mapping lambda at least once' do
+      described_class.actions.each do |header, action|
+        service.instance_variable_set(:@header, header)
+        service.instance_variable_set(:@values, ['foo'])
+        expect { service.instance_exec(&action) }.not_to raise_error
+      end
+    end
+  end
+
+  describe '#search_getty_aat_sparql error branch' do
+    let(:service) { described_class.new(path: 'dummy.csv') }
+    it 'rescues StandardError and logs error' do
+      allow(Net::HTTP).to receive(:get_response).and_raise(RuntimeError.new('fail'))
+      expect(Rails.logger).to receive(:error).with(/Getty AAT SPARQL unexpected error/)
+      expect(service.send(:search_getty_aat_sparql, 'foo')).to be_nil
+    end
+  end
 end
