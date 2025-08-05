@@ -639,4 +639,114 @@ RSpec.describe ValidationService do
       service.send(:validate_url, required: true)
     end
   end
+
+  describe '#validate_content' do
+    let(:service) { described_class.new(path: 'dummy.csv') }
+    it 'does nothing if header is not in actions' do
+      service.instance_variable_set(:@header, 'not_in_mappings')
+      expect { service.send(:validate_content) }.not_to raise_error
+    end
+  end
+
+  describe '#validate_row' do
+    let(:service) { described_class.new(path: 'dummy.csv') }
+    it 'returns true after validating row' do
+      row = { 'dcterms:title' => 'Test' }
+      expect(service.send(:validate_row, row: row, row_number: 2)).to eq(true)
+    end
+  end
+
+  describe '#bulkrax_headers' do
+    let(:service) { described_class.new(path: 'dummy.csv') }
+    it 'removes bulkrax_identifier from headers' do
+      bulkrax_class = Class.new do
+        def self.field_mappings
+          {
+            'Bulkrax::CsvParser' => {
+              'title' => { from: ['dcterms:title', 'bulkrax_identifier'], split: false }
+            }
+          }
+        end
+      end
+      stub_const('Bulkrax', bulkrax_class)
+      expect(service.send(:bulkrax_headers)).not_to include('bulkrax_identifier')
+    end
+  end
+
+  describe '#validate_url' do
+    let(:service) { described_class.new(path: 'dummy.csv') }
+    it 'calls is_active_url? for empty value' do
+      service.instance_variable_set(:@values, [''])
+      service.instance_variable_set(:@header, 'dcterms:source')
+      service.instance_variable_set(:@row_number, 1)
+      expect(service).to receive(:is_active_url?).with("")
+      service.send(:validate_url, required: false)
+    end
+  end
+
+  describe '#validate_iso_639_2' do
+    let(:service) { described_class.new(path: 'dummy.csv') }
+    it 'calls ISO_639.find_by_code for empty value' do
+      service.instance_variable_set(:@values, [''])
+      service.instance_variable_set(:@header, 'dcterms:language')
+      service.instance_variable_set(:@row_number, 1)
+      expect(ISO_639).to receive(:find_by_code).with("")
+      service.send(:validate_iso_639_2)
+    end
+  end
+
+  describe '#validate_local_authorities' do
+    let(:service) { described_class.new(path: 'dummy.csv') }
+    it 'calls qa.authority.find for empty value' do
+      service.instance_variable_set(:@values, [''])
+      service.instance_variable_set(:@header, 'dcterms:rights')
+      service.instance_variable_set(:@row_number, 1)
+      qa = double('QaSelectService', authority: double(find: { 'active' => true }))
+      allow(QaSelectService).to receive(:new).and_return(qa)
+      expect(qa.authority).to receive(:find).with("")
+      service.send(:validate_local_authorities, 'rights')
+    end
+  end
+
+  describe '#search_lc_linked_data_service' do
+    let(:service) { described_class.new(path: 'dummy.csv') }
+    it 'handles invalid XML gracefully' do
+      service.instance_variable_set(:@values, ['Test'])
+      service.instance_variable_set(:@header, 'dcterms:creator')
+      service.instance_variable_set(:@row_number, 1)
+      allow(Net::HTTP).to receive(:get).and_return('<bad></xml>')
+      expect { service.send(:search_lc_linked_data_service, 'http://id.loc.gov/authorities/names', 'LCNAF') }.not_to raise_error
+    end
+  end
+
+  describe '#search_getty_aat' do
+    let(:service) { described_class.new(path: 'dummy.csv') }
+    it 'handles nil results from both sparql and html' do
+      service.instance_variable_set(:@values, ['Test'])
+      service.instance_variable_set(:@header, 'dcterms:http://purl.org/dc/terms/type')
+      service.instance_variable_set(:@row_number, 1)
+      allow(service).to receive(:search_getty_aat_sparql).and_return(nil)
+      allow(service).to receive(:search_getty_aat_online_tool).and_return(nil)
+      expect { service.send(:search_getty_aat) }.not_to raise_error
+    end
+  end
+
+  describe '#search_getty_aat_online_tool' do
+    let(:service) { described_class.new(path: 'dummy.csv') }
+    it 'handles HTML parsing errors gracefully' do
+      allow(URI).to receive(:open).and_raise(StandardError)
+      expect { service.send(:search_getty_aat_online_tool, 'Test') }.not_to raise_error
+    end
+  end
+
+  describe '#search_getty_tgn' do
+    let(:service) { described_class.new(path: 'dummy.csv') }
+    it 'handles HTML parsing errors gracefully' do
+      service.instance_variable_set(:@values, ['Maryland (state)'])
+      service.instance_variable_set(:@header, 'dcterms:spatial')
+      service.instance_variable_set(:@row_number, 1)
+      allow(URI).to receive(:open).and_raise(StandardError)
+      expect { service.send(:search_getty_tgn) }.not_to raise_error
+    end
+  end
 end

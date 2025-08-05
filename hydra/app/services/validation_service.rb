@@ -260,9 +260,14 @@ class ValidationService
     find, note = match_data ? [match_data[1], match_data[2]] : [value, '']
 
     url = "https://www.getty.edu/vow/AATServlet?english=N&find=#{find}&logic=AND&page=1&note=#{note}"
-    doc = Nokogiri::HTML(URI.open(url))
-    selector = "//td[@valign='bottom' and @colspan='2']/span[@class='page']/a/b[text()='#{value}']"
-    doc.at_xpath(selector)
+    begin
+      doc = Nokogiri::HTML(URI.open(url))
+      selector = "//td[@valign='bottom' and @colspan='2']/span[@class='page']/a/b[text()='#{value}']"
+      doc.at_xpath(selector)
+    rescue StandardError => e
+      Rails.logger.warn "Getty AAT Online Tool error: #{e.class} - #{e.message}"
+      nil
+    end
   end
 
   # This is a very fragile approach to parsing the Getty TGN because
@@ -278,16 +283,24 @@ class ValidationService
       # what we want to store.  However we need to search Getty TGN with the name and
       # place type separately.
       match_data = value.match(/^(.*?)\s*\((.*?)\)$/)
-      next add_error(value:, message: "#{value} is not valid") unless match_data
+      unless match_data
+        add_error(value:, message: "#{value} is not valid")
+        next
+      end
 
       name, place_type = match_data[1], match_data[2]
       url = "https://www.getty.edu/vow/TGNServlet?english=Y&find=#{name}&place=#{place_type}&page=1&nation="
-      doc = Nokogiri::HTML(URI.open(url))
-      selector = "//td[@valign='bottom' and @colspan='2']/span[@class='page'][contains(., '(#{place_type})') and .//a/b[text()='#{name}']]"
-      element = doc.at_xpath(selector)
+      begin
+        doc = Nokogiri::HTML(URI.open(url))
+        selector = "//td[@valign='bottom' and @colspan='2']/span[@class='page'][contains(., '(#{place_type})') and .//a/b[text()='#{name}']]"
+        element = doc.at_xpath(selector)
 
-      if element.nil? || element.children[0].text.strip != name || !element.children[1].text.include?(place_type)
-        add_error(value:, message: "<strong>#{value}</strong> was not found in Getty TGN")
+        if element.nil? || element.children[0].text.strip != name || !element.children[1].text.include?(place_type)
+          add_error(value:, message: "<strong>#{value}</strong> was not found in Getty TGN")
+        end
+      rescue StandardError => e
+        Rails.logger.warn "Getty TGN error: #{e.class} - #{e.message}"
+        nil
       end
     end
   end

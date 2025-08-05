@@ -1,5 +1,13 @@
 require 'rails_helper'
 
+# Stub Ldp::HttpError and Ldp::Gone if not already defined
+unless defined?(Ldp)
+  module Ldp
+    class HttpError < StandardError; end
+    class Gone < StandardError; end
+  end
+end
+
 RSpec.describe ApplicationJob, type: :job do
   # Create a test subclass of ApplicationJob
   let(:job_class) do
@@ -129,7 +137,6 @@ RSpec.describe ApplicationJob, type: :job do
   end
 
   
-
   describe "#retry_delay" do
     it "calculates exponential backoff correctly" do
       expect(job_instance.retry_delay(0)).to eq(10)   # (1^2)*10
@@ -138,5 +145,35 @@ RSpec.describe ApplicationJob, type: :job do
       expect(job_instance.retry_delay(3)).to eq(160)  # (4^2)*10
       expect(job_instance.retry_delay(4)).to eq(250)  # (5^2)*10
     end
+  end
+
+  describe "rescue_from Ldp::HttpError" do
+    it "retries on 500 error with exponential delay" do
+      error = Ldp::HttpError.new("STATUS: 500 something broke")
+      allow(job_instance).to receive(:executions).and_return(1)
+      expect(job_instance).to receive(:retry_job).with(wait: 60) # (1 + 1) * 30
+
+      job_instance.send(:rescue_with_handler, error)
+    end
+
+    
+
+
+
+    it "raises immediately for non-500 errors" do
+      error = Ldp::HttpError.new("STATUS: 404 Not Found")
+      expect {
+        job_instance.send(:rescue_with_handler, error)
+      }.to raise_error(Ldp::HttpError)
+    end
+
+    it "returns false if job_class mismatches even if ID matches" do
+      fake_job = double(args: [{ "job_class" => "OtherJob", "arguments" => [record_id] }])
+      allow(Sidekiq::Queue).to receive(:new).and_return([fake_job])
+
+      expect(job_class.already_queued?(record_id)).to eq(false)
+    end
+
+
   end
 end

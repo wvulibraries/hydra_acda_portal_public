@@ -83,6 +83,28 @@ RSpec.describe ImportLibrary do
       expect(described_class).to receive(:create_new_record).at_least(:once).and_call_original
       described_class.import_record('id', obj)
     end
+
+    it 'retries multiple times on error' do
+      call_count = 0
+      allow(ImportLibrary).to receive(:create_new_record) do
+        call_count += 1
+        raise RuntimeError, 'fail' if call_count < 3
+        double('Acda', files: double('Files', build: true), save: true,
+          build_image_file: file_obj, build_thumbnail_file: file_obj, build_pdf_file: file_obj,
+          build_audio_file: file_obj, build_video_file: file_obj)
+      end
+      allow(Acda).to receive(:eradicate).and_return('ok')
+      allow(File).to receive(:exist?).and_return(false)
+      expect { described_class.import_record('id', obj) }.not_to raise_error
+    end
+    it 'does not call set_file if no files exist' do
+      allow(ImportLibrary).to receive(:create_new_record).and_return(double('Acda', files: double('Files', build: true), save: true,
+        build_image_file: file_obj, build_thumbnail_file: file_obj, build_pdf_file: file_obj,
+        build_audio_file: file_obj, build_video_file: file_obj))
+      allow(File).to receive(:exist?).and_return(false)
+      expect(ImportLibrary).not_to receive(:set_file)
+      described_class.import_record('id', obj)
+    end
   end
 
   describe '.update_file' do
@@ -109,6 +131,32 @@ RSpec.describe ImportLibrary do
       allow(described_class).to receive(:update_file)
       expect(updated_record).to receive(:update)
       expect(updated_record).to receive(:save)
+      described_class.update_record(updated_record, obj)
+    end
+    it 'calls set_file if file is nil and exists' do
+      allow(File).to receive(:exist?).and_return(true)
+      allow(described_class).to receive(:set_file)
+      allow(described_class).to receive(:update_file)
+      expect(described_class).to receive(:set_file).at_least(:once)
+      described_class.update_record(updated_record, obj)
+    end
+    it 'calls update_file if file is not nil and exists' do
+      record = double('Acda', update: true, save: true,
+        image_file: file_obj, thumbnail_file: file_obj, pdf_file: file_obj, audio_file: file_obj, video_file: file_obj,
+        build_image_file: file_obj, build_thumbnail_file: file_obj, build_pdf_file: file_obj,
+        build_audio_file: file_obj, build_video_file: file_obj)
+      allow(File).to receive(:exist?).and_return(true)
+      allow(described_class).to receive(:set_file)
+      allow(described_class).to receive(:update_file)
+      expect(described_class).to receive(:update_file).at_least(:once)
+      described_class.update_record(record, obj)
+    end
+    it 'does not call set_file or update_file if file does not exist' do
+      allow(File).to receive(:exist?).and_return(false)
+      allow(described_class).to receive(:set_file)
+      allow(described_class).to receive(:update_file)
+      expect(described_class).not_to receive(:set_file)
+      expect(described_class).not_to receive(:update_file)
       described_class.update_record(updated_record, obj)
     end
   end
@@ -171,6 +219,10 @@ RSpec.describe ImportLibrary do
     end
     it 'returns "no" for empty input' do
       allow(described_class).to receive(:gets).and_return("")
+      expect(described_class.prompt).to eq('no')
+    end
+    it 'returns "no" for whitespace input' do
+      allow(described_class).to receive(:gets).and_return("   ")
       expect(described_class.prompt).to eq('no')
     end
   end

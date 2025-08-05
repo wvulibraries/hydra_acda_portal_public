@@ -39,14 +39,8 @@ RSpec.describe AutomaticImport do
  describe '#parse_data' do
    let(:json_data) do
      [
-       {
-         'identifier' => 'test.123',
-         'title' => 'Test Record'
-       },
-       {
-         'identifier' => 'test.456',
-         'title' => 'EXCLUDE This Record'
-       }
+       { 'identifier' => 'test.123', 'title' => 'Test Record' },
+       { 'identifier' => 'test.456', 'title' => 'EXCLUDE This Record' }
      ].to_json
    end
 
@@ -92,6 +86,39 @@ RSpec.describe AutomaticImport do
        expect(ImportLibrary).to receive(:import_record)
        import.parse_data(json_data)
      end
+   end
+
+   it 'adds error text if import_record returns false' do
+     allow(ImportLibrary).to receive(:import_record).and_return(false)
+     expect { import.parse_data(json_data) }.not_to raise_error
+     expect(import.instance_variable_get(:@email_details)).to include('failed to create')
+   end
+
+   it 'adds error text if update_record returns false' do
+     allow(Acda).to receive(:where).and_return([double('Acda')])
+     allow(ImportLibrary).to receive(:update_record).and_return(false)
+     expect { import.parse_data(json_data) }.not_to raise_error
+     expect(import.instance_variable_get(:@email_details)).to include('failed to update')
+   end
+
+   it 'handles record with nil title' do
+     data = [{ 'identifier' => 'test.789', 'title' => nil }].to_json
+     expect { import.parse_data(data) }.not_to raise_error
+   end
+
+   it 'handles record with nil identifier' do
+     data = [{ 'identifier' => nil, 'title' => 'Test Record' }].to_json
+     expect { import.parse_data(data) }.not_to raise_error
+   end
+
+   it 'rescues RuntimeError and aborts' do
+     allow(ImportLibrary).to receive(:import_record).and_raise(RuntimeError, 'fail')
+     expect(import).to receive(:puts).at_least(:once)
+     expect { import.parse_data(json_data) }.to raise_error(SystemExit)
+   end
+
+   it 'handles empty JSON array' do
+     expect { import.parse_data([].to_json) }.not_to raise_error
    end
  end
 
@@ -145,6 +172,11 @@ RSpec.describe AutomaticImport do
      it 'aborts with error message' do
        expect { import.run }.to raise_error(SystemExit, "No data file found")
      end
+   end
+
+   it 'aborts if Dir[] returns empty array' do
+     allow(Dir).to receive(:[]).and_return([])
+     expect { import.run }.to raise_error(SystemExit, 'No data file found')
    end
  end
 
