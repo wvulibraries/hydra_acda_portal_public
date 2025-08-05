@@ -25,9 +25,8 @@ RSpec.describe GeneratePdfThumbsJob, type: :job do
     allow(FileUtils).to receive(:cp)
     allow(Dir).to receive(:glob).and_return([])
     allow(File).to receive(:delete)
-    allow(Rails.logger).to receive(:error)
     allow(Rails.logger).to receive(:info)
-    allow(Rails.logger).to receive(:warn)
+    # Do NOT stub :warn or :error here!
     allow(ImportLibrary).to receive(:set_file)
     allow_any_instance_of(Object).to receive(:puts)
   end
@@ -66,6 +65,17 @@ RSpec.describe GeneratePdfThumbsJob, type: :job do
       expect(Rails.logger).to receive(:error).with(/Failed to process PDF/)
       expect { job.perform(id, download_path) }.to raise_error(StandardError)
     end
+
+    it 'calls cleanup_files even if process_pdf raises' do
+      job = described_class.new
+      allow(job).to receive(:valid_for_processing?).and_return(true)
+      allow(job).to receive(:find_record).and_return(record)
+      allow(job).to receive(:process_pdf).and_raise(StandardError, 'fail')
+      expect(job).to receive(:cleanup_files).with(id, download_path)
+      expect {
+        job.perform(id, download_path)
+      }.to raise_error(StandardError)
+    end
   end
 
   describe '#process_pdf' do
@@ -92,9 +102,26 @@ RSpec.describe GeneratePdfThumbsJob, type: :job do
       expect(job).to receive(:create_thumbnail)
       job.send(:process_images, id, '/home/hydra/tmp/pdf/abc123.pdf', record)
     end
+
+    it 'does nothing if final_image_path is nil' do
+      allow(job).to receive(:setup_image_path).and_return('/tmp/images')
+      allow(job).to receive(:convert_pdf_to_image)
+      allow(job).to receive(:find_image_path).and_return(nil)
+      expect(record).not_to receive(:build_image_file)
+      expect(job).not_to receive(:create_thumbnail)
+      job.send(:process_images, id, '/tmp/a.pdf', record)
+    end
   end
 
-  
+  describe '#convert_pdf_to_image' do
+    let(:job) { described_class.new }
+    before do
+      allow_any_instance_of(Logger).to receive(:warn)
+      allow_any_instance_of(Logger).to receive(:error)
+      allow_any_instance_of(Logger).to receive(:info)
+    end
+   
+  end
 
   describe '#find_image_path' do
     it 'returns correct path if file exists' do

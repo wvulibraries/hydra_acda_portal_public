@@ -105,6 +105,33 @@ RSpec.describe GenerateThumbsJob, type: :job do
       expect(record).to receive(:save_with_retry!).with(validate: false)
       job.perform(record.id)
     end
+
+    it 'logs info for unsupported type and marks as completed' do
+      allow(record).to receive(:dc_type).and_return(nil)
+      expect(logger).to receive(:info).with(/Skipping unsupported type/)
+      expect(record).to receive(:queued_job=).with('completed')
+      expect(record).to receive(:save_with_retry!).with(validate: false)
+      job.perform(record.id)
+    end
+
+    it 'logs error if no file was downloaded' do
+      allow(record).to receive(:available_by).and_return('https://example.com/file.jpg')
+      allow(job).to receive(:process_url).and_return(false)
+      allow(record).to receive(:queued_job=)
+      allow(record).to receive(:save_with_retry!)
+      allow(logger).to receive(:error)
+      expect(logger).to receive(:error).with(a_string_matching('No file was successfully downloaded'))
+      job.perform(record.id)
+    end
+
+    it 'logs error and re-raises in rescue block' do
+      allow(record).to receive(:available_by).and_raise(StandardError, 'fail')
+      allow(record).to receive(:queued_job=)
+      allow(record).to receive(:save_with_retry!)
+      allow(logger).to receive(:error)
+      expect(logger).to receive(:error).with(a_string_matching('Error in GenerateThumbsJob'))
+      expect { job.perform(record.id) }.to raise_error(StandardError)
+    end
   end
 
   describe '#process_url' do
@@ -205,11 +232,35 @@ RSpec.describe GenerateThumbsJob, type: :job do
       expect(logger).to receive(:info).with(/Unable to extract thumbnail/)
       expect(job.send(:handle_video_thumbnail, rec, logger)).to eq(false)
     end
+
+    it 'logs and returns true for successful Vimeo thumbnail' do
+      allow(record).to receive(:available_by).and_return('https://vimeo.com/12345')
+      allow(job).to receive(:extract_vimeo_id).and_return('12345')
+      allow(URI).to receive(:open).and_return(StringIO.new('{"thumbnail_url":"http://thumb"}'))
+      allow(JSON).to receive(:parse).and_return({ 'thumbnail_url' => 'http://thumb' })
+      allow(job).to receive(:download_resource).and_return(true)
+      allow(File).to receive(:size).and_return(2000)
+      allow(logger).to receive(:info)
+      expect(logger).to receive(:info).with(a_string_matching('Found Vimeo thumbnail'))
+      expect(GenerateImageThumbsJob).to receive(:perform_later).with(record.id, anything)
+      expect(job.send(:handle_video_thumbnail, record, logger)).to eq(true)
+    end
+
+    it 'logs and returns true for successful YouTube thumbnail' do
+      rec = double(id: 'abc', available_by: 'https://youtube.com/watch?v=abc', available_at: nil)
+      allow(job).to receive(:extract_youtube_id).and_return('abc')
+      allow(job).to receive(:download_resource).and_return(false, false, true)
+      allow(File).to receive(:size).and_return(2001)
+      allow(logger).to receive(:info)
+      expect(logger).to receive(:info).with(a_string_matching('Successfully downloaded YouTube thumbnail'))
+      expect(GenerateImageThumbsJob).to receive(:perform_later).with(rec.id, anything)
+      expect(job.send(:handle_video_thumbnail, rec, logger)).to eq(true)
+    end
   end
 
   describe '#create_default_video_thumbnail' do
     let(:record) { double(id: 'abc', title: 'Test', queued_job: nil, save_with_retry!: true) }
-    let(:logger) { Logger.new(nil) }
+    let(:logger) { instance_spy(Logger) }
     let(:job) { described_class.new }
 
     it 'rescues and marks as completed on MiniMagick error' do
@@ -219,6 +270,8 @@ RSpec.describe GenerateThumbsJob, type: :job do
       expect(record).to receive(:save_with_retry!).with(validate: false)
       expect(job.send(:create_default_video_thumbnail, record, '/tmp/path', logger)).to eq(false)
     end
+
+    
   end
 
   describe '#handle_downloaded_file' do
@@ -303,12 +356,11 @@ RSpec.describe GenerateThumbsJob, type: :job do
   end
 
   describe '#handle_dlg_record' do
-    let(:logger) { Logger.new(nil) }
-    let(:record) { double(id: 'abc', dc_type: nil) }
+    let(:logger) { instance_spy(Logger) }
+    let(:record) { double(id: 'abc', dc_type: nil, save!: true) }
     let(:job) { described_class.new }
 
     before do
-      allow(record).to receive(:save!) { true }
       allow(Acda).to receive(:where).with(id: 'abc').and_return([record])
     end
 
@@ -317,5 +369,6 @@ RSpec.describe GenerateThumbsJob, type: :job do
       expect(logger).to receive(:error).with(/Failed to process DLG record/)
       job.send(:handle_dlg_record, 'http://bad-url.com', '/tmp/path', logger)
     end
+
   end
 end
