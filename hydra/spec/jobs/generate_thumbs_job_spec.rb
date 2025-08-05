@@ -78,6 +78,33 @@ RSpec.describe GenerateThumbsJob, type: :job do
       expect(record).to receive(:save_with_retry!).with(validate: false)
       expect { job.perform(record.id) }.to raise_error(StandardError)
     end
+
+    it 'marks as completed if both available_by and available_at are nil' do
+      allow(record).to receive(:available_by).and_return(nil)
+      allow(record).to receive(:available_at).and_return(nil)
+      expect(record).to receive(:queued_job=).with('completed')
+      expect(record).to receive(:save_with_retry!).with(validate: false)
+      job.perform(record.id)
+    end
+
+    it 'marks as completed if process_url returns true but file does not exist' do
+      allow(record).to receive(:available_by).and_return('https://example.com/file.jpg')
+      allow(job).to receive(:process_url).and_return(true)
+      allow(File).to receive(:exist?).and_return(false)
+      expect(record).to receive(:queued_job=).with('completed')
+      expect(record).to receive(:save_with_retry!).with(validate: false)
+      job.perform(record.id)
+    end
+
+    it 'marks as completed if process_url returns true but file is empty' do
+      allow(record).to receive(:available_by).and_return('https://example.com/file.jpg')
+      allow(job).to receive(:process_url).and_return(true)
+      allow(File).to receive(:exist?).and_return(true)
+      allow(File).to receive(:size).and_return(0)
+      expect(record).to receive(:queued_job=).with('completed')
+      expect(record).to receive(:save_with_retry!).with(validate: false)
+      job.perform(record.id)
+    end
   end
 
   describe '#process_url' do
@@ -128,6 +155,71 @@ RSpec.describe GenerateThumbsJob, type: :job do
     end
   end
 
+  describe '#handle_video_thumbnail' do
+    let(:record) { double(id: 'abc', available_by: 'https://vimeo.com/12345', available_at: nil) }
+    let(:logger) { Logger.new(nil) }
+    let(:job) { described_class.new }
+
+    it 'returns false if no url' do
+      rec = double(available_by: nil, available_at: nil)
+      expect(job.send(:handle_video_thumbnail, rec, logger)).to eq(false)
+    end
+
+    it 'returns false if extract_vimeo_id returns nil' do
+      allow(record).to receive(:available_by).and_return('https://vimeo.com/')
+      expect(job.send(:handle_video_thumbnail, record, logger)).to eq(false)
+    end
+
+    it 'returns false if download_resource fails for vimeo' do
+      allow(record).to receive(:available_by).and_return('https://vimeo.com/12345')
+      allow(job).to receive(:extract_vimeo_id).and_return('12345')
+      allow(URI).to receive(:open).and_return(StringIO.new('{"thumbnail_url":"http://thumb"}'))
+      allow(JSON).to receive(:parse).and_return({ 'thumbnail_url' => 'http://thumb' })
+      allow(job).to receive(:download_resource).and_return(false)
+      expect(job.send(:handle_video_thumbnail, record, logger)).to eq(false)
+    end
+
+    it 'rescues and returns false for vimeo error' do
+      allow(record).to receive(:available_by).and_return('https://vimeo.com/12345')
+      allow(job).to receive(:extract_vimeo_id).and_return('12345')
+      allow(URI).to receive(:open).and_raise(StandardError.new('fail'))
+      expect(logger).to receive(:error).with(/Error processing Vimeo thumbnail/)
+      expect(job.send(:handle_video_thumbnail, record, logger)).to eq(false)
+    end
+
+    it 'returns false if extract_youtube_id returns nil' do
+      rec = double(id: 'abc', available_by: 'https://youtube.com/', available_at: nil)
+      expect(job.send(:handle_video_thumbnail, rec, logger)).to eq(false)
+    end
+
+    it 'returns false if all youtube thumbnails fail' do
+      rec = double(id: 'abc', available_by: 'https://youtube.com/watch?v=abc', available_at: nil)
+      allow(job).to receive(:extract_youtube_id).and_return('abc')
+      allow(job).to receive(:download_resource).and_return(false)
+      expect(logger).to receive(:error).with(/Failed to download any YouTube thumbnails/)
+      expect(job.send(:handle_video_thumbnail, rec, logger)).to eq(false)
+    end
+
+    it 'returns false for unknown video url' do
+      rec = double(id: 'abc', available_by: 'https://notavideo.com/', available_at: nil)
+      expect(logger).to receive(:info).with(/Unable to extract thumbnail/)
+      expect(job.send(:handle_video_thumbnail, rec, logger)).to eq(false)
+    end
+  end
+
+  describe '#create_default_video_thumbnail' do
+    let(:record) { double(id: 'abc', title: 'Test', queued_job: nil, save_with_retry!: true) }
+    let(:logger) { Logger.new(nil) }
+    let(:job) { described_class.new }
+
+    it 'rescues and marks as completed on MiniMagick error' do
+      allow(MiniMagick::Image).to receive(:new).and_raise(StandardError.new('fail'))
+      expect(logger).to receive(:error).with(/Failed to create default thumbnail/)
+      expect(record).to receive(:queued_job=).with('completed')
+      expect(record).to receive(:save_with_retry!).with(validate: false)
+      expect(job.send(:create_default_video_thumbnail, record, '/tmp/path', logger)).to eq(false)
+    end
+  end
 
   describe '#handle_downloaded_file' do
     let(:record) { double(id: 'abc123') }
@@ -145,6 +237,13 @@ RSpec.describe GenerateThumbsJob, type: :job do
       expect(GenerateImageThumbsJob).to receive(:perform_later).with(record.id, anything)
       described_class.new.send(:handle_downloaded_file, record, '/tmp/file.png', logger)
     end
+
+    it 'does nothing for unsupported mime type' do
+      allow_any_instance_of(GenerateThumbsJob).to receive(:`).and_return('application/zip')
+      expect(GeneratePdfThumbsJob).not_to receive(:perform_later)
+      expect(GenerateImageThumbsJob).not_to receive(:perform_later)
+      described_class.new.send(:handle_downloaded_file, record, '/tmp/file.zip', logger)
+    end
   end
 
   describe '#download_resource' do
@@ -159,6 +258,13 @@ RSpec.describe GenerateThumbsJob, type: :job do
       expect(File).to receive(:open).with(path, 'wb')
       described_class.new.send(:download_resource, url, path, logger)
     end
+
+    it 'logs error and returns false on failure' do
+      allow(URI).to receive(:open).and_raise(StandardError.new("fail"))
+      expect(logger).to receive(:error).with(/fail/)
+      result = job.send(:download_resource, "http://bad-url.com", "/tmp/file", logger)
+      expect(result).to eq(false)
+    end
   end
 
   describe '#extract_and_download_embedded_file' do
@@ -172,27 +278,6 @@ RSpec.describe GenerateThumbsJob, type: :job do
       expect_any_instance_of(GenerateThumbsJob).to receive(:download_resource).with('https://example.com/download/file/sample.pdf', anything, logger)
       described_class.new.send(:extract_and_download_embedded_file, url, '/tmp/sample.pdf', logger)
     end
-  end
-
-  describe '#handle_downloaded_file' do
-    let(:record) { double(id: 'abc') }
-    let(:logger) { Logger.new(nil) }
-
-    it 'calls GeneratePdfThumbsJob for PDFs' do
-      allow(job).to receive(:`).and_return("application/pdf\n")
-      expect(GeneratePdfThumbsJob).to receive(:perform_later).with('abc', '/tmp/file.pdf')
-      job.send(:handle_downloaded_file, record, '/tmp/file.pdf', logger)
-    end
-
-    it 'calls GenerateImageThumbsJob for images' do
-      allow(job).to receive(:`).and_return("image/jpeg\n")
-      expect(GenerateImageThumbsJob).to receive(:perform_later).with('abc', '/tmp/image.jpg')
-      job.send(:handle_downloaded_file, record, '/tmp/image.jpg', logger)
-    end
-  end
-
-  describe '#extract_and_download_embedded_file' do
-    let(:logger) { Logger.new(nil) }
 
     it 'downloads embedded file when link is found' do
       html = '<html><body><a class="new-primary" href="/download/file/sample.pdf">Download</a></body></html>'
@@ -208,28 +293,29 @@ RSpec.describe GenerateThumbsJob, type: :job do
       result = job.send(:extract_and_download_embedded_file, "http://example.com/page", "/tmp/path", logger)
       expect(result).to be false
     end
-  end
 
-  describe '#download_resource' do
-    let(:logger) { Logger.new(nil) }
-
-    it 'downloads and writes file successfully' do
-      file = StringIO.new("binary data")
-      allow(URI).to receive(:open).and_return(file)
-      expect(File).to receive(:open).with("/tmp/file", 'wb')
-      job.send(:download_resource, "http://example.com/file.jpg", "/tmp/file", logger)
-    end
-
-    it 'logs error and returns false on failure' do
-      allow(URI).to receive(:open).and_raise(StandardError.new("fail"))
-      expect(logger).to receive(:error).with(/fail/)
-      result = job.send(:download_resource, "http://bad-url.com", "/tmp/file", logger)
+    it 'rescues and logs error if fetching or parsing fails' do
+      allow(URI).to receive(:open).and_raise(StandardError.new('fail'))
+      expect(logger).to receive(:error).with(/Error extracting embedded file/)
+      result = job.send(:extract_and_download_embedded_file, 'http://bad-url.com', '/tmp/path', logger)
       expect(result).to eq(false)
     end
   end
 
+  describe '#handle_dlg_record' do
+    let(:logger) { Logger.new(nil) }
+    let(:record) { double(id: 'abc', dc_type: nil) }
+    let(:job) { described_class.new }
 
+    before do
+      allow(record).to receive(:save!) { true }
+      allow(Acda).to receive(:where).with(id: 'abc').and_return([record])
+    end
 
-
-
+    it 'rescues and logs error if processing fails' do
+      allow(URI).to receive(:open).and_raise(StandardError.new('fail'))
+      expect(logger).to receive(:error).with(/Failed to process DLG record/)
+      job.send(:handle_dlg_record, 'http://bad-url.com', '/tmp/path', logger)
+    end
+  end
 end
