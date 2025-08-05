@@ -134,6 +134,17 @@ RSpec.describe ApplicationJob, type: :job do
       Sidekiq::RetrySet.new.each(&:delete)
       Sidekiq::ScheduledSet.new.each(&:delete)
     end
+
+    it "does not attempt cleanup if job.arguments.first is not present" do
+      fake_job = double(arguments: [nil])
+      expect(Sidekiq::Queue).not_to receive(:all)
+      expect(Sidekiq::RetrySet).not_to receive(:new)
+      expect(Sidekiq::ScheduledSet).not_to receive(:new)
+      # Simulate discard_on block
+      job_class.discard_on(Ldp::Gone) do |job, error|
+        # Should not attempt any Sidekiq cleanup
+      end
+    end
   end
 
   
@@ -156,10 +167,6 @@ RSpec.describe ApplicationJob, type: :job do
       job_instance.send(:rescue_with_handler, error)
     end
 
-    
-
-
-
     it "raises immediately for non-500 errors" do
       error = Ldp::HttpError.new("STATUS: 404 Not Found")
       expect {
@@ -174,6 +181,34 @@ RSpec.describe ApplicationJob, type: :job do
       expect(job_class.already_queued?(record_id)).to eq(false)
     end
 
+    it "marks record as completed and raises when max retries reached" do
+      error = Ldp::HttpError.new("STATUS: 500 Internal Server Error")
+      allow(job_instance).to receive(:executions).and_return(3)
+      fake_record = double(queued_job: nil, respond_to?: true, save_with_retry!: true)
+      allow(Acda).to receive(:find).with(record_id).and_return(fake_record)
+      allow(job_instance).to receive(:arguments).and_return([record_id])
+      expect(fake_record).to receive(:queued_job=).with('completed')
+      expect(fake_record).to receive(:save_with_retry!).with(validate: false)
+      expect {
+        job_instance.send(:rescue_with_handler, error)
+      }.to raise_error(Ldp::HttpError)
+    end
 
+    it "does nothing if record not found or does not respond to queued_job" do
+      error = Ldp::HttpError.new("STATUS: 500 Internal Server Error")
+      allow(job_instance).to receive(:executions).and_return(3)
+      allow(Acda).to receive(:find).with(record_id).and_return(nil)
+      allow(job_instance).to receive(:arguments).and_return([record_id])
+      expect {
+        job_instance.send(:rescue_with_handler, error)
+      }.to raise_error(Ldp::HttpError)
+
+      # Not responding to queued_job
+      fake_record = double(respond_to?: false)
+      allow(Acda).to receive(:find).with(record_id).and_return(fake_record)
+      expect {
+        job_instance.send(:rescue_with_handler, error)
+      }.to raise_error(Ldp::HttpError)
+    end
   end
 end
