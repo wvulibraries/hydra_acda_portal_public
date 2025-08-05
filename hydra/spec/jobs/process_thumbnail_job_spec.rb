@@ -423,4 +423,58 @@ RSpec.describe ProcessThumbnailJob, type: :job do
 
   end
 
+  describe 'edge/error/ensure branches for 100% coverage' do
+    let(:job) { described_class.new }
+    let(:logger) { Logger.new(nil) }
+    let(:record) { build_stubbed(:acda) }
+
+    it 'generate_thumbnail returns nil and logs error on MiniMagick failure' do
+      allow(MiniMagick::Image).to receive(:open).and_raise("fail")
+      expect(logger).to receive(:error).with(/Error generating thumbnail/)
+      expect(job.send(:generate_thumbnail, '/tmp/fake.jpg', 250, logger)).to be_nil
+    end
+
+    it 'attach_images_to_record handles exception and ensure block' do
+      FileUtils.touch('/tmp/fake.jpg') # Ensure file exists for cleanup
+      allow(job).to receive(:generate_thumbnail).and_raise("fail")
+      expect(logger).to receive(:error).with(/Error attaching images/)
+      expect(FileUtils).to receive(:rm_f).at_least(:once)
+      expect(job.send(:attach_images_to_record, record, '/tmp/fake.jpg', logger)).to eq(false)
+      FileUtils.rm_f('/tmp/fake.jpg')
+    end
+
+    it 'attach_thumbnail_to_record handles exception and ensure block' do
+      FileUtils.touch('/tmp/fake.jpg') # Ensure file exists for cleanup
+      allow(job).to receive(:generate_thumbnail).and_raise("fail")
+      expect(logger).to receive(:error).with(/Error attaching thumbnail/)
+      expect(FileUtils).to receive(:rm_f).at_least(:once)
+      expect(job.send(:attach_thumbnail_to_record, record, '/tmp/fake.jpg', logger)).to eq(false)
+      FileUtils.rm_f('/tmp/fake.jpg')
+    end
+
+    it 'generate_thumbnail_from_pdf handles exception and ensure block' do
+      pdf_path = '/tmp/fake.pdf'
+      output_path = '/tmp/fake.pdf_page1.jpg'
+      FileUtils.touch(pdf_path)
+      FileUtils.touch(output_path)
+      allow(job).to receive(:valid_image?).and_raise("fail")
+      allow(job).to receive(:create_placeholder_thumbnail)
+      expect(logger).to receive(:error).with(/Error generating PDF thumbnail/)
+      expect(FileUtils).to receive(:rm_f).at_least(:once)
+      expect {
+        job.send(:generate_thumbnail_from_pdf, record, pdf_path, logger)
+      }.not_to raise_error
+      FileUtils.rm_f(pdf_path)
+      FileUtils.rm_f(output_path)
+    end
+
+    
+
+    it 'check_image_quality handles exception' do
+      allow(MiniMagick::Image).to receive(:open).and_raise("fail")
+      expect(logger).to receive(:error).with(/Error checking image quality/)
+      expect(job.send(:check_image_quality, '/tmp/fake.jpg', logger)).to eq(false)
+    end
+  end
+
 end
