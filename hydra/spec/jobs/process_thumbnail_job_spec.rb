@@ -477,4 +477,53 @@ RSpec.describe ProcessThumbnailJob, type: :job do
     end
   end
 
+  describe "edge/error branches for full coverage" do
+    let(:job) { described_class.new }
+    let(:logger) { Logger.new(nil) }
+
+    it "falls through to preview/default if both YouTube HQ and standard downloads fail" do
+      record.available_by = "https://youtube.com/watch?v=abc123"
+      allow(job).to receive(:extract_youtube_id).and_return("abc123")
+      allow(job).to receive(:download_file).and_return(false, false)
+      expect(job).to receive(:process_preview_thumbnail).with(record, logger)
+      job.send(:process_video_thumbnail, record, logger)
+    end
+
+    it "calls create_placeholder_thumbnail if preview download fails" do
+      record.preview = "https://example.com/preview.jpg"
+      allow(job).to receive(:download_file).and_return(false)
+      expect(job).to receive(:create_placeholder_thumbnail).with(record, logger)
+      job.send(:process_preview_thumbnail, record, logger)
+    end
+
+    it "calls create_placeholder_thumbnail if image download fails" do
+      record.available_by = "https://example.com/image.jpg"
+      allow(job).to receive(:download_file).and_return(false)
+      expect(job).to receive(:create_placeholder_thumbnail).with(record, logger)
+      job.send(:process_image_thumbnail, record, logger)
+    end
+
+    it "calls create_placeholder_thumbnail if PDF verify fails" do
+      record.available_by = "https://example.com/file.pdf"
+      allow(job).to receive(:download_file).and_return(true)
+      allow(job).to receive(:verify_pdf).and_return(false)
+      expect(job).to receive(:create_placeholder_thumbnail).with(record, logger)
+      job.send(:process_pdf_thumbnail, record, logger)
+    end
+
+    it "calls create_placeholder_thumbnail if PDF download fails" do
+      record.available_by = "https://example.com/file.pdf"
+      allow(job).to receive(:download_file).and_return(false)
+      expect(job).to receive(:create_placeholder_thumbnail).with(record, logger)
+      job.send(:process_pdf_thumbnail, record, logger)
+    end
+
+    it "calls create_placeholder_thumbnail if no suitable PDF URL is found" do
+      record.available_by = nil
+      record.available_at = nil
+      expect(job).to receive(:create_placeholder_thumbnail).with(record, logger)
+      job.send(:process_pdf_thumbnail, record, logger)
+    end
+
+  end
 end
