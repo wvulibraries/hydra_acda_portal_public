@@ -84,6 +84,25 @@ RSpec.describe ImportLibrary do
       described_class.import_record('id', obj)
     end
 
+    it 'executes curl deletes and outputs for tombstone error' do
+      error = RuntimeError.new("Can't call create on an existing resource (http://example.org/resource/123)")
+      call_count = 0
+      allow(described_class).to receive(:create_new_record) do
+        call_count += 1
+        raise error if call_count < 2
+        double('Acda', files: double('Files', build: true), save: true,
+          build_image_file: file_obj, build_thumbnail_file: file_obj, build_pdf_file: file_obj,
+          build_audio_file: file_obj, build_video_file: file_obj)
+      end
+      allow(File).to receive(:exist?).and_return(false)
+      # Stub shelling out
+      expect(described_class).to receive(:`).with(' curl -X DELETE http://example.org/resource/123 ').and_return('')
+      expect(described_class).to receive(:`).with(' curl -X DELETE http://example.org/resource/123/fcr:tombstone ').and_return('')
+      # Capture puts output
+      expect { described_class.import_record('id', obj) }
+        .to output(/deleting record and tombstone from fedora and retrying create/).to_stdout
+    end
+
     it 'retries multiple times on error' do
       call_count = 0
       allow(ImportLibrary).to receive(:create_new_record) do
