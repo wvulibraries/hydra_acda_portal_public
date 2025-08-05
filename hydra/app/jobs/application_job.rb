@@ -1,3 +1,11 @@
+# frozen_string_literal: true
+
+# ApplicationJob is the base job for handling Fedora + Sidekiq cleanup and retry logic.
+# It adds:
+# - Automatic retries for Ldp::Conflict with exponential backoff
+# - Discaring jobs gracefully if a resource is deleted
+# - Robust HTTP error handling with limited retries for Fedora 500s
+# - Deduplication of jobs for the same record ID
 class ApplicationJob < ActiveJob::Base
   # Retry on Fedora conflicts with exponential backoff
   retry_on Ldp::Conflict, 
@@ -73,11 +81,11 @@ class ApplicationJob < ActiveJob::Base
         
         # Then give up
         Rails.logger.error "Max retries reached for Fedora 500 error, giving up"
-        raise
+        raise exception
       end
     else
       # For other HTTP errors, raise immediately
-      raise
+      raise exception
     end
   end
   
