@@ -102,6 +102,7 @@ class Acda < ActiveFedora::Base
   def assign_id
     # Ensure identifier is defined or fetched
     identifier = self.identifier if self.respond_to?(:identifier)
+    return '' if identifier.nil?
 
     # Removes the protocol (http or https) and domain part of the url
     cleaned_identifier = identifier.gsub(/https?:\/\/[^\/]+\//, '')
@@ -110,7 +111,10 @@ class Acda < ActiveFedora::Base
     cleaned_identifier = cleaned_identifier.gsub(/[\/:?%&=#+_]/, '_')
 
     # Replaces periods with empty strings to maintain the original functionality
-    cleaned_identifier.gsub('.', '').to_s
+    cleaned_identifier = cleaned_identifier.gsub('.', '').to_s
+
+    # If only underscores or empty, return ''
+    cleaned_identifier.gsub('_', '').empty? ? '' : cleaned_identifier
   end
 
   # Queued Job
@@ -386,14 +390,14 @@ class Acda < ActiveFedora::Base
 
   # Add to Acda model
   def self.with_lock(id)
-    transaction do
+    begin
       record = find(id)
       record.lock!  # Acquire a database lock
       yield record
+    rescue ActiveRecord::RecordNotFound
+      Rails.logger.error "Record \\#{id} not found for locking"
+      false
     end
-  rescue ActiveRecord::RecordNotFound
-    Rails.logger.error "Record #{id} not found for locking"
-    false
   end
 
   # Add to Acda model

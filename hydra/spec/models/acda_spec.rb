@@ -24,6 +24,22 @@ RSpec.describe Acda, type: :model do
       expect(acda).to have_received(:format_url).exactly(3).times
       expect(acda).to have_received(:resolve_redirect).once
     end
+
+    it 'handles blank preview and available_by/available_at' do
+      allow(acda).to receive(:format_url).and_return('formatted')
+      allow(acda).to receive(:generate_preview).and_return('preview')
+      allow(acda).to receive(:resolve_redirect).and_return('preview')
+      acda.preview = nil
+      acda.available_by = nil
+      acda.available_at = nil
+      expect { acda.format_urls }.not_to raise_error
+    end
+    it 'handles present preview' do
+      allow(acda).to receive(:format_url).and_return('formatted')
+      allow(acda).to receive(:resolve_redirect).and_return('formatted')
+      acda.preview = 'something'
+      expect { acda.format_urls }.not_to raise_error
+    end
   end
  
   describe "#generate_preview" do
@@ -51,6 +67,21 @@ RSpec.describe Acda, type: :model do
         expect(acda.generate_preview(nil)).to be_nil
       end
     end
+
+    it 'returns nil for blank url' do
+      expect(acda.generate_preview(nil)).to be_nil
+      expect(acda.generate_preview('')).to be_nil
+    end
+    it 'returns url for non-matching cases' do
+      expect(acda.generate_preview('http://foo.com')).to eq('http://foo.com')
+    end
+    it 'returns nil for /download or .pdf' do
+      expect(acda.generate_preview('http://foo.com/download')).to be_nil
+      expect(acda.generate_preview('http://foo.com/file.pdf')).to be_nil
+    end
+    it 'handles non-string input' do
+      expect { acda.generate_preview(123) }.to raise_error(NoMethodError)
+    end
   end
  
   describe "#clear_empty_fields" do
@@ -65,12 +96,30 @@ RSpec.describe Acda, type: :model do
       acda.clear_empty_fields
       expect(acda.creator).to eq(["John Doe"])
     end
+
+    it 'skips non-ActiveTriples::Relation values' do
+      acda.title = ''
+      expect { acda.clear_empty_fields }.not_to raise_error
+    end
+    it 'handles missing attributes gracefully' do
+      allow(acda).to receive(:attributes).and_return({})
+      expect { acda.clear_empty_fields }.not_to raise_error
+    end
   end
  
   describe "#assign_id" do
     it "cleans identifier by removing protocol and special characters" do
       allow(acda).to receive(:identifier).and_return("https://test.com/doc?id=123")
       expect(acda.assign_id).to eq "doc_id_123"
+    end
+
+    it 'returns empty string if identifier is nil' do
+      allow(acda).to receive(:identifier).and_return(nil)
+      expect(acda.assign_id).to eq ''
+    end
+    it 'handles identifier with only special chars' do
+      allow(acda).to receive(:identifier).and_return('http://foo.com/./:/')
+      expect(acda.assign_id).to eq ''
     end
   end
  
@@ -278,4 +327,69 @@ RSpec.describe Acda, type: :model do
     end
   end
 
+  describe '#prepare_record' do
+    it 'calls format_urls and clear_empty_fields' do
+      expect(acda).to receive(:format_urls)
+      expect(acda).to receive(:clear_empty_fields)
+      acda.prepare_record
+    end
+  end
+
+  describe '#saved_change_to_preview?' do
+    it 'returns false if previous_changes is empty' do
+      allow(acda).to receive(:previous_changes).and_return({})
+      expect(acda.saved_change_to_preview?).to eq false
+    end
+    it 'returns true if previous_changes["preview"] is present' do
+      allow(acda).to receive(:previous_changes).and_return({ 'preview' => [nil, 'foo'] })
+      expect(acda.saved_change_to_preview?).to eq true
+    end
+  end
+
+  describe '#saved_change_to_available_by?' do
+    it 'returns false if previous_changes is empty' do
+      allow(acda).to receive(:previous_changes).and_return({})
+      expect(acda.saved_change_to_available_by?).to eq false
+    end
+    it 'returns true if previous_changes["available_by"] is present' do
+      allow(acda).to receive(:previous_changes).and_return({ 'available_by' => [nil, 'foo'] })
+      expect(acda.saved_change_to_available_by?).to eq true
+    end
+  end
+
+  describe '#saved_change_to_available_at?' do
+    it 'returns false if previous_changes is empty' do
+      allow(acda).to receive(:previous_changes).and_return({})
+      expect(acda.saved_change_to_available_at?).to eq false
+    end
+    it 'returns true if previous_changes["available_at"] is present' do
+      allow(acda).to receive(:previous_changes).and_return({ 'available_at' => [nil, 'foo'] })
+      expect(acda.saved_change_to_available_at?).to eq true
+    end
+  end
+
+  describe '.with_lock' do
+    it 'yields the record' do
+      record = double('Acda')
+      allow(described_class).to receive(:find).and_return(record)
+      allow(record).to receive(:lock!)
+      expect { |b| described_class.with_lock(1, &b) }.to yield_with_args(record)
+    end
+    it 'returns false if not found' do
+      allow(described_class).to receive(:find).and_raise(ActiveRecord::RecordNotFound)
+      expect(described_class.with_lock(1) { }).to eq false
+    end
+  end
+
+  describe '#save_with_retry!' do
+    it 'retries on Ldp::Conflict and raises after max retries' do
+      allow(acda).to receive(:save!).and_raise(Ldp::Conflict)
+      expect(Rails.logger).to receive(:error).at_least(:once)
+      expect { acda.save_with_retry! }.to raise_error(Ldp::Conflict)
+    end
+    it 'saves successfully if no error' do
+      allow(acda).to receive(:save!).and_return(true)
+      expect(acda.save_with_retry!).to eq true
+    end
+  end
 end
