@@ -525,5 +525,75 @@ RSpec.describe ProcessThumbnailJob, type: :job do
       job.send(:process_pdf_thumbnail, record, logger)
     end
 
+    it "logs error and returns false if download_file raises exception" do
+      allow(URI).to receive(:parse).and_raise("test error")
+      expect(logger).to receive(:error).with(/Error downloading file: test error/)
+      result = job.send(:download_file, "https://fail.com", "/tmp/test.jpg", logger)
+      expect(result).to eq(false)
+    end
+
+    it "returns false if vimeo oembed API fails" do
+      stub_request(:get, /vimeo\.com\/api\/oembed/).to_return(status: 500)
+      expect(job.send(:download_vimeo_thumbnail, "12345", "/tmp/out.jpg", logger)).to eq(false)
+    end
+
+    it "returns false if vimeo high-quality API fails" do
+      stub_request(:get, /vimeo\.com\/api\/v2\/video/).to_return(status: 500)
+      expect(job.send(:download_vimeo_high_quality, "12345", "/tmp/out.jpg", logger)).to eq(false)
+    end
+
+  
+    it "returns false if PDF file does not exist or is too small" do
+      path = "/tmp/too_small.pdf"
+      File.write(path, "tiny") # Only 4 bytes
+      allow(job).to receive(:verify_pdf).and_call_original
+      expect(job.send(:verify_pdf, path, logger)).to eq(false)
+      FileUtils.rm_f(path)
+    end
+
+
+    it "returns false for file without %PDF- header" do
+      path = "/tmp/bad_header.pdf"
+      content = "-----BEGIN SOMETHING-----\nnot a pdf\n" + ("x" * 1200)
+      File.write(path, content)
+      allow(job).to receive(:verify_pdf).and_call_original
+      expect(job.send(:verify_pdf, path, logger)).to eq(false)
+      FileUtils.rm_f(path)
+    end
+
+
+    it "returns false if file is HTML" do
+      path = "/tmp/html_fake.pdf"
+      html = "<html><body>Error page</body></html>" + (" " * 1200)
+      File.write(path, html)
+      allow(job).to receive(:verify_pdf).and_call_original
+      expect(job.send(:verify_pdf, path, logger)).to eq(false)
+      FileUtils.rm_f(path)
+    end
+
+
+    it "handles missing output file from PDF conversion" do
+      pdf_path = "/tmp/fake.pdf"
+      output_path = "#{pdf_path}_page1.jpg"
+
+      FileUtils.touch(pdf_path)
+      FileUtils.touch(output_path) # simulate convert command writes something
+
+      # Stub shell command (backtick)
+      allow(job).to receive(:`).and_return("")
+      allow($?).to receive(:success?).and_return(true) rescue nil # safe fallback
+
+      # Force `valid_image?` to raise error, simulating unreadable image
+      allow(job).to receive(:valid_image?).and_raise("mini magick boom")
+      allow(job).to receive(:create_placeholder_thumbnail)
+
+      expect(logger).to receive(:error).with(/Error generating PDF thumbnail: mini magick boom/)
+
+      job.send(:generate_thumbnail_from_pdf, record, pdf_path, logger)
+
+      FileUtils.rm_f(pdf_path)
+      FileUtils.rm_f(output_path)
+    end
+
   end
 end
