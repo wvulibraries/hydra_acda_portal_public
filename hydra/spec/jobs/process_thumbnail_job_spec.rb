@@ -595,5 +595,106 @@ RSpec.describe ProcessThumbnailJob, type: :job do
       FileUtils.rm_f(output_path)
     end
 
+    it "follows a relative redirect" do
+      start = "https://rel.example.com/start.jpg"
+      dest  = "https://rel.example.com/final.jpg"
+
+      stub_request(:get, start)
+        .to_return(status: 302, headers: { 'Location' => '/final.jpg' })
+      stub_request(:get, dest)
+        .to_return(status: 200, body: "ok")
+
+      job   = described_class.new
+      logger = Logger.new(nil)
+      expect(job.send(:download_file, start, "/tmp/rel.jpg", logger)).to eq(true)
+      FileUtils.rm_f("/tmp/rel.jpg")
+    end
+
+    it "adds DSpace cookie for evols.library.manoa.hawaii.edu downloads" do
+      url = "https://evols.library.manoa.hawaii.edu/some/file.jpg"
+
+      stub = stub_request(:get, url)
+              .with(headers: { 'Cookie' => 'dspace.cookie.login=true' })
+              .to_return(status: 200, body: "ok")
+
+      job = described_class.new
+      logger = Logger.new(nil)
+
+      expect(job.send(:download_file, url, "/tmp/evols.jpg", logger)).to eq(true)
+      expect(stub).to have_been_requested
+      FileUtils.rm_f("/tmp/evols.jpg")
+    end
+
+
+    it "uses YouTube maxresdefault when available" do
+      record.available_by = "https://youtube.com/watch?v=abc123"
+      job = described_class.new
+      logger = Logger.new(nil)
+
+      # maxresdefault succeeds
+      allow(job).to receive(:download_file).with(
+        "https://img.youtube.com/vi/abc123/maxresdefault.jpg", anything, logger
+      ).and_return(true)
+
+      expect(job).to receive(:attach_images_to_record) # full image + thumb
+      allow(job).to receive(:extract_youtube_id).and_return("abc123")
+
+      job.send(:process_video_thumbnail, record, logger)
+    end
+
+
+    it "falls back after Vimeo HQ and standard both fail (uses preview if present)" do
+      record.available_by = "https://vimeo.com/12345"
+      record.preview = "https://example.com/preview.jpg"
+      job = described_class.new
+      logger = Logger.new(nil)
+
+      allow(job).to receive(:extract_vimeo_id).and_return("12345")
+      allow(job).to receive(:download_vimeo_high_quality).and_return(false)
+      allow(job).to receive(:download_vimeo_thumbnail).and_return(false)
+
+      expect(job).to receive(:process_preview_thumbnail).with(record, logger)
+      job.send(:process_video_thumbnail, record, logger)
+    end
+
+    it "falls back to default video thumbnail if Vimeo attempts fail and no preview" do
+      record.available_by = "https://vimeo.com/12345"
+      record.preview = nil
+      job = described_class.new
+      logger = Logger.new(nil)
+
+      allow(job).to receive(:extract_vimeo_id).and_return("12345")
+      allow(job).to receive(:download_vimeo_high_quality).and_return(false)
+      allow(job).to receive(:download_vimeo_thumbnail).and_return(false)
+
+      expect(job).to receive(:create_default_video_thumbnail).with(record, logger)
+      job.send(:process_video_thumbnail, record, logger)
+    end
+
+    it "uses available_at when it matches bitstreams/download pattern" do
+      record.available_by = nil
+      record.available_at = "https://repo.edu/bitstreams/abc123/download"
+      job = described_class.new
+      logger = Logger.new(nil)
+
+      allow(job).to receive(:download_file).and_return(true)
+      allow(job).to receive(:verify_pdf).and_return(true)
+      expect(job).to receive(:generate_thumbnail_from_pdf)
+
+      job.send(:process_pdf_thumbnail, record, logger)
+    end
+
+    it "treats dc_type 'Moving' as video" do
+      record.dc_type = "Moving"
+      job = described_class.new
+      expect(job).to receive(:process_video_thumbnail).with(record, anything)
+      job.perform(record.id)
+    end
+
+    
+
+
+
+
   end
 end
