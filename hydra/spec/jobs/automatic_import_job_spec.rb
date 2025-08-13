@@ -62,5 +62,39 @@ RSpec.describe AutomaticImportJob, type: :job do
         job.perform(control_file)
       }.to raise_error(SystemExit)
     end
+
+    it "sends queueing email in prod and performs before/after renames" do
+      allow(Rails).to receive_message_chain(:env, :production?).and_return(true)
+
+      mailer_double = instance_double("ActionMailer::MessageDelivery", deliver_now: true)
+
+      expect(ImportMailer).to receive(:email) do |emails, subject, body|
+        expect(emails).to eq(control_file["contact_emails"])
+        expect(subject).to include("Queueing Automatic Import for #{control_file["project_name"].capitalize}")
+        expect(body).to include("number of digital objects {#{control_file['digital_items_count']}}")
+        instance_double("ActionMailer::MessageDelivery", deliver_now: true)
+      end
+
+
+      expect(File).to receive(:rename)
+        .with("#{control_dir}/#{yaml_file}", "#{process_dir}/#{yaml_file}").ordered
+      expect(File).to receive(:rename)
+        .with("#{process_dir}/#{yaml_file}", "#{finished_dir}/#{yaml_file}").ordered
+
+      described_class.perform_now(control_file)
+    end
+
+    it "renames control -> in-progress (before) and in-progress -> finished (after) in non-prod WITHOUT email" do
+      allow(Rails).to receive_message_chain(:env, :production?).and_return(false)
+
+      expect(File).to receive(:rename)
+        .with("#{control_dir}/#{yaml_file}", "#{process_dir}/#{yaml_file}").ordered
+      expect(File).to receive(:rename)
+        .with("#{process_dir}/#{yaml_file}", "#{finished_dir}/#{yaml_file}").ordered
+      expect(ImportMailer).not_to receive(:email)
+
+      described_class.perform_now(control_file)
+    end
+
   end
 end

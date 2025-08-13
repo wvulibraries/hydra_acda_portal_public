@@ -211,4 +211,68 @@ RSpec.describe ApplicationJob, type: :job do
       }.to raise_error(Ldp::HttpError)
     end
   end
+
+  describe "rescue_from Ldp::HttpError (max retries, no id present)" do
+    it "does not attempt record-marking when arguments.first is blank" do
+      error = Ldp::HttpError.new("STATUS: 500 Internal Server Error")
+      allow(job_instance).to receive(:executions).and_return(3)
+      allow(job_instance).to receive(:arguments).and_return([nil])
+
+      # Should raise without touching Acda
+      expect(Acda).not_to receive(:find)
+      expect { job_instance.send(:rescue_with_handler, error) }.to raise_error(Ldp::HttpError)
+    end
+  end
+
+  describe "discard_on Ldp::Gone (no queued/retry/scheduled jobs present)" do
+    let(:gone_job_class) do
+      Class.new(ApplicationJob) do
+        queue_as :default
+        def perform(id); raise Ldp::Gone, "gone"; end
+      end
+    end
+
+    it "discards without attempting deletions when sets are empty" do
+      # Sidekiq exists, but sets are empty – nothing to delete
+      stub_const("Sidekiq::Queue", Class.new do
+        def self.all; []; end
+      end)
+      stub_const("Sidekiq::RetrySet", Class.new do
+        def self.new; []; end
+      end)
+      stub_const("Sidekiq::ScheduledSet", Class.new do
+        def self.new; []; end
+      end)
+
+      # Should be discarded (no exception)
+      expect { gone_job_class.perform_now("abc") }.not_to raise_error
+    end
+  end
+
+
+  describe "discard_on Ldp::Gone (no id present)" do
+    let(:gone_job_class_no_id) do
+      Class.new(ApplicationJob) do
+        queue_as :default
+        def perform(_id = nil)
+          raise Ldp::Gone, "gone"
+        end
+      end
+    end
+
+    it "does not attempt Sidekiq cleanup when id is blank" do
+      stub_const("Sidekiq::Queue", Class.new)
+      stub_const("Sidekiq::RetrySet", Class.new)
+      stub_const("Sidekiq::ScheduledSet", Class.new)
+
+      expect(Sidekiq::Queue).not_to receive(:all)
+      expect(Sidekiq::RetrySet).not_to receive(:new)
+      expect(Sidekiq::ScheduledSet).not_to receive(:new)
+
+      expect { gone_job_class_no_id.perform_now(nil) }.not_to raise_error
+    end
+  end
+
+
+
 end
