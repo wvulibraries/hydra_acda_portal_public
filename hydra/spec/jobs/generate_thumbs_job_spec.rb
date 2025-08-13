@@ -370,5 +370,11 @@ RSpec.describe GenerateThumbsJob, type: :job do
       job.send(:handle_dlg_record, 'http://bad-url.com', '/tmp/path', logger)
     end
 
+  
   end
+
+  
+
+
+
 end
