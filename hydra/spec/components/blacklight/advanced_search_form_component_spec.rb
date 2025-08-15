@@ -105,4 +105,57 @@ RSpec.describe Blacklight::AdvancedSearchFormComponent, type: :component do
     allow(comp).to receive(:fetch_service_for).and_return(service3)
     expect(comp.send(:options_for_qa_select, 'title')).to eq(['C'])
   end
+
+
+  it 'initializes search filter controls using facet fields and response aggregations' do
+    agg = double('Agg')
+    allow(response).to receive(:aggregations).and_return({ 'format_ssim' => agg })
+    facet_cfg = double('FacetConfig',
+                      field: 'format_ssim',
+                      include_in_advanced_search: true,
+                      presenter: nil,
+                      advanced_search_component: nil)
+    allow(blacklight_config).to receive(:facet_fields).and_return({ 'format' => facet_cfg })
+
+    comp = described_class.new(**default_args)
+    # The renders_many proc will call with_search_filter_control; just ensure it runs
+    expect { comp.send(:initialize_search_filter_controls) }.not_to raise_error
+  end
+
+  it 'builds text input controls for non-QA fields with query prefilled' do
+    comp = described_class.new(**default_args)
+
+    # Non-QA path + prefilled value
+    allow(comp).to receive(:local_authority?).with('title').and_return(false)
+    allow(comp).to receive(:query_for_search_clause).with('title').and_return('War and Peace')
+
+    # Yield the block from the component's own helpers, not the helpers double
+    f = double('f')
+    expect(f).to receive(:label).with(:query, anything, hash_including(class: a_string_including('col-form-label'))).and_return('')
+    expect(f).to receive(:hidden_field).with(:field, hash_including(value: 'title')).and_return('')
+    expect(f).to receive(:text_field).with(:query, hash_including(value: 'War and Peace', class: 'form-control')).and_return('')
+
+    # Ensure the inner blocks run
+    allow(comp).to receive(:fields_for).and_yield(f)
+    allow(comp).to receive(:content_tag) { |*_, &blk| blk ? blk.call : '' }
+
+    field = double('Field', key: 'title', display_label: ->(_){ 'Title' })
+    expect { comp.send(:get_field_controls, field, 0) }.not_to raise_error
+  end
+
+  it 'extracts query_for_search_clause for a given key and returns nil when missing' do
+    comp = described_class.new(**default_args)
+    comp.instance_variable_set(:@params, {
+      clause: {
+        '0' => { 'field' => 'title', 'query' => 'Moby-Dick' },
+        '1' => { 'field' => 'author', 'query' => 'Melville' }
+      }
+    })
+
+    expect(comp.send(:query_for_search_clause, 'title')).to eq('Moby-Dick')
+    expect(comp.send(:query_for_search_clause, 'subject')).to be_nil
+  end
+
+
+
 end
