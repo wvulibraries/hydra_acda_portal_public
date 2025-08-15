@@ -178,4 +178,92 @@ RSpec.describe GeneratePdfThumbsJob, type: :job do
       job.send(:cleanup_files, id, download_path)
     end
   end
+
+ describe '#convert_pdf_to_image' do
+    let(:job) { described_class.new }
+
+    it 'runs the primary convert command successfully' do
+      job = described_class.new
+
+      # Fake Convert that yields a tool responding to `<<` and returns it
+      fake_convert = Class.new do
+        def self.new(&blk)
+          tool = Object.new
+          tool.define_singleton_method(:<<) { |_arg| self } # chainable
+          blk.call(tool) if blk
+          tool
+        end
+      end
+      stub_const('MiniMagick::Tool::Convert', fake_convert)
+
+      expect {
+        job.send(:convert_pdf_to_image, '/tmp/a.pdf', '/tmp/images', id)
+      }.not_to raise_error
+    end
+
+
+
+    it 'falls back to secondary convert command when the first fails' do
+      job = described_class.new
+
+      call_count = 0
+      fake_convert = Class.new do
+        define_singleton_method(:new) do |&blk|
+          # first call raises, second call yields tool
+          call_count = (defined?(call_count) ? call_count : 0) + 1
+          if call_count == 1
+            raise MiniMagick::Error, 'primary failed'
+          else
+            tool = Object.new
+            tool.define_singleton_method(:<<) { |_arg| self }
+            blk.call(tool) if blk
+            tool
+          end
+        end
+      end
+      stub_const('MiniMagick::Tool::Convert', fake_convert)
+
+      expect(Rails.logger).to receive(:warn).with(/Initial PDF conversion failed/)
+
+      expect {
+        job.send(:convert_pdf_to_image, '/tmp/a.pdf', '/tmp/images', id)
+      }.not_to raise_error
+    end
+
+
+
+    it 'warns and re-raises when both convert attempts fail' do
+      job = described_class.new
+
+      # Make every Convert.new raise -> first rescue runs, fallback raises inside rescue,
+      # method re-raises (no second rescue executed).
+      fake_convert = Class.new do
+        def self.new(&_)
+          raise MiniMagick::Error, 'boom'
+        end
+      end
+      stub_const('MiniMagick::Tool::Convert', fake_convert)
+
+      logger = instance_double(Logger)
+      allow(logger).to receive(:info)
+      expect(logger).to receive(:warn).with(/Initial PDF conversion failed/).at_least(:once)
+      # No `.error` expectation — it won’t be called with current control flow
+      allow(Rails).to receive(:logger).and_return(logger)
+
+      expect {
+        job.send(:convert_pdf_to_image, '/tmp/a.pdf', '/tmp/images', id)
+      }.to raise_error(MiniMagick::Error)
+    end
+
+
+  end
+
+
+  describe '#setup_image_path' do
+    it 'creates the images directory and returns it' do
+      job = described_class.new
+      expect(FileUtils).to receive(:mkdir_p).with('/home/hydra/tmp/images')
+      expect(job.send(:setup_image_path, id)).to eq('/home/hydra/tmp/images')
+    end
+  end
 end

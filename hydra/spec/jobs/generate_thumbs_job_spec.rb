@@ -373,8 +373,15 @@ RSpec.describe GenerateThumbsJob, type: :job do
   
   end
 
-  
+  it 'uses available_at when available_by is nil' do
+    allow(record).to receive(:available_by).and_return(nil)
+    allow(record).to receive(:available_at).and_return('https://example.com/file.png')
 
+    expect(job).to receive(:process_url).with('https://example.com/file.png', anything, logger).and_return(false)
+    expect(record).to receive(:queued_job=).with('completed')
+    expect(record).to receive(:save_with_retry!).with(validate: false)
 
+    job.perform(record.id)
+  end
 
 end
