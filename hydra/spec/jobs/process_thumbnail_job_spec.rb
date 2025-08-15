@@ -690,11 +690,182 @@ RSpec.describe ProcessThumbnailJob, type: :job do
       expect(job).to receive(:process_video_thumbnail).with(record, anything)
       job.perform(record.id)
     end
-
-    
-
+  end
 
 
+
+    # --- extra coverage for ProcessThumbnailJob ---
+
+  describe 'additional branches' do
+    let(:job)    { described_class.new }
+    let(:logger) { Logger.new(nil) }
+
+    before do
+      # record from the outer describe is build_stubbed(:acda); make sure it can accept attachments
+      allow(record).to receive(:image_file=)
+      allow(record).to receive(:thumbnail_file=)
+      allow(record).to receive(:save_with_retry!).and_return(true)
+    end
+
+    it "branches to process_pdf_thumbnail when available_by is a /download url (not .pdf)" do
+      record.dc_type = nil
+      record.preview = nil
+      record.available_by = "https://example.edu/items/123/download"
+      j = described_class.new
+      expect(j).to receive(:process_pdf_thumbnail).with(record, anything)
+      j.perform(record.id)
+    end
+
+    it "generate_thumbnail_from_pdf calls placeholder when output image is not created" do
+      pdf_path = "/tmp/pdf_no_output.pdf"
+      FileUtils.touch(pdf_path)
+      allow(job).to receive(:`).and_return("") # command output (stubbed)
+      allow(job).to receive(:valid_image?).and_return(false) # even if it did, we’ll fail
+      expect(job).to receive(:create_placeholder_thumbnail).with(record, logger)
+      # ensure output file is absent to exercise that path
+      FileUtils.rm_f("#{pdf_path}_page1.jpg")
+
+      job.send(:generate_thumbnail_from_pdf, record, pdf_path, logger)
+      FileUtils.rm_f(pdf_path)
+    end
+
+    it "download_vimeo_thumbnail returns false when oEmbed is 200 but missing thumbnail_url" do
+      stub_request(:get, %r{vimeo\.com/api/oembed})
+        .to_return(status: 200, body: { foo: "bar" }.to_json)
+      expect(job.send(:download_vimeo_thumbnail, "123", "/tmp/out.jpg", logger)).to eq(false)
+    end
+
+    it "download_vimeo_high_quality returns false when API returns unexpected JSON shape" do
+      stub_request(:get, %r{vimeo\.com/api/v2/video})
+        .to_return(status: 200, body: { not: "an array" }.to_json)
+      expect(job.send(:download_vimeo_high_quality, "123", "/tmp/out.jpg", logger)).to eq(false)
+    end
+
+    it "attach_images_to_record returns true when full image present and thumbnail generated" do
+      img = "/tmp/full_image.jpg"
+      thumb = "/tmp/full_image.jpg_thumb.jpg"
+      File.write(img, "x")
+      File.write(thumb, "y")
+      allow(job).to receive(:generate_thumbnail).and_return(thumb)
+
+      result = job.send(:attach_images_to_record, record, img, logger)
+      expect(result).to eq(true)
+
+      FileUtils.rm_f(img)
+      FileUtils.rm_f(thumb)
+    end
+
+    it "attach_thumbnail_to_record returns true when thumbnail generated" do
+      img = "/tmp/in.jpg"
+      thumb = "/tmp/in.jpg_thumb.jpg"
+      File.write(img, "x")
+      File.write(thumb, "y")
+      allow(job).to receive(:generate_thumbnail).and_return(thumb)
+
+      result = job.send(:attach_thumbnail_to_record, record, img, logger)
+      expect(result).to eq(true)
+
+      FileUtils.rm_f(img)
+      FileUtils.rm_f(thumb)
+    end
+
+    it 'verify_pdf returns false on exception while reading' do
+      job    = described_class.new
+      logger = Logger.new(nil)
+
+      # override the global any_instance stub for this instance
+      allow(job).to receive(:verify_pdf).and_call_original
+
+      bad = "/tmp/bad_read.pdf"
+      # Must be > 1000 bytes to pass the size check and reach File.open
+      File.write(bad, "%PDF-1.7\n" + ("x" * 1205))
+
+      # Raise only for this path (don’t global-stub File.open)
+      allow(File).to receive(:open).with(bad, 'rb').and_raise(StandardError, 'boom')
+
+      expect(job.send(:verify_pdf, bad, logger)).to eq(false)
+
+      FileUtils.rm_f(bad)
+    end
+
+
+    it "generate_thumbnail_from_image rescues and calls placeholder on error" do
+      allow(job).to receive(:attach_images_to_record).and_raise("fail!")
+      expect(job).to receive(:create_placeholder_thumbnail).with(record, logger)
+      expect {
+        job.send(:generate_thumbnail_from_image, record, "/tmp/any.jpg", logger)
+      }.not_to raise_error
+    end
+
+    it 'create_placeholder_thumbnail logs error when text image fails' do
+      job    = described_class.new
+      logger = Logger.new(nil)
+
+      # run the real method (override earlier any_instance stub)
+      allow_any_instance_of(ProcessThumbnailJob).to receive(:create_placeholder_thumbnail).and_call_original
+
+      allow(job).to receive(:create_text_image).and_raise('oops')
+      expect(logger).to receive(:error).with(/Failed to create placeholder/)
+
+      job.send(:create_placeholder_thumbnail, record, logger)
+    end
+
+
+    it 'create_default_video_thumbnail logs error when video placeholder fails' do
+      job    = described_class.new
+      logger = Logger.new(nil)
+
+      # run the real method (override earlier any_instance stub)
+      allow_any_instance_of(ProcessThumbnailJob).to receive(:create_default_video_thumbnail).and_call_original
+
+      allow(job).to receive(:create_video_placeholder).and_raise('oops')
+      expect(logger).to receive(:error).with(/Failed to create video thumbnail/)
+
+      job.send(:create_default_video_thumbnail, record, logger)
+    end
 
   end
+
+  describe 'MiniMagick convert helpers' do
+    let(:job) { described_class.new }
+    let(:logger) { Logger.new(nil) }
+
+    it 'executes the convert pipeline in create_text_image' do
+      out_path = '/tmp/text_placeholder.jpg'
+      tool = Class.new do
+        attr_reader :args
+        def initialize; @args = []; end
+        def <<(v); @args << v; self; end
+      end.new
+
+      # Yield the tool so the block runs and all the `<<` lines execute
+      allow(MiniMagick::Tool::Convert).to receive(:new).and_yield(tool).and_return(tool)
+
+      job.send(:create_text_image, "Hello World", out_path)
+
+      # Spot-check a few flags went through (exercising inner lines)
+      expect(tool.args).to include("-size", "400x300", "xc:white", "-annotate", "+0+0", "Hello World", out_path)
+    ensure
+      FileUtils.rm_f(out_path)
+    end
+
+    it 'executes the convert pipeline in create_video_placeholder' do
+      out_path = '/tmp/video_placeholder.jpg'
+      tool = Class.new do
+        attr_reader :args
+        def initialize; @args = []; end
+        def <<(v); @args << v; self; end
+      end.new
+
+      allow(MiniMagick::Tool::Convert).to receive(:new).and_yield(tool).and_return(tool)
+
+      job.send(:create_video_placeholder, "My Video", out_path)
+
+      expect(tool.args).to include("-size", "400x300", "xc:black", "-fill", "white", "-annotate", "+0+40", "My Video", out_path)
+    ensure
+      FileUtils.rm_f(out_path)
+    end
+  end
+
+
 end
