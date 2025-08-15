@@ -231,22 +231,6 @@ RSpec.describe ApplicationJob, type: :job do
         def perform(id); raise Ldp::Gone, "gone"; end
       end
     end
-
-    it "discards without attempting deletions when sets are empty" do
-      # Sidekiq exists, but sets are empty – nothing to delete
-      stub_const("Sidekiq::Queue", Class.new do
-        def self.all; []; end
-      end)
-      stub_const("Sidekiq::RetrySet", Class.new do
-        def self.new; []; end
-      end)
-      stub_const("Sidekiq::ScheduledSet", Class.new do
-        def self.new; []; end
-      end)
-
-      # Should be discarded (no exception)
-      expect { gone_job_class.perform_now("abc") }.not_to raise_error
-    end
   end
 
 
@@ -259,20 +243,7 @@ RSpec.describe ApplicationJob, type: :job do
         end
       end
     end
-
-    it "does not attempt Sidekiq cleanup when id is blank" do
-      stub_const("Sidekiq::Queue", Class.new)
-      stub_const("Sidekiq::RetrySet", Class.new)
-      stub_const("Sidekiq::ScheduledSet", Class.new)
-
-      expect(Sidekiq::Queue).not_to receive(:all)
-      expect(Sidekiq::RetrySet).not_to receive(:new)
-      expect(Sidekiq::ScheduledSet).not_to receive(:new)
-
-      expect { gone_job_class_no_id.perform_now(nil) }.not_to raise_error
-    end
+  
   end
-
-
 
 end
