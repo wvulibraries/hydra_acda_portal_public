@@ -190,13 +190,13 @@ class CatalogController < ApplicationController
     }
 
     # sorting results should be custom to each collection
-    sort_date = Solrizer.solr_name('date', :stored_sortable, type: :string)
+    sort_edtf = Solrizer.solr_name('edtf', :stored_sortable, type: :string)
     sort_title = Solrizer.solr_name('title', :stored_sortable, type: :string)
     sort_creator = Solrizer.solr_name('creator', :stored_sortable, type: :string)
     sort_identifier = Solrizer.solr_name('identifier', :stored_sortable, type: :string)
 
-    config.add_sort_field "#{sort_date} asc", :label => 'Date (asc)'
-    config.add_sort_field "#{sort_date} desc", :label => 'Date (desc)'
+    config.add_sort_field "#{sort_edtf} asc", :label => 'Date (asc)'
+    config.add_sort_field "#{sort_edtf} desc", :label => 'Date (desc)'
     config.add_sort_field "#{sort_identifier} asc", :label => 'Identifier (asc)'
     config.add_sort_field "#{sort_identifier} desc", :label => 'Identifier (desc)'
     config.add_sort_field "#{sort_title} asc", :label => 'Title (A-Z)'
