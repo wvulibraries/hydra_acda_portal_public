@@ -13,7 +13,7 @@ class ProcessThumbnailJob < ApplicationJob
       FileUtils.mkdir_p(log_directory) unless File.exist?(log_directory)
       logger = Logger.new("#{log_directory}/#{id}.log")
       logger.info "Starting thumbnail processing for #{id}"
-      
+
       # Determine the best approach based on content type
       if record.dc_type == 'MovingImage' || record.dc_type == 'Moving'
         process_video_thumbnail(record, logger)
@@ -21,17 +21,19 @@ class ProcessThumbnailJob < ApplicationJob
         process_preview_thumbnail(record, logger)
       elsif record.dc_type == 'Image'
         process_image_thumbnail(record, logger)
-      # Improved PDF detection - check for .pdf extension OR /download in URL
-      elsif record.available_by&.end_with?('.pdf') || 
-            record.available_by&.include?('/download') ||
-            (record.available_at&.include?('/bitstreams/') && record.available_at&.include?('/download'))
+      # Improved PDF detection - check for .pdf, /download, or /content in URL
+      elsif record.available_by&.downcase&.end_with?('.pdf') ||
+            record.available_by&.downcase&.include?('/download') ||
+            record.available_by&.downcase&.include?('/content') ||
+            (record.available_at&.downcase&.include?('/bitstreams/') && 
+              (record.available_at&.downcase&.include?('/download') || record.available_at&.downcase&.include?('/content')))
         logger.info "Detected PDF-like URL pattern: #{record.available_by || record.available_at}"
         process_pdf_thumbnail(record, logger)
       else
         logger.info "No suitable thumbnail source found"
         create_placeholder_thumbnail(record, logger)
       end
-      
+
       logger.info "Thumbnail processing completed for #{id}"
     end
   end
@@ -151,22 +153,22 @@ class ProcessThumbnailJob < ApplicationJob
   
   # Update the process_pdf_thumbnail method to handle both URL patterns
   def process_pdf_thumbnail(record, logger)
-    # Determine which URL to use (available_by or available_at)
     url_to_use = nil
-    
-    if record.available_by&.end_with?('.pdf') || record.available_by&.include?('/download')
+
+    if record.available_by&.downcase&.end_with?('.pdf') ||
+       record.available_by&.downcase&.include?('/download') ||
+       record.available_by&.downcase&.include?('/content')
       url_to_use = record.available_by
       logger.info "Using available_by for PDF download: #{url_to_use}"
-    elsif record.available_at&.include?('/bitstreams/') && record.available_at&.include?('/download')
+    elsif record.available_at&.downcase&.include?('/bitstreams/') &&
+          (record.available_at&.downcase&.include?('/download') || record.available_at&.downcase&.include?('/content'))
       url_to_use = record.available_at
       logger.info "Using available_at for PDF download: #{url_to_use}"
     end
-    
+
     if url_to_use.present?
       download_path = "#{Rails.root}/tmp/downloads/#{record.id}_pdf.pdf"
-      
       if download_file(url_to_use, download_path, logger)
-        # Verify it's actually a PDF
         if verify_pdf(download_path, logger)
           logger.info "Successfully downloaded PDF"
           generate_thumbnail_from_pdf(record, download_path, logger)
