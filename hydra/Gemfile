@@ -79,7 +79,7 @@ gem 'hydra-head'
 # gem 'ldp'
 gem 'nokogiri'
 gem 'solrizer'
-gem 'speedy-af', '~> 0.3'
+gem 'speedy-af', '~> 0.5', '>= 0.5.0'
 
 gem 'rsolr'
 gem 'devise'
