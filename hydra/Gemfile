@@ -64,7 +64,7 @@ gem 'open-uri'
 # sidekiq 7 is not compatible with rails 5.2
 gem 'sidekiq'
 gem "sidekiq-cron"
-gem 'sidekiq-failures'
+gem 'sidekiq-failures', '>= 1.1.0'
 gem 'sidekiq-unique-jobs'
 
 # Hydra Dependencies
