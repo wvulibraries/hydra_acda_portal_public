@@ -55,8 +55,9 @@ services:
       - hydra
 
   memcached:
-    image: bitnami/memcached
+    image: memcached:1.6.22-alpine
     container_name: memcached
+    command: ["memcached", "-m", "64"]
     ports:
       - "11211"
     networks:
