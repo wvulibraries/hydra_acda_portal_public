@@ -1,43 +1,23 @@
-/* --- Full-bleed helper to escape the .container width --- */
-.full-bleed {
+
+.carousel-wrap {
     position: relative;
-    left: 50%;
-    right: 50%;
-    width: 100vw;
-    margin-left: -50vw;
-    margin-right: -50vw;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1320px; 
+    padding-left: 1rem;
+    padding-right: 1rem;
+    overflow: visible; 
   }
   
-  /* --- Hero banner --- */
-  .hero-bleed {
-    position: relative;
-    left: 50%;
-    right: 50%;
-    width: 100vw;
-    margin-left: -50vw;
-    margin-right: -50vw;
   
-    /* Replace hero.jpg with your banner image */
-    background: linear-gradient(0deg, rgba(0,0,0,0.45), rgba(0,0,0,0.45)),
-                image-url('hero.jpg') center/cover no-repeat;
-    min-height: 60vh;
-  }
-  
-  .hero-inner {
-    max-width: 1140px;
-    padding: 6rem 1rem;
-    text-shadow: 0 2px 6px rgba(0,0,0,.35);
-  }
-  
-  /* --- Multi-card carousel (3 visible, slide by 1) --- */
-  #featuredCarousel { overflow: visible; } /* allow arrows outside */
+  #featuredCarousel { overflow: hidden; } 
   
   #featuredCarousel .carousel-item { display: none; }
   #featuredCarousel .carousel-item.active,
   #featuredCarousel .carousel-item-next,
   #featuredCarousel .carousel-item-prev { display: flex; }
   
-  /* Every base card column takes 1/3 on md+ */
+  /* 1/3 columns on md+ */
   @media (min-width: 768px) {
     #featuredCarousel .carousel-item > .col-md-4 {
       flex: 0 0 33.3333%;
@@ -45,46 +25,64 @@
     }
   }
   
-  /* Card image crop for consistent height */
+
   #featuredCarousel .card-img-top {
-    height: 180px;     /* tweak to taste */
+    height: 240px;  /* was 180px */
     object-fit: cover;
     display: block;
   }
   
-  /* Hide indicators if you add them later */
+
   #featuredCarousel .carousel-indicators { display: none !important; }
   
-  /* --- Black arrows positioned just outside the carousel --- */
+
   #featuredCarousel .carousel-control-prev,
   #featuredCarousel .carousel-control-next {
     width: 3rem;
-    opacity: 1;                  /* always visible */
+    opacity: 1;
     filter: none;
+    top: calc(50% - 1.5rem);
   }
   
-  #featuredCarousel .carousel-control-prev { left: -2.75rem; }
-  #featuredCarousel .carousel-control-next { right: -2.75rem; }
+  #featuredCarousel .carousel-control-prev { left: -1.25rem; }
+  #featuredCarousel .carousel-control-next { right: -1.25rem; }
   
-  /* Larger icons and black color via inline SVG */
+
   #featuredCarousel .carousel-control-prev-icon,
   #featuredCarousel .carousel-control-next-icon {
-    width: 2rem;
-    height: 2rem;
-    background-size: 2rem 2rem;
+    width: 2rem; height: 2rem; background-size: 2rem 2rem;
   }
   
   #featuredCarousel .carousel-control-prev-icon {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23000' viewBox='0 0 16 16'%3E%3Cpath d='M11.354 1.646a.5.5 0 0 1 0 .708L6.707 7l4.647 4.646a.5.5 0 0 1-.708.708l-5-5a.5.5 0 0 1 0-.708l5-5a.5.5 0 0 1 .708 0z'/%3E%3C/svg%3E");
   }
-  
   #featuredCarousel .carousel-control-next-icon {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23000' viewBox='0 0 16 16'%3E%3Cpath d='M4.646 1.646a.5.5 0 0 1 .708 0l5 5a.5.5 0 0 1 0 .708l-5 5a.5.5 0 0 1-.708-.708L9.293 7 4.646 2.354a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
   }
   
-  /* Pull arrows back inside on narrow screens */
+
   @media (max-width: 992px) {
-    #featuredCarousel .carousel-control-prev { left: -1.25rem; }
-    #featuredCarousel .carousel-control-next { right: -1.25rem; }
+    #featuredCarousel .carousel-control-prev { left: -0.5rem; }
+    #featuredCarousel .carousel-control-next { right: -0.5rem; }
+  }
+  
+
+  .link-card {
+    background-color: #f1f1f1;        
+    border: 0;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .link-card .card-body {
+    padding: 1.25rem 1.25rem 1.5rem;
+  }
+  .link-card:hover,
+  .link-card:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(0,0,0,.12);
+    text-decoration: none;
+  }
+  .link-card .card-img-top {
+    height: 260px;                 
+    object-fit: cover;
   }
   
