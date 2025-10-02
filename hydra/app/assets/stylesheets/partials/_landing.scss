@@ -1,3 +1,33 @@
+/* --- Full-bleed helper to escape the .container width --- */
+.full-bleed {
+    position: relative;
+    left: 50%;
+    right: 50%;
+    width: 100vw;
+    margin-left: -50vw;
+    margin-right: -50vw;
+  }
+  
+  /* --- Hero banner --- */
+  .hero-bleed {
+    position: relative;
+    left: 50%;
+    right: 50%;
+    width: 100vw;
+    margin-left: -50vw;
+    margin-right: -50vw;
+  
+    /* Replace hero.jpg with your banner image */
+    background: linear-gradient(0deg, rgba(0,0,0,0.45), rgba(0,0,0,0.45)),
+                image-url('hero.jpg') center/cover no-repeat;
+    min-height: 60vh;
+  }
+  
+  .hero-inner {
+    max-width: 1140px;
+    padding: 6rem 1rem;
+    text-shadow: 0 2px 6px rgba(0,0,0,.35);
+  }
 
 .carousel-wrap {
     position: relative;
