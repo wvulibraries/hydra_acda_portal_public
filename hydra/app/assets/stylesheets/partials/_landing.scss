@@ -1,0 +1,35 @@
+/* app/assets/stylesheets/landing.scss */
+
+/* --- Multi-card carousel (3 visible, slide by 1) --- */
+
+/* Show multiple columns inside the active/adjacent items during slide */
+#featuredCarousel .carousel-item {
+    display: none;
+  }
+  #featuredCarousel .carousel-item.active,
+  #featuredCarousel .carousel-item-next,
+  #featuredCarousel .carousel-item-prev {
+    display: flex;
+  }
+  
+  /* Each "card column" takes 1/3 on md+ */
+  @media (min-width: 768px) {
+    #featuredCarousel .carousel-item > .col-md-4 {
+      flex: 0 0 33.3333%;
+      max-width: 33.3333%;
+    }
+  }
+  
+  /* Card image crop so heights are consistent */
+  #featuredCarousel .card-img-top {
+    height: 180px;       /* adjust as needed */
+    object-fit: cover;
+  }
+  
+  /* Optional: tidy card spacing */
+  #featuredCarousel .card-title { margin-bottom: .25rem; }
+  #featuredCarousel .card-text  { margin-bottom: .5rem; }
+  
+  /* --- 2×3 grid helpers --- */
+  .cards-2x3 .card { height: 100%; }
+  

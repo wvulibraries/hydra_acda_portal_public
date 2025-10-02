@@ -47,6 +47,12 @@
 //= require partials/nav_toggles
 //= require partials/toggle_required
 
+//= require rails-ujs
+//= require popper
+//= require bootstrap
+//= require landing_carousel
+//= require_tree .
+
 
 // For blacklight_range_limit built-in JS, if you don't want it you don't need
 // this:

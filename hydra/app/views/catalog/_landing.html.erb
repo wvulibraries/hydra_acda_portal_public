@@ -1,0 +1,119 @@
+<!-- app/views/catalog/_landing.html.erb -->
+
+<!-- ====== 3-across carousel (advances 1 card per click) ====== -->
+<div id="featuredCarousel" class="carousel slide my-4" data-bs-ride="false" aria-label="Featured">
+  <div class="carousel-inner" role="listbox">
+    <!-- NOTE: Each .carousel-item contains ONE .col-md-4. JS will clone the next two cards into each slide at runtime. -->
+    <div class="carousel-item active">
+      <div class="col-md-4">
+        <div class="card shadow-sm">
+          <%= image_tag 'carousel/slide1.jpg', class: 'card-img-top', alt: 'Featured 1' %>
+          <div class="card-body">
+            <h3 class="h6 card-title">Featured 1</h3>
+            <p class="card-text">Brief blurb about item one.</p>
+            <%= link_to 'Open', catalog_index_path, class: 'btn btn-primary btn-sm' %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carousel-item">
+      <div class="col-md-4">
+        <div class="card shadow-sm">
+          <%= image_tag 'carousel/slide2.jpg', class: 'card-img-top', alt: 'Featured 2' %>
+          <div class="card-body">
+            <h3 class="h6 card-title">Featured 2</h3>
+            <p class="card-text">Another short blurb.</p>
+            <%= link_to 'Open', catalog_index_path(sort: 'timestamp desc'), class: 'btn btn-primary btn-sm' %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carousel-item">
+      <div class="col-md-4">
+        <div class="card shadow-sm">
+          <%= image_tag 'carousel/slide3.jpg', class: 'card-img-top', alt: 'Featured 3' %>
+          <div class="card-body">
+            <h3 class="h6 card-title">Featured 3</h3>
+            <p class="card-text">Another short blurb.</p>
+            <%= link_to 'Get help', '/research-support', class: 'btn btn-primary btn-sm' %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carousel-item">
+      <div class="col-md-4">
+        <div class="card shadow-sm">
+          <%= image_tag 'carousel/slide4.jpg', class: 'card-img-top', alt: 'Featured 4' %>
+          <div class="card-body">
+            <h3 class="h6 card-title">Featured 4</h3>
+            <p class="card-text">Another short blurb.</p>
+            <%= link_to 'Open', catalog_index_path(f: { format: ['Collection'] }), class: 'btn btn-primary btn-sm' %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carousel-item">
+      <div class="col-md-4">
+        <div class="card shadow-sm">
+          <%= image_tag 'carousel/slide5.jpg', class: 'card-img-top', alt: 'Featured 5' %>
+          <div class="card-body">
+            <h3 class="h6 card-title">Featured 5</h3>
+            <p class="card-text">Another short blurb.</p>
+            <%= link_to 'Open', '/finding-aids', class: 'btn btn-primary btn-sm' %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carousel-item">
+      <div class="col-md-4">
+        <div class="card shadow-sm">
+          <%= image_tag 'carousel/slide6.jpg', class: 'card-img-top', alt: 'Featured 6' %>
+          <div class="card-body">
+            <h3 class="h6 card-title">Featured 6</h3>
+            <p class="card-text">Another short blurb.</p>
+            <%= link_to 'Open', '/teaching-and-learning', class: 'btn btn-primary btn-sm' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Arrows on either side -->
+  <button class="carousel-control-prev" type="button" data-bs-target="#featuredCarousel" data-bs-slide="prev" aria-label="Previous">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#featuredCarousel" data-bs-slide="next" aria-label="Next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+  </button>
+</div>
+
+<!-- ====== 2×3 card grid ====== -->
+<section class="cards-2x3 my-5" aria-labelledby="quick-links-heading">
+  <h2 id="quick-links-heading" class="h4 mb-3">Quick links</h2>
+
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+    <% [
+      {title: "Digital Collections", body: "Search Samvera/Hyrax repositories.", href: catalog_index_path(f: { format: ['Digital Object'] })},
+      {title: "Finding Aids", body: "Browse ArchivesSpace resources.", href: "/finding-aids"},
+      {title: "Teaching & Learning", body: "Instructional materials and support.", href: "/teaching-and-learning"},
+      {title: "New Arrivals", body: "Latest items added.", href: catalog_index_path(sort: 'timestamp desc')},
+      {title: "Research Support", body: "Guides and consultations.", href: "/research-support"},
+      {title: "About the Repository", body: "Policies, help, and FAQs.", href: "/about"}
+    ].each do |c| %>
+      <div class="col">
+        <div class="card shadow-sm h-100">
+          <div class="card-body d-flex flex-column">
+            <h3 class="h5 card-title"><%= c[:title] %></h3>
+            <p class="card-text flex-grow-1"><%= c[:body] %></p>
+            <%= link_to "Open", c[:href], class: "btn btn-primary mt-auto" %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</section>
