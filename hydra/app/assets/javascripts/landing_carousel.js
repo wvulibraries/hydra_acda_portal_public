@@ -1,5 +1,4 @@
 // app/assets/javascripts/landing_carousel.js
-//= require bootstrap   // ensure bootstrap is available before this runs
 
 document.addEventListener('DOMContentLoaded', function () {
     var carouselEl = document.querySelector('#featuredCarousel');
