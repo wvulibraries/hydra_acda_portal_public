@@ -51,7 +51,6 @@
 //= require popper
 //= require bootstrap
 //= require landing_carousel
-//= require_tree .
 
 
 // For blacklight_range_limit built-in JS, if you don't want it you don't need
