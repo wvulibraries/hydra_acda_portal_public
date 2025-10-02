@@ -11,7 +11,7 @@
           <div class="card-body">
             <h3 class="h6 card-title">Featured 1</h3>
             <p class="card-text">Brief blurb about item one.</p>
-            <%= link_to 'Open', search_catalog, class: 'btn btn-primary btn-sm' %>
+            <%= link_to 'Open', search_action_path, class: 'btn btn-primary btn-sm' %>
           </div>
         </div>
       </div>
@@ -24,7 +24,7 @@
           <div class="card-body">
             <h3 class="h6 card-title">Featured 2</h3>
             <p class="card-text">Another short blurb.</p>
-            <%= link_to 'Open', search_catalog(sort: 'timestamp desc'), class: 'btn btn-primary btn-sm' %>
+            <%= link_to 'Open', search_action_path(sort: 'timestamp desc'), class: 'btn btn-primary btn-sm' %>
           </div>
         </div>
       </div>
@@ -50,7 +50,7 @@
           <div class="card-body">
             <h3 class="h6 card-title">Featured 4</h3>
             <p class="card-text">Another short blurb.</p>
-            <%= link_to 'Open', search_catalog(f: { format: ['Collection'] }), class: 'btn btn-primary btn-sm' %>
+            <%= link_to 'Open', search_action_path(f: { format: ['Collection'] }), class: 'btn btn-primary btn-sm' %>
           </div>
         </div>
       </div>
@@ -98,10 +98,10 @@
 
   <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
     <% [
-      {title: "Digital Collections", body: "Search Samvera/Hyrax repositories.", href: search_catalog(f: { format: ['Digital Object'] })},
+      {title: "Digital Collections", body: "Search Samvera/Hyrax repositories.", href: search_action_path(f: { format: ['Digital Object'] })},
       {title: "Finding Aids", body: "Browse ArchivesSpace resources.", href: "/finding-aids"},
       {title: "Teaching & Learning", body: "Instructional materials and support.", href: "/teaching-and-learning"},
-      {title: "New Arrivals", body: "Latest items added.", href: search_catalog(sort: 'timestamp desc')},
+      {title: "New Arrivals", body: "Latest items added.", href: search_action_path(sort: 'timestamp desc')},
       {title: "Research Support", body: "Guides and consultations.", href: "/research-support"},
       {title: "About the Repository", body: "Policies, help, and FAQs.", href: "/about"}
     ].each do |c| %>
