@@ -1,22 +1,15 @@
 document.addEventListener('DOMContentLoaded', function () {
-    var hero = document.querySelector('.hero-bleed');
     var nav = document.getElementById('site-navbar');
-    if (hero && nav) nav.classList.add('nav-hidden');
-  
-    var heroSearch = document.getElementById('hero-search');
-    function revealNav() {
-      if (!nav) return;
-      nav.classList.remove('nav-hidden');
-      heroSearch && heroSearch.removeEventListener('click', revealNav);
-      heroSearch && heroSearch.removeEventListener('focusin', revealNav);
-      var form = heroSearch ? heroSearch.querySelector('form') : null;
-      form && form.removeEventListener('submit', revealNav);
-    }
-    if (heroSearch) {
-      heroSearch.addEventListener('click', revealNav);
-      heroSearch.addEventListener('focusin', revealNav);
-      var form = heroSearch.querySelector('form');
-      form && form.addEventListener('submit', revealNav);
+    var heroBtn = document.getElementById('hero-reveal-nav');
+    if (nav && heroBtn) {
+      nav.classList.add('nav-hidden');
+      heroBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        nav.classList.remove('nav-hidden');
+        var navInput = nav.querySelector("input[name='q'], #search_q, input[type='search']");
+        if (navInput) navInput.focus();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
     }
   
     var el = document.getElementById('featuredCarousel');
@@ -34,6 +27,6 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
   
-    try { new bootstrap.Carousel(el, { interval: false, wrap: true }); } catch(e) {}
+    try { new bootstrap.Carousel(el, { interval: false, wrap: true }); } catch (e) {}
   });
   

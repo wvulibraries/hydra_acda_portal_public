@@ -1,16 +1,14 @@
 .hero-bleed {
-    position: relative;
-    left: 50%; right: 50%; width: 100vw; margin-left: -50vw; margin-right: -50vw;
+    position: relative; left: 50%; right: 50%; width: 100vw; margin-left: -50vw; margin-right: -50vw;
     background: linear-gradient(0deg, rgba(0,0,0,.45), rgba(0,0,0,.45)), image-url('hero.jpg') center/cover no-repeat;
     min-height: 60vh;
   }
   .hero-inner { max-width: 1140px; padding: 6rem 1rem; text-shadow: 0 2px 6px rgba(0,0,0,.35); }
-  .hero-bleed .form-control { background: rgba(255,255,255,.95); }
   
   #site-navbar.nav-hidden { display: none !important; }
   
   .carousel-wrap { max-width: 1320px; margin: 0 auto; padding: 0 1rem; position: relative; overflow: visible; }
-  #featuredCarousel { position: relative; overflow: visible; }
+  #featuredCarousel { position: relative; overflow: hidden; }
   #featuredCarousel .carousel-item { display: none; }
   #featuredCarousel .carousel-item.active,
   #featuredCarousel .carousel-item-next,
@@ -24,8 +22,8 @@
   
   #featuredCarousel .carousel-control-prev,
   #featuredCarousel .carousel-control-next { width: 3rem; opacity: 1; filter: none; top: calc(50% - 1.5rem); }
-  #featuredCarousel .carousel-control-prev { left: -1.25rem; }
-  #featuredCarousel .carousel-control-next { right: -1.25rem; }
+  #featuredCarousel .carousel-control-prev { left: -0.75rem; }
+  #featuredCarousel .carousel-control-next { right: -0.75rem; }
   
   #featuredCarousel .carousel-control-prev-icon,
   #featuredCarousel .carousel-control-next-icon { width: 2rem; height: 2rem; background-size: 2rem 2rem; }
