@@ -73,14 +73,18 @@
 
       <!-- Image Overlay Card with Button-->
       <div class="col-12 col-lg-6">
-        <%= link_to '/collections/inouye-keynote', class: "card overlay-card h-100 d-block text-decoration-none shadow-sm" do %>
-          <%= image_tag 'cards/card4.jpg', class: "card-img", alt: "" %>
-          <div class="card-img-overlay d-flex flex-column justify-content-center align-items-center text-center text-white">
-            <h3 class="display-6 fw-bold mb-3">Senator Daniel K. Inouye's keynote address</h3>
-            <p class="mb-4 overlay-text">First page of Senator Inouye's keynote address at the 1968 Democratic National Convention in Chicago. The speech addressed civil unrest, the Vietnam War, and the assassinations of Martin Luther King Jr. and Robert F. Kennedy, and it brought Senator Inouye into the national spotlight.</p>
-            <%= link_to 'View Collection', '/collections/inouye-keynote', class: 'btn btn-danger btn-lg px-4' %>
-          </div>
-        <% end %>
+        <div class="card overlay-card h-100 shadow-sm">
+          <%= link_to '/collections/inouye-keynote', class: "overlay-card-link d-block text-decoration-none" do %>
+            <div class="overlay-card-inner">
+              <%= image_tag 'cards/card4.jpg', class: "overlay-card-img", alt: "" %>
+              <div class="overlay-card-content">
+                <h3 class="h4 fw-bold text-white mb-3">Senator Daniel K. Inouye's keynote address</h3>
+                <p class="text-white mb-3">First page of Senator Inouye's keynote address at the 1968 Democratic National Convention in Chicago. The speech addressed civil unrest, the Vietnam War, and the assassinations of Martin Luther King Jr. and Robert F. Kennedy, and it brought Senator Inouye into the national spotlight.</p>
+                <span class="btn btn-danger btn-lg px-4">View Collection</span>
+              </div>
+            </div>
+          <% end %>
+        </div>
       </div>
 
       <!-- Split Card - Manuscript + Text -->
