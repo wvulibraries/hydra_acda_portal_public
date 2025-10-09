@@ -1,7 +1,7 @@
 <section class="hero-bleed text-white d-flex align-items-center justify-content-center text-center">
   <div class="hero-inner">
     <h1 class="display-4 fw-bold mb-4">American Congress Digital Archives Portal</h1>
-    <%= link_to 'Search', search_action_path, id: 'hero-reveal-nav', class: 'btn btn-outline-light btn-lg px-4 py-2' %>
+    <%= link_to 'Search', search_action_path, class: 'btn btn-outline-light btn-lg px-4 py-2' %>
   </div>
 </section>
 
@@ -57,12 +57,13 @@
 <section class="cards-2x3 my-5" aria-labelledby="quick-links-heading">
   <h2 id="quick-links-heading" class="visually-hidden">Curated Content</h2>
 
+  <!-- 2 columns on md+ (forces 2×3); 1 column on xs -->
   <div class="row row-cols-1 row-cols-md-2 g-4">
     <% [
-      {title: "Curated Content", body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit ...", href: "/about", image: "cards/card4.jpg"},
-      {title: "Curated Content", body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit ...", href: "/about", image: "cards/card3.jpg"},
       {title: "Curated Content", body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit ...", href: "/about", image: "cards/card3.jpg"},
       {title: "Curated Content", body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit ...", href: "/about", image: "cards/card4.jpg"},
+      {title: "Curated Content", body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit ...", href: "/about", image: "cards/card4.jpg"},
+      {title: "Curated Content", body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit ...", href: "/about", image: "cards/card3.jpg"},
       {title: "Curated Content", body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit ...", href: "/about", image: "cards/card3.jpg"},
       {title: "Curated Content", body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit ...", href: "/about", image: "cards/card4.jpg"}
     ].each do |c| %>
