@@ -38,13 +38,14 @@
   #featuredCarousel .carousel-item.active,
   #featuredCarousel .carousel-item-next,
   #featuredCarousel .carousel-item-prev { 
-    display: flex; 
+    display: flex;
+    gap: 1rem;
   }
   
   @media (min-width: 768px) {
-    #featuredCarousel .carousel-item > .col-md-4 { 
-      flex: 0 0 33.3333%; 
-      max-width: 33.3333%; 
+    #featuredCarousel .carousel-item > .col-12.col-md-4 { 
+      flex: 0 0 calc(33.3333% - 0.67rem);
+      max-width: calc(33.3333% - 0.67rem);
     }
   }
   
@@ -98,11 +99,11 @@
   }
   
   #featuredCarousel .carousel-control-prev { 
-    left: -0.75rem; 
+    left: -3rem; 
   }
   
   #featuredCarousel .carousel-control-next { 
-    right: -0.75rem; 
+    right: -3rem; 
   }
   
   #featuredCarousel .carousel-control-prev-icon,
@@ -125,10 +126,10 @@
   
   @media (max-width: 992px) {
     #featuredCarousel .carousel-control-prev { 
-      left: -0.25rem; 
+      left: -0.5rem; 
     }
     #featuredCarousel .carousel-control-next { 
-      right: -0.25rem; 
+      right: -0.5rem; 
     }
   }
   
@@ -138,19 +139,22 @@
     margin: 0 auto;
   }
   
-  // Feature Card (Large with overlay)
-  .feature-card {
+  // Image Overlay Card (Senator Inouye style)
+  .overlay-card {
     position: relative;
     overflow: hidden;
     border: 0;
     border-radius: 0.25rem;
-    min-height: 320px;
     transition: transform .2s ease, box-shadow .2s ease;
     
     &:hover, &:focus {
       transform: translateY(-4px);
       box-shadow: 0 12px 28px rgba(0,0,0,.2);
       text-decoration: none;
+      
+      .btn-danger {
+        background-color: #bb2d3b;
+      }
     }
     
     .card-img {
@@ -160,60 +164,31 @@
       position: absolute;
       top: 0;
       left: 0;
+      min-height: 400px;
     }
     
     .card-img-overlay {
-      background: linear-gradient(to top, rgba(0,0,0,.75) 0%, rgba(0,0,0,.4) 50%, transparent 100%);
-    }
-    
-    .feature-card-content {
-      color: white;
-      max-width: 90%;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 2rem;
       
-      h3 {
-        color: white;
-        font-size: 1.5rem;
-      }
-      
-      p {
-        font-size: 0.95rem;
-        line-height: 1.5;
-      }
-    }
-  }
-  
-  // Dark Card with Button
-  .dark-card {
-    background: #2c2c2c;
-    border: 0;
-    border-radius: 0.25rem;
-    min-height: 320px;
-    transition: transform .2s ease, box-shadow .2s ease;
-    
-    &:hover, &:focus {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 28px rgba(0,0,0,.3);
-      text-decoration: none;
-      
-      .btn-danger {
-        background-color: #bb2d3b;
-      }
-    }
-    
-    .card-body {
       h3 {
         font-size: 1.75rem;
+        text-shadow: 0 2px 4px rgba(0,0,0,.3);
       }
       
-      p {
+      .overlay-text {
         font-size: 0.95rem;
         line-height: 1.5;
-        color: rgba(255,255,255,.9);
+        max-width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+        text-shadow: 0 1px 3px rgba(0,0,0,.3);
       }
     }
     
     .btn-danger {
       transition: background-color .2s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,.2);
     }
   }
   
@@ -301,28 +276,19 @@
   
   // Responsive adjustments
   @media (max-width: 767px) {
-    .feature-card,
-    .dark-card {
-      min-height: 350px;
-    }
-    
-    .feature-card-content {
-      h3 {
-        font-size: 1.5rem;
+    .overlay-card {
+      .card-img {
+        min-height: 350px;
       }
       
-      p {
-        font-size: 0.9rem;
-      }
-    }
-    
-    .dark-card {
-      .display-6 {
-        font-size: 1.75rem;
-      }
-      
-      p {
-        font-size: 0.9rem;
+      .card-img-overlay {
+        h3 {
+          font-size: 1.5rem;
+        }
+        
+        .overlay-text {
+          font-size: 0.9rem;
+        }
       }
     }
   }
