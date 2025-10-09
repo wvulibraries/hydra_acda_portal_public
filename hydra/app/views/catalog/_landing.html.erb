@@ -6,10 +6,15 @@
 </section>
 
 <div class="carousel-wrap my-5">
-  <div id="featuredCarousel" class="carousel slide" data-bs-ride="false" aria-label="Featured Collections">
-    <div class="carousel-inner" role="listbox">
-      <div class="carousel-item active">
-        <div class="col-12 col-md-4">
+  <div class="carousel-container">
+    <button class="carousel-nav carousel-nav-prev" type="button" aria-label="Previous">
+      <span class="carousel-nav-icon">‹</span>
+    </button>
+    
+    <div class="carousel-track-container">
+      <div class="carousel-track">
+        <!-- Card 1 -->
+        <div class="carousel-slide">
           <%= link_to search_action_path, class: "card carousel-card d-block text-reset text-decoration-none shadow-sm" do %>
             <%= image_tag 'carousel/slide1.jpg', class: 'card-img-top', alt: 'Featured Collection 1' %>
             <div class="card-body">
@@ -18,10 +23,9 @@
             </div>
           <% end %>
         </div>
-      </div>
 
-      <div class="carousel-item">
-        <div class="col-12 col-md-4">
+        <!-- Card 2 -->
+        <div class="carousel-slide">
           <%= link_to search_action_path(sort: 'timestamp desc'), class: "card carousel-card d-block text-reset text-decoration-none shadow-sm" do %>
             <%= image_tag 'carousel/slide2.jpg', class: 'card-img-top', alt: 'Featured Collection 2' %>
             <div class="card-body">
@@ -30,10 +34,9 @@
             </div>
           <% end %>
         </div>
-      </div>
 
-      <div class="carousel-item">
-        <div class="col-12 col-md-4">
+        <!-- Card 3 -->
+        <div class="carousel-slide">
           <%= link_to '/research-support', class: "card carousel-card d-block text-reset text-decoration-none shadow-sm" do %>
             <%= image_tag 'carousel/slide3.jpg', class: 'card-img-top', alt: 'Featured Collection 3' %>
             <div class="card-body">
@@ -44,12 +47,9 @@
         </div>
       </div>
     </div>
-
-    <button class="carousel-control-prev" type="button" data-bs-target="#featuredCarousel" data-bs-slide="prev" aria-label="Previous">
-      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#featuredCarousel" data-bs-slide="next" aria-label="Next">
-      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    
+    <button class="carousel-nav carousel-nav-next" type="button" aria-label="Next">
+      <span class="carousel-nav-icon">›</span>
     </button>
   </div>
 </div>

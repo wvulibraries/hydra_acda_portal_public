@@ -17,35 +17,85 @@
     text-shadow: 0 2px 6px rgba(0,0,0,.35); 
   }
   
-  // Carousel Section
+  // Carousel
   .carousel-wrap { 
     max-width: 1320px; 
     margin: 0 auto; 
     padding: 0 1rem; 
-    position: relative; 
-    overflow: visible; 
   }
   
-  #featuredCarousel { 
-    position: relative; 
-    overflow: visible; 
-  }
-  
-  #featuredCarousel .carousel-item { 
-    display: none; 
-  }
-  
-  #featuredCarousel .carousel-item.active,
-  #featuredCarousel .carousel-item-next,
-  #featuredCarousel .carousel-item-prev { 
+  .carousel-container {
+    position: relative;
     display: flex;
+    align-items: center;
     gap: 1rem;
   }
   
-  @media (min-width: 768px) {
-    #featuredCarousel .carousel-item > .col-12.col-md-4 { 
-      flex: 0 0 calc(33.3333% - 0.67rem);
-      max-width: calc(33.3333% - 0.67rem);
+  .carousel-track-container {
+    overflow: hidden;
+    width: 100%;
+  }
+  
+  .carousel-track {
+    display: flex;
+    gap: 1.5rem;
+    transition: transform 0.3s ease;
+  }
+  
+  .carousel-slide {
+    flex: 0 0 100%;
+    
+    @media (min-width: 768px) {
+      flex: 0 0 calc(33.333% - 1rem);
+    }
+  }
+  
+  // Carousel Navigation Buttons
+  .carousel-nav {
+    flex-shrink: 0;
+    width: 3rem;
+    height: 3rem;
+    border: none;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,.15);
+    cursor: pointer;
+    transition: box-shadow .2s ease, transform .2s ease;
+    z-index: 10;
+    
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,.2);
+      transform: scale(1.05);
+    }
+    
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+  
+  .carousel-nav-prev {
+    order: -1;
+  }
+  
+  .carousel-nav-next {
+    order: 1;
+  }
+  
+  .carousel-nav-icon {
+    font-size: 2rem;
+    line-height: 1;
+    color: #000;
+    font-weight: 300;
+  }
+  
+  @media (max-width: 767px) {
+    .carousel-nav {
+      width: 2.5rem;
+      height: 2.5rem;
+    }
+    
+    .carousel-nav-icon {
+      font-size: 1.5rem;
     }
   }
   
@@ -56,6 +106,7 @@
     border-radius: 0.25rem;
     overflow: hidden;
     transition: transform .2s ease, box-shadow .2s ease;
+    height: 100%;
     
     &:hover, &:focus {
       transform: translateY(-4px);
@@ -125,11 +176,8 @@
   }
   
   @media (max-width: 992px) {
-    #featuredCarousel .carousel-control-prev { 
-      left: -0.5rem; 
-    }
-    #featuredCarousel .carousel-control-next { 
-      right: -0.5rem; 
+    .carousel-container {
+      gap: 0.5rem;
     }
   }
   
@@ -139,7 +187,7 @@
     margin: 0 auto;
   }
   
-  // Image Overlay Card (Senator Inouye style) - Redesigned
+  // Image Overlay Card
   .overlay-card {
     border: 0;
     border-radius: 0.25rem;
