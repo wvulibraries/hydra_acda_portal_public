@@ -1,3 +1,4 @@
+// Hero Section
 .hero-bleed {
     position: relative;
     left: 50%;
@@ -9,46 +10,314 @@
                 image-url('hero.jpg') center/cover no-repeat;
     min-height: 60vh;
   }
-  .hero-inner { max-width: 1140px; padding: 6rem 1rem; text-shadow: 0 2px 6px rgba(0,0,0,.35); }
   
-  .carousel-wrap { max-width: 1320px; margin: 0 auto; padding: 0 1rem; position: relative; overflow: visible; }
+  .hero-inner { 
+    max-width: 1140px; 
+    padding: 6rem 1rem; 
+    text-shadow: 0 2px 6px rgba(0,0,0,.35); 
+  }
   
-  #featuredCarousel { position: relative; overflow: visible; }
-  #featuredCarousel .carousel-item { display: none; }
+  // Carousel Section
+  .carousel-wrap { 
+    max-width: 1320px; 
+    margin: 0 auto; 
+    padding: 0 1rem; 
+    position: relative; 
+    overflow: visible; 
+  }
+  
+  #featuredCarousel { 
+    position: relative; 
+    overflow: visible; 
+  }
+  
+  #featuredCarousel .carousel-item { 
+    display: none; 
+  }
+  
   #featuredCarousel .carousel-item.active,
   #featuredCarousel .carousel-item-next,
-  #featuredCarousel .carousel-item-prev { display: flex; }
+  #featuredCarousel .carousel-item-prev { 
+    display: flex; 
+  }
   
   @media (min-width: 768px) {
-    #featuredCarousel .carousel-item > .col-md-4 { flex: 0 0 33.3333%; max-width: 33.3333%; }
+    #featuredCarousel .carousel-item > .col-md-4 { 
+      flex: 0 0 33.3333%; 
+      max-width: 33.3333%; 
+    }
   }
   
-  #featuredCarousel .card-img-top { height: 260px; object-fit: cover; display: block; }
+  // Carousel Cards
+  .carousel-card {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 0.25rem;
+    overflow: hidden;
+    transition: transform .2s ease, box-shadow .2s ease;
+    
+    &:hover, &:focus {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0,0,0,.15);
+      text-decoration: none;
+    }
+    
+    .card-img-top {
+      height: 240px;
+      object-fit: cover;
+      display: block;
+      width: 100%;
+    }
+    
+    .card-body {
+      padding: 1.25rem;
+    }
+    
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #212529;
+    }
+    
+    .card-text {
+      font-size: 0.875rem;
+      color: #6c757d;
+      margin-bottom: 0;
+    }
+  }
   
+  // Carousel Controls
   #featuredCarousel .carousel-control-prev,
   #featuredCarousel .carousel-control-next {
-    width: 3rem; opacity: 1; filter: none; top: calc(50% - 1.5rem);
+    width: 3rem; 
+    opacity: 1; 
+    filter: none; 
+    top: calc(50% - 1.5rem);
+    z-index: 10;
   }
-  #featuredCarousel .carousel-control-prev { left: -0.75rem; }
-  #featuredCarousel .carousel-control-next { right: -0.75rem; }
+  
+  #featuredCarousel .carousel-control-prev { 
+    left: -0.75rem; 
+  }
+  
+  #featuredCarousel .carousel-control-next { 
+    right: -0.75rem; 
+  }
   
   #featuredCarousel .carousel-control-prev-icon,
   #featuredCarousel .carousel-control-next-icon {
-    width: 2rem; height: 2rem; background-size: 2rem 2rem;
+    width: 2.5rem; 
+    height: 2.5rem; 
+    background-size: 2rem 2rem;
+    background-color: white;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0,0,0,.15);
   }
+  
   #featuredCarousel .carousel-control-prev-icon {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23000' viewBox='0 0 16 16'%3E%3Cpath d='M11.354 1.646a.5.5 0 0 1 0 .708L6.707 7l4.647 4.646a.5.5 0 0 1-.708.708l-5-5a.5.5 0 0 1 0-.708l5-5a.5.5 0 0 1 .708 0z'/%3E%3C/svg%3E");
   }
+  
   #featuredCarousel .carousel-control-next-icon {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23000' viewBox='0 0 16 16'%3E%3Cpath d='M4.646 1.646a.5.5 0 0 1 .708 0l5 5a.5.5 0 0 1 0 .708l-5 5a.5.5 0 0 1-.708-.708L9.293 7 4.646 2.354a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
   }
+  
   @media (max-width: 992px) {
-    #featuredCarousel .carousel-control-prev { left: -0.25rem; }
-    #featuredCarousel .carousel-control-next { right: -0.25rem; }
+    #featuredCarousel .carousel-control-prev { 
+      left: -0.25rem; 
+    }
+    #featuredCarousel .carousel-control-next { 
+      right: -0.25rem; 
+    }
   }
   
-  .link-card { background: #f1f1f1; border: 0; transition: transform .15s ease, box-shadow .15s ease; }
-  .link-card .card-img-top { height: 260px; object-fit: cover; }
-  .link-card .card-body { padding: 1.25rem 1.25rem 1.5rem; }
-  .link-card:hover, .link-card:focus { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,.12); text-decoration: none; }
+  // Content Grid Section
+  .content-grid {
+    max-width: 1320px;
+    margin: 0 auto;
+  }
   
+  // Feature Card (Large with overlay)
+  .feature-card {
+    position: relative;
+    overflow: hidden;
+    border: 0;
+    border-radius: 0.25rem;
+    min-height: 400px;
+    transition: transform .2s ease, box-shadow .2s ease;
+    
+    &:hover, &:focus {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 28px rgba(0,0,0,.2);
+      text-decoration: none;
+    }
+    
+    .card-img {
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    
+    .card-img-overlay {
+      background: linear-gradient(to top, rgba(0,0,0,.75) 0%, rgba(0,0,0,.4) 50%, transparent 100%);
+    }
+    
+    .feature-card-content {
+      color: white;
+      max-width: 90%;
+      
+      h3 {
+        color: white;
+      }
+      
+      p {
+        font-size: 1rem;
+        line-height: 1.6;
+      }
+    }
+  }
+  
+  // Dark Card with Button
+  .dark-card {
+    background: #2c2c2c;
+    border: 0;
+    border-radius: 0.25rem;
+    min-height: 400px;
+    transition: transform .2s ease, box-shadow .2s ease;
+    
+    &:hover, &:focus {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 28px rgba(0,0,0,.3);
+      text-decoration: none;
+      
+      .btn-danger {
+        background-color: #bb2d3b;
+      }
+    }
+    
+    .card-body {
+      p {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: rgba(255,255,255,.9);
+      }
+    }
+    
+    .btn-danger {
+      transition: background-color .2s ease;
+    }
+  }
+  
+  // Split Card (Image + Text Side by Side)
+  .split-card {
+    background: #f8f9fa;
+    border: 0;
+    border-radius: 0.25rem;
+    overflow: hidden;
+    transition: transform .2s ease, box-shadow .2s ease;
+    
+    &:hover, &:focus {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 28px rgba(0,0,0,.15);
+      text-decoration: none;
+    }
+    
+    .split-card-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      min-height: 400px;
+    }
+    
+    .card-body {
+      background: #f8f9fa;
+      
+      h3 {
+        color: #212529;
+      }
+      
+      h4 {
+        color: #212529;
+      }
+      
+      p {
+        color: #495057;
+        line-height: 1.6;
+      }
+    }
+    
+    @media (max-width: 767px) {
+      .split-card-img {
+        min-height: 300px;
+      }
+    }
+  }
+  
+  // Standard Cards (Image on Top)
+  .standard-card {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 0.25rem;
+    overflow: hidden;
+    transition: transform .2s ease, box-shadow .2s ease;
+    
+    &:hover, &:focus {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 28px rgba(0,0,0,.15);
+      text-decoration: none;
+    }
+    
+    .card-img-top {
+      height: 280px;
+      width: 100%;
+      object-fit: cover;
+    }
+    
+    .card-body {
+      padding: 1.5rem;
+      background: white;
+      
+      h3 {
+        color: #212529;
+        margin-bottom: 1rem;
+      }
+      
+      p {
+        color: #495057;
+        line-height: 1.6;
+        font-size: 0.95rem;
+      }
+    }
+  }
+  
+  // Responsive adjustments
+  @media (max-width: 767px) {
+    .feature-card,
+    .dark-card {
+      min-height: 350px;
+    }
+    
+    .feature-card-content {
+      h3 {
+        font-size: 1.5rem;
+      }
+      
+      p {
+        font-size: 0.9rem;
+      }
+    }
+    
+    .dark-card {
+      .display-6 {
+        font-size: 1.75rem;
+      }
+      
+      p {
+        font-size: 0.9rem;
+      }
+    }
+  }
