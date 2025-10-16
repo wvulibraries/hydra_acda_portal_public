@@ -1,10 +1,20 @@
 document.addEventListener('DOMContentLoaded', function () {
+    console.log('Carousel script loaded');
+    
     const track = document.querySelector('.carousel-track');
     const slides = Array.from(document.querySelectorAll('.carousel-slide'));
     const prevButton = document.querySelector('.carousel-nav-prev');
     const nextButton = document.querySelector('.carousel-nav-next');
     
-    if (!track || slides.length === 0 || !prevButton || !nextButton) return;
+    console.log('Track:', track);
+    console.log('Slides:', slides);
+    console.log('Prev button:', prevButton);
+    console.log('Next button:', nextButton);
+    
+    if (!track || slides.length === 0 || !prevButton || !nextButton) {
+      console.error('Missing carousel elements!');
+      return;
+    }
     
     let currentIndex = 0;
     
@@ -14,38 +24,23 @@ document.addEventListener('DOMContentLoaded', function () {
     
     let slidesPerView = getSlidesPerView();
     
-    // Update slides per view on resize
-    let resizeTimeout;
-    window.addEventListener('resize', function() {
-      clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(function() {
-        const newSlidesPerView = getSlidesPerView();
-        if (newSlidesPerView !== slidesPerView) {
-          slidesPerView = newSlidesPerView;
-          currentIndex = 0; // Reset to start on resize
-          updateCarousel();
-        }
-      }, 250);
-    });
-    
     function updateCarousel() {
-      const containerWidth = track.parentElement.offsetWidth;
-      const gap = 24; // 1.5rem = 24px
+      console.log('Updating carousel, currentIndex:', currentIndex);
       
-      // Calculate slide width based on container and gaps
+      const containerWidth = track.parentElement.offsetWidth;
+      const gap = 24;
+      
       let slideWidth;
       if (slidesPerView === 1) {
         slideWidth = containerWidth;
       } else {
-        // For 3 slides: total width - (2 gaps) = usable width, divided by 3
         slideWidth = (containerWidth - (gap * (slidesPerView - 1))) / slidesPerView;
       }
       
-      // Move by one slide width plus one gap
       const moveAmount = -(currentIndex * (slideWidth + gap));
+      console.log('Moving to:', moveAmount + 'px');
       track.style.transform = `translateX(${moveAmount}px)`;
       
-      // Update button states
       const maxIndex = Math.max(0, slides.length - slidesPerView);
       prevButton.disabled = currentIndex === 0;
       nextButton.disabled = currentIndex >= maxIndex;
@@ -57,7 +52,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     
     prevButton.addEventListener('click', function(e) {
+      console.log('Prev button clicked');
       e.preventDefault();
+      e.stopPropagation();
       if (currentIndex > 0) {
         currentIndex--;
         updateCarousel();
@@ -65,7 +62,9 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     
     nextButton.addEventListener('click', function(e) {
+      console.log('Next button clicked');
       e.preventDefault();
+      e.stopPropagation();
       const maxIndex = Math.max(0, slides.length - slidesPerView);
       if (currentIndex < maxIndex) {
         currentIndex++;
@@ -74,8 +73,24 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     
     // Initial setup
+    console.log('Initial carousel setup');
     updateCarousel();
     
-    // Update on window load to ensure correct measurements
-    window.addEventListener('load', updateCarousel);
+    window.addEventListener('load', function() {
+      console.log('Window loaded, updating carousel');
+      updateCarousel();
+    });
+    
+    let resizeTimeout;
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(function() {
+        const newSlidesPerView = getSlidesPerView();
+        if (newSlidesPerView !== slidesPerView) {
+          slidesPerView = newSlidesPerView;
+          currentIndex = 0;
+          updateCarousel();
+        }
+      }, 250);
+    });
   });
