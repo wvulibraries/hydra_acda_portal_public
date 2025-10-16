@@ -20,6 +20,7 @@
 //= require 'blacklight_advanced_search'
 //= require advanced_search_additional_fields
 
+//= require jquery_ujs
 
 //= require tether
 
