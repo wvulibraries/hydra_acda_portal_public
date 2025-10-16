@@ -47,7 +47,6 @@
 //= require partials/nav_toggles
 //= require partials/toggle_required
 
-//= require rails-ujs
 //= require landing_carousel
 
 
