@@ -77,11 +77,14 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     }
     
-    // Navbar toggle functionality
+    // Navbar toggle functionality - hidden by default
     const navbar = document.getElementById('site-navbar');
     const heroSearchButton = document.querySelector('.hero-bleed .btn');
     
     if (navbar && heroSearchButton) {
+      // Hide navbar on page load
+      navbar.classList.add('navbar-hidden');
+      
       heroSearchButton.addEventListener('click', function(e) {
         e.preventDefault();
         navbar.classList.toggle('navbar-hidden');
