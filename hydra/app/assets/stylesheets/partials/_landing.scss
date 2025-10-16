@@ -32,6 +32,12 @@
     }
   }
   
+  // Remove top margin from main container specifically
+  #main-container.container {
+    margin-top: 0;
+    margin-bottom: 40px;
+  }
+  
   // Ensure hero has no top margin or padding
   .hero-bleed {
     margin-top: 0;
