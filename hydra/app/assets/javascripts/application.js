@@ -20,7 +20,6 @@
 //= require 'blacklight_advanced_search'
 //= require advanced_search_additional_fields
 
-//= require jquery_ujs
 
 //= require tether
 
@@ -48,8 +47,6 @@
 //= require partials/toggle_required
 
 //= require rails-ujs
-//= require popper
-//= require bootstrap
 //= require landing_carousel
 
 
