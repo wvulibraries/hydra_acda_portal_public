@@ -34,8 +34,7 @@
   
   // Remove top margin from main container specifically
   #main-container.container {
-    margin-top: 0;
-    margin-bottom: 40px;
+    margin: 0 auto 40px auto;
   }
   
   // Ensure hero has no top margin or padding
