@@ -20,7 +20,6 @@
   // Navbar toggle
   #site-navbar {
     transition: all 0.3s ease;
-    margin-bottom: 0;
     
     &.navbar-hidden {
       max-height: 0;
@@ -29,16 +28,6 @@
       margin: 0;
       padding: 0;
     }
-    
-    // Remove any margin after navbar
-    + * {
-      margin-top: 0;
-    }
-  }
-  
-  // Ensure hero has no top margin
-  .hero-bleed {
-    margin-top: 0;
   }
   
   // Hamburger menu icon
