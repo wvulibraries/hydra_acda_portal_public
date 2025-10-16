@@ -17,7 +17,18 @@
     text-shadow: 0 2px 6px rgba(0,0,0,.35); 
   }
   
-  // Carousel
+  // Navbar toggle
+  #site-navbar {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    
+    &.navbar-hidden {
+      transform: translateY(-100%);
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+  
+  // Carousel Section - Redesigned
   .carousel-wrap { 
     max-width: 1320px; 
     margin: 0 auto; 
@@ -187,7 +198,7 @@
     margin: 0 auto;
   }
   
-  // Image Overlay Card
+  // Image Overlay Card (Senator Inouye style) - Redesigned
   .overlay-card {
     border: 0;
     border-radius: 0.25rem;
