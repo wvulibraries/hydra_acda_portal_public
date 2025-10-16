@@ -80,14 +80,31 @@ document.addEventListener('DOMContentLoaded', function () {
     // Navbar toggle functionality - hidden by default
     const navbar = document.getElementById('site-navbar');
     const heroSearchButton = document.querySelector('.hero-bleed .btn');
+    const hamburgerToggle = document.getElementById('navbar-hamburger-toggle');
     
-    if (navbar && heroSearchButton) {
+    if (navbar) {
       // Hide navbar on page load
       navbar.classList.add('navbar-hidden');
       
-      heroSearchButton.addEventListener('click', function(e) {
+      // Toggle function
+      function toggleNavbar(e) {
         e.preventDefault();
         navbar.classList.toggle('navbar-hidden');
-      });
+        
+        // Toggle hamburger icon animation
+        if (hamburgerToggle) {
+          hamburgerToggle.classList.toggle('active');
+        }
+      }
+      
+      // Hero search button toggle
+      if (heroSearchButton) {
+        heroSearchButton.addEventListener('click', toggleNavbar);
+      }
+      
+      // Hamburger menu toggle
+      if (hamburgerToggle) {
+        hamburgerToggle.addEventListener('click', toggleNavbar);
+      }
     }
   });
