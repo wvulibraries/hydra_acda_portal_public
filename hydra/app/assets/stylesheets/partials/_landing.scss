@@ -25,9 +25,17 @@
       max-height: 0;
       overflow: hidden;
       opacity: 0;
-      margin: 0;
-      padding: 0;
+      margin-top: 0;
+      margin-bottom: 0;
+      padding-top: 0;
+      padding-bottom: 0;
     }
+  }
+  
+  // Ensure hero has no top margin or padding
+  .hero-bleed {
+    margin-top: 0;
+    padding-top: 0;
   }
   
   // Hamburger menu icon
