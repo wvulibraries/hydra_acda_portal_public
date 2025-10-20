@@ -72,8 +72,9 @@ services:
       - hydra
 
   memcached:
-    image: bitnami/memcached
+    image: memcached:1.6.22-alpine
     container_name: memcached
+    command: ["memcached", "-m", "64"]
     ports:
       - "11211"
     networks:
@@ -83,14 +84,12 @@ services:
     image: redis:alpine
     container_name: redis
     command: redis-server    
-    # command: redis-server /usr/local/etc/redis/redis.conf    
     ports:
       - "127.0.0.1:6379:6379"
     env_file:
       - './env/env.dev.redis'
     volumes:
       - redis:/var/lib/redis/data
-      # - ./config/redis.conf:/usr/local/etc/redis/redis.conf
     restart: unless-stopped
     healthcheck:
       test: redis-cli -h localhost -p 6379 -a $$REDIS_PASSWORD ping
@@ -102,11 +101,7 @@ services:
 
   fcrepo:
     image: fcrepo/fcrepo:6.5.1-tomcat9
-    # build:
-    #   context: ./
-    #   dockerfile: Dockerfile.fcrepo
     container_name: fcrepo
-    # command: bash -c "/usr/local/tomcat/bin/catalina.sh run"  
     restart: always
     ports:
       - "8080:8080"

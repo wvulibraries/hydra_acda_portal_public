@@ -231,26 +231,13 @@ class ValidationService
     uri = URI(endpoint)
     uri.query = URI.encode_www_form(params)
 
-    begin
-      response = Net::HTTP.get_response(uri)
-
-      unless response.is_a?(Net::HTTPSuccess)
-        add_error(value:, message: "Error: #{response.message}")
-        return nil
-      end
-
-      JSON.parse(response.body)['results']['bindings'][0]
-
-    rescue Net::OpenTimeout, Net::ReadTimeout, SocketError => e
-      # When timeout or connection error, just log and return nil so we fall back to HTML
-      Rails.logger.warn "Getty AAT SPARQL timeout/error: #{e.class} - #{e.message}"
-      nil
-
-    rescue StandardError => e
-      # Catch any unexpected parsing/network errors and return nil
-      Rails.logger.error "Getty AAT SPARQL unexpected error: #{e.class} - #{e.message}"
-      nil
+    response = Net::HTTP.get_response(uri)
+    unless response.is_a?(Net::HTTPSuccess)
+      add_error(value:, message: "Error: #{response.message}")
+      return
     end
+
+    JSON.parse(response.body)['results']['bindings'][0]
   end
 
   # If the sqarql query doesn't return with results we have this scraper as a backup.

@@ -1,5 +1,5 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
-  skip "No tests yet for User model #{__FILE__}"
+  pending "add some examples to (or delete) #{__FILE__}"
 end

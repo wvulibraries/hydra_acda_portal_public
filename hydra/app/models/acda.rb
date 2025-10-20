@@ -11,7 +11,6 @@ class Acda < ActiveFedora::Base
 
   before_create :prepare_record
   after_save :handle_thumbnail_generation, unless: :skip_thumbnail_update
-
   attr_accessor :skip_thumbnail_update
 
   def prepare_record
@@ -60,11 +59,13 @@ class Acda < ActiveFedora::Base
 
   def generate_preview(url)
     return nil if url.blank?
-    
-    if url.include?('preservica.com')
+
+    url_down = url.downcase
+
+    if url_down.include?('preservica.com')
       # Only transform Preservica URLs
       url.gsub('preservica.com', 'preservica.com/download/thumbnail')
-    elsif url.include?('/download') || url.end_with?('.pdf')
+    elsif url_down.include?('/download') || url_down.include?('/content') || url_down.end_with?('.pdf')
       # For downloadable content that needs thumbnail generation
       nil
     else
