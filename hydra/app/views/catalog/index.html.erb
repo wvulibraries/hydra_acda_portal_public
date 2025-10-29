@@ -1,9 +1,5 @@
 <% if params[:q].blank? && params[:f].blank? && params[:range].blank? %>
   <!-- HOMEPAGE MODE (no query/filters): full-width landing -->
-  <div id="sidebar" class="col-sm-12 col-md-4 col-lg-3">
-    <%= render 'search_sidebar' %>
-  </div>
-  
   <div id="content" class="col-12">
     <%= render 'landing' %>
   </div>
