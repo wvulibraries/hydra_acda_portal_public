@@ -107,4 +107,17 @@ document.addEventListener('DOMContentLoaded', function () {
         hamburgerToggle.addEventListener('click', toggleNavbar);
       }
     }
+    
+    // Browse Portal sidebar toggle
+    const browsePortalToggle = document.getElementById('browse-portal-toggle');
+    const sidebar = document.querySelector('.landing-sidebar');
+    const mainContent = document.querySelector('.landing-main-content');
+    
+    if (browsePortalToggle && sidebar && mainContent) {
+      browsePortalToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        sidebar.classList.toggle('sidebar-visible');
+        mainContent.classList.toggle('content-shifted');
+      });
+    }
   });
