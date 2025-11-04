@@ -1,4 +1,4 @@
-<% if params[:q].blank? && params[:f].blank? && params[:range].blank? %>
+<% if params[:q].nil? && params[:f].blank? && params[:range].blank? %>
   <!-- HOMEPAGE MODE (no query/filters): full-width landing -->
   <div id="content" class="col-12">
     <%= render 'landing' %>
