@@ -53,5 +53,66 @@ RSpec.describe Acda, type: :model do
       expect(acda.assign_id).to eq "doc_id_123"
     end
   end
+
+  # describe "callbacks" do
+  #   before do
+  #     acda.available_at = "http://example.com"
+
+  #     stub_request(:head, "http://fcrepo:8080/fcrepo/rest/dev")
+  #       .with(
+  #         headers: {
+  #           'Accept'=>'*/*',
+  #           'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+  #           'Authorization'=>'Basic ZmVkb3JhQWRtaW46ZmVkb3JhQWRtaW4=',
+  #           'User-Agent'=>'Faraday v2.12.2'
+  #         }
+  #       ).to_return(status: 200, body: "", headers: {})
+      
+  #     stub_request(:post, "http://fcrepo:8080/fcrepo/rest/dev")
+  #       .with(
+  #         body: "\n<> <info:fedora/fedora-system:def/model#hasModel> \"Hydra::AccessControl\" .\n",
+  #         headers: {
+  #           'Accept'=>'*/*',
+  #           'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+  #           'Authorization'=>'Basic ZmVkb3JhQWRtaW46ZmVkb3JhQWRtaW4=',
+  #           'Content-Type'=>'text/turtle',
+  #           'User-Agent'=>'Faraday v2.12.2'
+  #         }
+  #       ).to_return(status: 200, body: "", headers: {})
+      
+  #     stub_request(:post, "http://solr:8983/solr/hydra_dev/update?softCommit=true&wt=json")
+  #       .with(
+  #         body: /.*system_create_dtsi.*system_modified_dtsi.*/,
+  #         headers: {
+  #           'Accept'=>'*/*',
+  #           'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+  #           'Authorization'=>'Basic aHlkcmE6bTBOaWY3ck5wM1pwa2lLTjUyTkE=',
+  #           'Content-Type'=>'application/json',
+  #           'User-Agent'=>'Faraday v2.12.2'
+  #         }
+  #       ).to_return(status: 200, body: "", headers: {})
+      
+  #     stub_request(:post, "http://fcrepo:8080/fcrepo/rest/dev")
+  #       .with(
+  #         headers: {
+  #           'Accept'=>'*/*',
+  #           'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+  #           'Authorization'=>'Basic ZmVkb3JhQWRtaW46ZmVkb3JhQWRtaW4=',
+  #           'Content-Type'=>'text/turtle',
+  #           'User-Agent'=>'Faraday v2.12.2'
+  #         }
+  #       ).to_return(status: 200, body: "", headers: {})
+  #   end
+
+  #   it "calls format_urls before save" do
+  #     expect(acda).to receive(:format_urls)
+  #     acda.run_callbacks(:save)
+  #   end
+
+  #   it "calls clear_empty_fields_and_generate_thumbnail after save" do
+  #     expect(acda).to receive(:clear_empty_fields_and_generate_thumbnail)
+  #     acda.run_callbacks(:save)
+  #   end
+  # end
  
 end
