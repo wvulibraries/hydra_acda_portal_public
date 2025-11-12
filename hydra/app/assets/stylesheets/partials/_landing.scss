@@ -452,20 +452,25 @@
       background: white;
       box-shadow: 0 2px 8px rgba(0,0,0,.15);
       list-style: none;
-      padding: 0.5rem 0;
+      padding: 0.75rem 1rem;
       margin: 0;
-      min-width: 150px;
+      min-width: 180px;
       z-index: 1000;
+      border-radius: 0.25rem;
       
       li {
         padding: 0;
+        margin: 0;
         
         a {
           font-size: 18px;
-          padding: 4px 0 5px 0;
+          padding: 0.5rem 1rem;
           display: block;
           color: #76323f;
           font-weight: bold;
+          text-decoration: none;
+          border-radius: 0.25rem;
+          transition: background-color 0.2s ease;
           
           &:hover {
             background: #f8f9fa;
