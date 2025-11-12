@@ -77,14 +77,17 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     }
     
-    // Navbar toggle functionality - hidden by default
+    // Navbar toggle functionality - hidden by default ONLY on landing page
     const navbar = document.getElementById('site-navbar');
     const heroSearchButton = document.querySelector('.hero-bleed .btn');
     const hamburgerToggle = document.getElementById('navbar-hamburger-toggle');
+    const isLandingPage = document.querySelector('.hero-bleed') !== null;
     
     if (navbar) {
-      // Hide navbar on page load
-      navbar.classList.add('navbar-hidden');
+      // Hide navbar on page load ONLY if on landing page
+      if (isLandingPage) {
+        navbar.classList.add('navbar-hidden');
+      }
       
       // Toggle function
       function toggleNavbar(e) {
@@ -97,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       }
       
-      // Hero search button toggle
+      // Hero search button toggle (only exists on landing page)
       if (heroSearchButton) {
         heroSearchButton.addEventListener('click', toggleNavbar);
       }
