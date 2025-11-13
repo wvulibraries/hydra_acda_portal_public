@@ -43,6 +43,11 @@
   height: 100%;
   background: rgba(0, 0, 0, 0.45);
   z-index: 1;
+  transition: opacity 0.5s ease;
+  
+  &.fade-out {
+    opacity: 0;
+  }
 }
 
 .hero-inner { 
@@ -51,6 +56,12 @@
   text-shadow: 0 2px 6px rgba(0,0,0,.35);
   position: relative;
   z-index: 2;
+  transition: opacity 0.5s ease;
+  
+  &.fade-out {
+    opacity: 0;
+    pointer-events: none;
+  }
 }
 
 // Navbar toggle
