@@ -6,7 +6,7 @@
 <section class="hero-bleed text-white d-flex align-items-center justify-content-center text-center">
   <iframe id="hero-video-player" 
           class="hero-video" 
-          src="https://www.youtube.com/embed/OgVKvqTItto?autoplay=1&mute=0&loop=1&playlist=OgVKvqTItto&rel=0&modestbranding=1&playsinline=1" 
+          src="https://www.youtube.com/embed/OgVKvqTItto?enablejsapi=1&autoplay=1&mute=1&loop=1&playlist=OgVKvqTItto&rel=0&modestbranding=1&playsinline=1" 
           frameborder="0" 
           allow="autoplay; fullscreen; picture-in-picture" 
           allowfullscreen>
@@ -58,6 +58,18 @@
             </div>
           <% end %>
         </div>
+
+        <!-- Card 4 -->
+        <div class="carousel-slide">
+          <%= link_to search_action_path, class: "card carousel-card d-block text-reset text-decoration-none shadow-sm" do %>
+            <%= image_tag 'carousel/slide1.jpg', class: 'card-img-top', alt: 'Featured Collection 1' %>
+            <div class="card-body">
+              <h3 class="card-title">Lorem Ipsum Subheading Content</h3>
+              <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing</p>
+            </div>
+          <% end %>
+        </div>
+
       </div>
     </div>
     
