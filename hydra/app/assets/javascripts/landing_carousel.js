@@ -1,33 +1,30 @@
 document.addEventListener('DOMContentLoaded', function () {
-  // YouTube API for hero video
-  var tag = document.createElement('script');
-  tag.src = "https://www.youtube.com/iframe_api";
-  var firstScriptTag = document.getElementsByTagName('script')[0];
-  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-  
-  var player;
-  window.onYouTubeIframeAPIReady = function() {
-    player = new YT.Player('hero-video-player', {
-      events: {
-        'onStateChange': onPlayerStateChange
+  // Vimeo player for hero video
+  var vimeoScript = document.querySelector('script[src*="player.vimeo.com"]');
+  if (vimeoScript) {
+    vimeoScript.onload = function() {
+      var iframe = document.getElementById('hero-vimeo-player');
+      if (iframe && typeof Vimeo !== 'undefined') {
+        var player = new Vimeo.Player(iframe);
+        var heroContent = document.getElementById('hero-content');
+        var heroOverlay = document.querySelector('.hero-overlay');
+        
+        player.on('play', function() {
+          if (heroContent) heroContent.classList.add('fade-out');
+          if (heroOverlay) heroOverlay.classList.add('fade-out');
+        });
+        
+        player.on('pause', function() {
+          if (heroContent) heroContent.classList.remove('fade-out');
+          if (heroOverlay) heroOverlay.classList.remove('fade-out');
+        });
+        
+        player.on('ended', function() {
+          if (heroContent) heroContent.classList.remove('fade-out');
+          if (heroOverlay) heroOverlay.classList.remove('fade-out');
+        });
       }
-    });
-  };
-  
-  function onPlayerStateChange(event) {
-    var heroContent = document.getElementById('hero-content');
-    var heroOverlay = document.querySelector('.hero-overlay');
-    
-    // When video starts playing (state 1)
-    if (event.data == YT.PlayerState.PLAYING) {
-      if (heroContent) heroContent.classList.add('fade-out');
-      if (heroOverlay) heroOverlay.classList.add('fade-out');
-    }
-    // When video is paused or ended (state 2 or 0)
-    else if (event.data == YT.PlayerState.PAUSED || event.data == YT.PlayerState.ENDED) {
-      if (heroContent) heroContent.classList.remove('fade-out');
-      if (heroOverlay) heroOverlay.classList.remove('fade-out');
-    }
+    };
   }
   
   // Carousel functionality
