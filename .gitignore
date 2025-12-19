@@ -13,3 +13,5 @@ tmp
 
 /public/
 /public/*
+
+hydra/coverage
