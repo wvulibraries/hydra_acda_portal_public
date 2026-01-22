@@ -41,12 +41,12 @@ module ApplicationHelper
 
     if document[:dc_type_ssi] == "Interactive Resource" || document[:dc_type_ssi] == "InteractiveResource"
       link_to_document document, render(partial: 'catalog/interactive_button'), class: "button interactive-button"
+    elsif document[:dc_type_ssi] == "Sound"
+      link_to_document document, render(partial: 'catalog/audio_button'), class: "button audio-button"
     elsif is_active_url?(preview)
       image_tag(preview, title: title, alt: description, class: "full-size-responsive")
     elsif document.thumbnail_file?
       image_tag("/thumb/#{id}.jpg", title: title, alt: description, class: "full-size-responsive")
-    elsif document[:dc_type_ssi] == "Sound"
-      link_to_document document, render(partial: 'catalog/audio_button'), class: "button audio-button"
     elsif document[:dc_type_ssi]&.include?("Moving")
       link_to_document document, render(partial: 'catalog/video_button'), class: "button video-button"
     elsif !document.image_file? && document[:dc_type_ssi] == "Text"
