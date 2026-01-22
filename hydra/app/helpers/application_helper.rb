@@ -116,13 +116,12 @@ module ApplicationHelper
     values = kwargs[:value]
     field = kwargs[:field].gsub('_tesim', '_sim')
 
-    display_value = ''
-    values.each do |value|
+    links = values.map do |value|
       params = { q: '', f: { field => [value], search_field: 'all_fields' } }
-      display_value << link_to(value, search_action_path(params))
+      link_to(value, search_action_path(params))
     end
 
-    display_value.html_safe
+    links.join(', ').html_safe
   end
 
   # Specifically used for date_ssim in conjunction with the range limit
