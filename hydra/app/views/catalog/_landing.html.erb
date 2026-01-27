@@ -31,44 +31,51 @@
       <div class="carousel-track">
         <!-- Card 1 -->
         <div class="carousel-slide">
-          <%= link_to search_action_path, class: "card carousel-card d-block text-reset text-decoration-none shadow-sm" do %>
+          <%= link_to 'https://congressarchivesdev.lib.wvu.edu/about', class: "card carousel-card d-block text-reset text-decoration-none shadow-sm" do %>
             <%= image_tag 'carousel/slide1.jpg', class: 'card-img-top', alt: 'Featured Collection 1' %>
             <div class="card-body">
-              <h3 class="card-title">Lorem Ipsum Subheading Content</h3>
-              <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing</p>
+              <h3 class="card-title">American Congress Digital Archives Portal
+</h3>
+              <p class="card-text">A collaborative, non-partisan project that makes congressional archives available online. 
+</p>
             </div>
           <% end %>
         </div>
 
         <!-- Card 2 -->
         <div class="carousel-slide">
-          <%= link_to search_action_path(sort: 'timestamp desc'), class: "card carousel-card d-block text-reset text-decoration-none shadow-sm" do %>
+          <%= link_to 'https://congressarchivesdev.lib.wvu.edu/?f%5Bcollection_title_sim%5D%5B%5D=Howard+Sutherland%2C+Senator%2C+Women%27s+Suffrage+Papers&f%5Bcontributing_institution_sim%5D%5B%5D=West+Virginia+University+Libraries%2C+West+Virginia+University%2C+Morgantown%2C+WV', class: "card carousel-card d-block text-reset text-decoration-none shadow-sm" do %>
             <%= image_tag 'carousel/slide2.jpg', class: 'card-img-top', alt: 'Featured Collection 2' %>
             <div class="card-body">
-              <h3 class="card-title">Lorem Ipsum Partner Content</h3>
-              <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing</p>
+              <h3 class="card-title">Women’s Suffrage and the 19th Amendment</h3>
+              <p class="card-text">Examine women’s suffrage, the 19th Amendment, and Congress as a representative body through constituent correspondence.
+</p>
             </div>
           <% end %>
         </div>
 
         <!-- Card 3 -->
         <div class="carousel-slide">
-          <%= link_to '/research-support', class: "card carousel-card d-block text-reset text-decoration-none shadow-sm" do %>
+          <%= link_to 'https://congressarchivesdev.lib.wvu.edu/?f%5Bpolicy_area_sim%5D%5B%5D=International+Affairs&f%5Bsubject_policy_sim%5D%5B%5D=International+Affairs&per_page=50&sort=edtf_ssi+desc', class: "card carousel-card d-block text-reset text-decoration-none shadow-sm" do %>
             <%= image_tag 'carousel/slide3.jpg', class: 'card-img-top', alt: 'Featured Collection 3' %>
             <div class="card-body">
-              <h3 class="card-title">Lorem Ipsum Subheading Content</h3>
-              <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing</p>
+              <h3 class="card-title">International Affairs and Foreign Policy
+</h3>
+              <p class="card-text">Investigate Congress’ role in international affairs and foreign policy through materials related to the Panama Canal Treaty, the 1982 Lebanon War, and efforts to gain U.S. acknowledgement of the Armenian genocide.
+</p>
             </div>
           <% end %>
         </div>
 
         <!-- Card 4 -->
         <div class="carousel-slide">
-          <%= link_to search_action_path, class: "card carousel-card d-block text-reset text-decoration-none shadow-sm" do %>
+          <%= link_to 'https://congressarchivesdev.lib.wvu.edu/?f%5Bsubject_topical_sim%5D%5B%5D=Vietnam+War%2C+1961-1975&f%5Btopic_sim%5D%5B%5D=Vietnam+War%2C+1961-1975&f%5Btopic_sim%5D%5B%5D=Prisoners+of+war&per_page=50&q=&search_field=dummy_range&sort=edtf_ssi+asc', class: "card carousel-card d-block text-reset text-decoration-none shadow-sm" do %>
             <%= image_tag 'carousel/slide1.jpg', class: 'card-img-top', alt: 'Featured Collection 1' %>
             <div class="card-body">
-              <h3 class="card-title">Lorem Ipsum Subheading Content</h3>
-              <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing</p>
+              <h3 class="card-title"> American Prisoners During the Vietnam War
+</h3>
+              <p class="card-text">Explore efforts in Congress to bring home American Prisoners of War and Missing in Action during the Vietnam War.
+</p>
             </div>
           <% end %>
         </div>
@@ -102,16 +109,16 @@
       <!-- Image Overlay Card with Button-->
       <div class="col-12 col-lg-6">
         <div class="card overlay-card h-100 shadow-sm">
-          <%= link_to '/collections/inouye-keynote', class: "overlay-card-link d-block text-decoration-none" do %>
+          <div class="overlay-card-link d-block text-decoration-none">
             <div class="overlay-card-inner">
               <%= image_tag 'cards/card4.jpg', class: "overlay-card-img", alt: "" %>
               <div class="overlay-card-content">
                 <h3 class="h4 fw-bold text-white mb-3">Senator Daniel K. Inouye's keynote address</h3>
                 <p class="text-white mb-3">First page of Senator Inouye's keynote address at the 1968 Democratic National Convention in Chicago. The speech addressed civil unrest, the Vietnam War, and the assassinations of Martin Luther King Jr. and Robert F. Kennedy, and it brought Senator Inouye into the national spotlight.</p>
-                <span class="btn btn-danger btn-lg px-4">View Collection</span>
+                <%= link_to 'https://congressarchives.org/catalog/10524_71692', class: "btn btn-danger btn-lg px-4" do %>View<% end %>
               </div>
             </div>
-          <% end %>
+          </div>
         </div>
       </div>
 
@@ -124,13 +131,13 @@
             </div>
             <div class="col-md-6">
               <div class="card-body h-100 d-flex flex-column justify-content-center p-4 p-md-5">
-                <h3 class="h2 fw-bold mb-4">Curated Content</h3>
+                <h3 class="h2 fw-bold mb-4"> The Julian P. Kanter Political Commercial Collection</h3>
                 <div class="split-card-text">
                   <h4 class="h5 fw-semibold mb-2">Lorem</h4>
-                  <p class="mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                  <p class="mb-4">This collection, stored in the archives of the Carl Albert Congressional Research and Studies Center’s Congressional and Political Collections, is the largest collection of political commercials in the world, and the only comprehensive collection that covers all levels of political campaigning from Presidential elections to ballot initiatives.
+</p>
                   
-                  <h4 class="h5 fw-semibold mb-2">Ipsum</h4>
-                  <p class="mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                  <%= link_to 'View Collection', 'https://congressarchivesdev.lib.wvu.edu/?f%5Bcollection_title_sim%5D%5B%5D=Julian+P.+Kanter+Political+Commercials+Collection&f%5Bsearch_field%5D=all_fields&q=', class: 'btn btn-primary' %>
                 </div>
               </div>
             </div>
