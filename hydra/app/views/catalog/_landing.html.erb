@@ -29,15 +29,14 @@
     
     <div class="carousel-track-container">
       <div class="carousel-track">
-        <!-- Card 1 -->
+     
+      <!-- Card 1 -->
         <div class="carousel-slide">
           <%= link_to 'https://congressarchivesdev.lib.wvu.edu/about', class: "card carousel-card d-block text-reset text-decoration-none shadow-sm" do %>
             <%= image_tag 'carousel/slide1.jpg', class: 'card-img-top', alt: 'Featured Collection 1' %>
             <div class="card-body">
-              <h3 class="card-title">American Congress Digital Archives Portal
-</h3>
-              <p class="card-text">A collaborative, non-partisan project that makes congressional archives available online. 
-</p>
+              <h3 class="card-title">American Congress Digital Archives Portal</h3>
+              <p class="card-text">A collaborative, non-partisan project that makes congressional archives available online. </p>
             </div>
           <% end %>
         </div>
@@ -70,12 +69,10 @@
         <!-- Card 4 -->
         <div class="carousel-slide">
           <%= link_to 'https://congressarchivesdev.lib.wvu.edu/?f%5Bsubject_topical_sim%5D%5B%5D=Vietnam+War%2C+1961-1975&f%5Btopic_sim%5D%5B%5D=Vietnam+War%2C+1961-1975&f%5Btopic_sim%5D%5B%5D=Prisoners+of+war&per_page=50&q=&search_field=dummy_range&sort=edtf_ssi+asc', class: "card carousel-card d-block text-reset text-decoration-none shadow-sm" do %>
-            <%= image_tag 'carousel/slide1.jpg', class: 'card-img-top', alt: 'Featured Collection 1' %>
+            <%= image_tag 'Vietnam.png', class: 'card-img-top', alt: 'Featured Collection 1' %>
             <div class="card-body">
-              <h3 class="card-title"> American Prisoners During the Vietnam War
-</h3>
-              <p class="card-text">Explore efforts in Congress to bring home American Prisoners of War and Missing in Action during the Vietnam War.
-</p>
+              <h3 class="card-title"> American Prisoners During the Vietnam War</h3>
+              <p class="card-text">Explore efforts in Congress to bring home American Prisoners of War and Missing in Action during the Vietnam War.</p>
             </div>
           <% end %>
         </div>
@@ -124,47 +121,45 @@
 
       <!-- Split Card - Manuscript + Text -->
       <div class="col-12">
-        <%= link_to '/about', class: "card split-card d-block text-reset text-decoration-none shadow-sm" do %>
+        <div class="card split-card d-block text-reset shadow-sm">
           <div class="row g-0">
             <div class="col-md-6">
-              <%= image_tag 'cards/card4.jpg', class: "split-card-img", alt: "" %>
+              <%= image_tag 'Eskind.png', class: "split-card-img", alt: "" %>
             </div>
             <div class="col-md-6">
               <div class="card-body h-100 d-flex flex-column justify-content-center p-4 p-md-5">
-                <h3 class="h2 fw-bold mb-4"> The Julian P. Kanter Political Commercial Collection</h3>
+                <h3 class="h2 fw-bold mb-4">The Julian P. Kanter Political Commercial Collection</h3>
                 <div class="split-card-text">
-                  <h4 class="h5 fw-semibold mb-2">Lorem</h4>
-                  <p class="mb-4">This collection, stored in the archives of the Carl Albert Congressional Research and Studies Center’s Congressional and Political Collections, is the largest collection of political commercials in the world, and the only comprehensive collection that covers all levels of political campaigning from Presidential elections to ballot initiatives.
-</p>
+                  <p class="mb-4">This collection, stored in the archives of the Carl Albert Congressional Research and Studies Center's Congressional and Political Collections, is the largest collection of political commercials in the world, and the only comprehensive collection that covers all levels of political campaigning from Presidential elections to ballot initiatives.</p>
                   
                   <%= link_to 'View Collection', 'https://congressarchivesdev.lib.wvu.edu/?f%5Bcollection_title_sim%5D%5B%5D=Julian+P.+Kanter+Political+Commercials+Collection&f%5Bsearch_field%5D=all_fields&q=', class: 'btn btn-primary' %>
                 </div>
               </div>
             </div>
           </div>
-        <% end %>
+        </div>
       </div>
 
-      <!-- Standard Grid Cards - 2 columns -->
-      <div class="col-12 col-md-6">
-        <%= link_to '/collections/library', class: "card standard-card h-100 d-block text-reset text-decoration-none shadow-sm" do %>
-          <%= image_tag 'cards/card3.jpg', class: "card-img-top", alt: "" %>
-          <div class="card-body">
-            <h3 class="h4 fw-bold mb-3">Curated Content</h3>
-            <p class="mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mauris nunc congue nisi vitae suscipit tellus mauris a diam maecenas sed enim ut sem.</p>
-          </div>
-        <% end %>
-      </div>
+      # <!-- Standard Grid Cards - 2 columns -->
+      # <div class="col-12 col-md-6">
+      #   <%= link_to '/collections/library', class: "card standard-card h-100 d-block text-reset text-decoration-none shadow-sm" do %>
+      #     <%= image_tag 'cards/card3.jpg', class: "card-img-top", alt: "" %>
+      #     <div class="card-body">
+      #       <h3 class="h4 fw-bold mb-3">Curated Content</h3>
+      #       <p class="mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mauris nunc congue nisi vitae suscipit tellus mauris a diam maecenas sed enim ut sem.</p>
+      #     </div>
+      #   <% end %>
+      # </div>
 
-      <div class="col-12 col-md-6">
-        <%= link_to '/collections/architecture', class: "card standard-card h-100 d-block text-reset text-decoration-none shadow-sm" do %>
-          <%= image_tag 'cards/card4.jpg', class: "card-img-top", alt: "" %>
-          <div class="card-body">
-            <h3 class="h4 fw-bold mb-3">Curated Content</h3>
-            <p class="mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mauris nunc congue nisi vitae suscipit tellus mauris a diam maecenas sed enim ut sem.</p>
-          </div>
-        <% end %>
-      </div>
+      # <div class="col-12 col-md-6">
+      #   <%= link_to '/collections/architecture', class: "card standard-card h-100 d-block text-reset text-decoration-none shadow-sm" do %>
+      #     <%= image_tag 'cards/card4.jpg', class: "card-img-top", alt: "" %>
+      #     <div class="card-body">
+      #       <h3 class="h4 fw-bold mb-3">Curated Content</h3>
+      #       <p class="mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mauris nunc congue nisi vitae suscipit tellus mauris a diam maecenas sed enim ut sem.</p>
+      #     </div>
+      #   <% end %>
+      # </div>
 
     </div>
   </div>
