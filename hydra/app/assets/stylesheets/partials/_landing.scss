@@ -93,12 +93,14 @@
   cursor: pointer;
   padding: 0.5rem;
   display: inline-block;
+  pointer-events: none;
   
   .hamburger-icon {
     width: 24px;
     height: 20px;
     position: relative;
     display: inline-block;
+    pointer-events: auto;
     
     span {
       display: block;
