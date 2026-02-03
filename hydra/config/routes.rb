@@ -18,7 +18,6 @@ Rails.application.routes.draw do
   get '/contribute' => 'catalog#contribute'
   get '/partners' => 'catalog#partners'
   get '/policies' => 'catalog#policies'
-  get '/search_history' => 'redirect_controller#search_history'
   # get '/contributingcollections' => 'catalog#contributingcollections'
   get '/educationalresources' => 'catalog#educationalresources'
   get '/validate' => 'validations#upload'
