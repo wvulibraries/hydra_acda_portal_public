@@ -89,11 +89,12 @@
 }
 
 // Hamburger menu icon
+// Fix hamburger icon link pointer events
 #navbar-hamburger-toggle {
   cursor: pointer;
   padding: 0.5rem;
   display: inline-block;
-  pointer-events: none;
+  pointer-events: auto;
   
   .hamburger-icon {
     width: 24px;
