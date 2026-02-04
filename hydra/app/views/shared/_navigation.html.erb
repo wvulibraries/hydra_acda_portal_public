@@ -10,10 +10,10 @@
           <%= render_search_bar if controller.class == CatalogController  %>
       </div>
       <div class="sticky-header-nav tabBar">
-          <span id="menu-toggle" style="pointer-events: none; opacity: 0.5;">
+          <div id="menu-toggle" style="pointer-events: none; opacity: 0.5;">
               <%= image_tag("menu.svg", alt: "Menu Expand", id: "menu-toggle1") %>
               <%= image_tag("x.svg", alt: "Menu Close", id: "menu-toggle2") %>
-          </span>
+          </div>
           <ul id="sticky-header-nav-menu" role="navigation">
               <li><a href="/"></i>Home</a></li>
               <li class="has-dropdown">
