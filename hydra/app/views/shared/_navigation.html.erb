@@ -10,10 +10,10 @@
           <%= render_search_bar if controller.class == CatalogController  %>
       </div>
       <div class="sticky-header-nav tabBar">
-          <a href="https://congressarchivesdev.lib.wvu.edu/search_history" id="menu-toggle" style="color: inherit; text-decoration: none;">
+          <span id="menu-toggle" style="pointer-events: none; opacity: 0.5;">
               <%= image_tag("menu.svg", alt: "Menu Expand", id: "menu-toggle1") %>
               <%= image_tag("x.svg", alt: "Menu Close", id: "menu-toggle2") %>
-          </a>
+          </span>
           <ul id="sticky-header-nav-menu" role="navigation">
               <li><a href="/"></i>Home</a></li>
               <li class="has-dropdown">
