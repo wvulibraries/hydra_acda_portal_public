@@ -6,7 +6,7 @@ class SolrDocument
   include BlacklightOaiProvider::SolrDocument
   use_extension Blacklight::Document::DublinCore
 
-  ACDA_URL = 'http://congressarchivesdev.lib.wvu.edu/record/'
+  ACDA_URL = 'http://congressarchives.org/record/'
 
   def to_semantic_values
     @semantic_value_hash ||= self.class.field_semantics.each_with_object(Hash.new([])) do |(key, field_names), hash|
