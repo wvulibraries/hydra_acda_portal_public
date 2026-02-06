@@ -54,6 +54,16 @@ Collections span the twentieth and twenty-first centuries and document topics ra
 - **Vietnam War POW/MIA Efforts**: Congressional efforts to bring home American Prisoners of War and Missing in Action
 - **Julian P. Kanter Political Commercial Collection**: The world's largest collection of political commercials, covering all levels of political campaigning from Presidential elections to ballot initiatives
 
+## Documentation
+
+For detailed documentation, see the [`docs/`](./docs/) directory:
+
+- [Development Setup](./docs/development.md) - Detailed development environment setup
+- [Deployment Guide](./docs/deployment.md) - Deployment procedures and configurations  
+- [Architecture Overview](./docs/architecture.md) - Technical architecture and components
+- [Troubleshooting](./docs/troubleshooting.md) - Common issues and solutions
+- [API Reference](./docs/api.md) - API documentation
+
 ---
 
 ## Technical Overview
