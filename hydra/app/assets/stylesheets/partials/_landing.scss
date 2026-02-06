@@ -1,3 +1,44 @@
+// --- Mobile menu improvements ---
+@media (max-width: 767px) {
+  #sticky-header-nav-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    padding: 0.5rem 0;
+    background: #fff;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    position: static;
+  }
+
+  #sticky-header-nav-menu > li {
+    width: 100%;
+    margin: 0;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid #eee;
+    font-size: 1.1rem;
+  }
+
+  #sticky-header-nav-menu > li:last-child {
+    border-bottom: none;
+  }
+
+  #sticky-header-nav-menu .dropdown-menu {
+    position: static;
+    min-width: 100%;
+    box-shadow: none;
+    background: #f9f9f9;
+    padding: 0.5rem 1rem;
+    margin: 0.25rem 0 0 0;
+    border-radius: 0 0 8px 8px;
+  }
+
+  #sticky-header-nav-menu .has-dropdown > a.dropdown-toggle:after {
+    content: ' ▼';
+    font-size: 0.8em;
+  }
+}
 
 // Browse Portal Button
 .browse-portal-button-wrap {
