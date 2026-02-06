@@ -1,5 +1,5 @@
 <!-- Website Tab Bar -->
-<div class="sticky-header">
+<div id="site-navbar" class="sticky-header">
   <div class="tbwrap">
   <div class="sticky-header-search tabBar">
           <a id="search-toggle">
@@ -10,19 +10,22 @@
           <%= render_search_bar if controller.class == CatalogController  %>
       </div>
       <div class="sticky-header-nav tabBar">
-          <a id="menu-toggle">
+          <div id="menu-toggle" style="pointer-events: none; cursor: default; opacity: 0.5;">
               <%= image_tag("menu.svg", alt: "Menu Expand", id: "menu-toggle1") %>
               <%= image_tag("x.svg", alt: "Menu Close", id: "menu-toggle2") %>
-          </a>
+          </div>
           <ul id="sticky-header-nav-menu" role="navigation">
               <li><a href="/"></i>Home</a></li>
-              <li><a href="/about"></i>About</a></li>
-              <!-- <li><a href="/contributingcollections"></i>Collections</a></li> -->
-              <li><a href="/partners"></i>Partners</a></li>
-              <li><a href="/policies"></i>Policies</a></li>
-              <li><a href="/contribute"></i>Contribute</a></li>
-              <li><a href="https://give.wvu.edu/congress-archives-project"></i>Donate</a>
+              <li class="has-dropdown">
+                <a href="/about" class="dropdown-toggle"></i>About</a>
+                <ul class="dropdown-menu">
+                    <li><a href="/partners"></i>Partners</a></li>
+                    <li><a href="/policies"></i>Policies</a></li>
+                </ul>
               </li>
+              <li><a href="/contribute"></i>Contribute</a></li>
+              <li><a href="https://give.wvu.edu/congress-archives-project"></i>Donate</a></li>
+              <li><a href="/educationalresources"></i>Educational Resources</a></li>
           </ul>
       </div>
       <div class="sticky-header-top tabBar">

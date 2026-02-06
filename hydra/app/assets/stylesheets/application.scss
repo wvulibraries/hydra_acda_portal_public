@@ -19,6 +19,7 @@
  * Used by blacklight_range_limit
  *= require  'blacklight_range_limit'
  *
+
 */
 
 // import custom scss
@@ -40,6 +41,7 @@
 @import "bulkrax/application";
 @import "partials/bulkrax";
 @import "bulkrax_overrides";
+@import "partials/landing";
 
 // custom partials for views
 @import "partials/video"; 

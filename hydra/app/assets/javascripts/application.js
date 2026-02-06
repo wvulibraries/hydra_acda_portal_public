@@ -14,13 +14,13 @@
 // Rails or Hydra Requirements
 // -----------------------------------------------------
 //= require jquery3
+//= require rails-ujs
 
 // Required by Blacklight Advance Search
 // -----------------------------------------------------
 //= require 'blacklight_advanced_search'
 //= require advanced_search_additional_fields
 
-//= require jquery_ujs
 
 //= require tether
 
@@ -46,6 +46,8 @@
 //= require partials/cookie_modal
 //= require partials/nav_toggles
 //= require partials/toggle_required
+
+//= require landing_carousel
 
 
 // For blacklight_range_limit built-in JS, if you don't want it you don't need
