@@ -130,7 +130,8 @@ document.addEventListener('DOMContentLoaded', function () {
   
   if (navbar) {
     // Hide navbar on page load ONLY if on landing page
-    if (isLandingPage) {
+    // Only hide navbar on landing page for desktop, always show on mobile
+    if (isLandingPage && window.innerWidth > 767) {
       navbar.classList.add('navbar-hidden');
     }
     
