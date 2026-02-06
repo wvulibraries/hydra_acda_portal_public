@@ -1,3 +1,26 @@
+// Force menu links to be clickable and on top for mobile
+@media (max-width: 767px) {
+  #sticky-header-nav-menu a {
+    pointer-events: auto !important;
+    z-index: 99999 !important;
+    position: relative !important;
+  }
+}
+// Force menu and links to be visible and on top for mobile
+@media (max-width: 767px) {
+  #site-navbar,
+  #sticky-header-nav-menu,
+  #sticky-header-nav-menu > li,
+  #sticky-header-nav-menu a {
+    display: initial !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    pointer-events: auto !important;
+    position: relative !important;
+    z-index: 9999 !important;
+  }
+}
 // Ensure menu links are always visible on mobile
 @media (max-width: 767px) {
   #sticky-header-nav-menu,
