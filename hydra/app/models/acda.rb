@@ -11,7 +11,6 @@ class Acda < ActiveFedora::Base
 
   before_create :prepare_record
   after_save :handle_thumbnail_generation, unless: :skip_thumbnail_update
-
   attr_accessor :skip_thumbnail_update
 
   def prepare_record

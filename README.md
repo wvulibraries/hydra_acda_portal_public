@@ -4,6 +4,7 @@
 
 [![Code Coverage](https://qlty.sh/gh/wvulibraries/projects/hydra_acda_portal_public/coverage.svg)](https://qlty.sh/gh/wvulibraries/projects/hydra_acda_portal_public)
 
+=======
 
 # American Congress Digital Archives Portal (ACDA)
 
