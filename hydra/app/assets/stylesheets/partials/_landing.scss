@@ -1,3 +1,43 @@
+// Force menu always visible and vertical on mobile
+@media (max-width: 767px) {
+  #sticky-header-nav-menu {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    width: 100% !important;
+    position: static !important;
+    background: #fff !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
+    border-radius: 0 0 8px 8px !important;
+    padding: 0.5rem 0 !important;
+    z-index: 1001 !important;
+    overflow-x: auto !important;
+  }
+  #sticky-header-nav-menu > li {
+    width: auto !important;
+    margin: 0 0.5rem !important;
+    padding: 0.5rem 0.5rem !important;
+    border-bottom: none !important;
+    font-size: 1.1rem !important;
+    display: inline-block !important;
+    white-space: nowrap !important;
+  }
+  #sticky-header-nav-menu .dropdown-menu {
+    display: block !important;
+    position: static !important;
+    min-width: 100% !important;
+    box-shadow: none !important;
+    background: #f9f9f9 !important;
+    padding: 0.5rem 1rem !important;
+    margin: 0.25rem 0 0 0 !important;
+    border-radius: 0 0 8px 8px !important;
+  }
+  #sticky-header-nav-menu .has-dropdown > a.dropdown-toggle:after {
+    content: ' ▼';
+    font-size: 0.8em;
+  }
+}
 // --- Mobile menu improvements ---
 @media (max-width: 767px) {
   #sticky-header-nav-menu {
