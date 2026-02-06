@@ -1,148 +1,217 @@
-
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/wvulibraries/hydra_acda_portal_public/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/wvulibraries/hydra_acda_portal_public/tree/main)
 
 [![Maintainability](https://qlty.sh/gh/wvulibraries/projects/hydra_acda_portal_public/maintainability.svg)](https://qlty.sh/gh/wvulibraries/projects/hydra_acda_portal_public)
 
 [![Code Coverage](https://qlty.sh/gh/wvulibraries/projects/hydra_acda_portal_public/coverage.svg)](https://qlty.sh/gh/wvulibraries/projects/hydra_acda_portal_public)
 
+=======
 
-# WVU Hydra Repo (Hydra 11)
+# American Congress Digital Archives Portal (ACDA)
 
-This repo was created with the intention of being our main hydra head for while.  The goal is to implement hydra 11 in a docker container while also scripting in things to generate our new hydra heads every time we have to make a new "head" or repository.
+A collaborative, non-partisan digital repository that makes congressional archives available online, bringing the history of the People's Branch to the people.
 
-## Contents
-- Hydra
-  - This folder contains a new rails application, generated in rails 5.0.1 and all assets bundled in from the hydra core gem.  Note this isn't the hydra-head gem, it is the core hydra.
-  - A `bin/rails generate hydra:install` has also been run.
-  - An import folder has been created and is the place to start when trying to import the exports from MFCS.
-  - Style and JavaScript files have been added for WVU Customization
-  - Images have been added that are used in the views and in some of the more customized aspects of the hydra heads.
-- WVU Setup
-  - This has a ruby class that runs as a project generator replacing variable names in various folders and files.  This is done in a way to try and do minimal work getting a hydra head up and running.  Things that can't be automated are export scripts and import scripts.
+## About
 
-----
+The American Congress Digital Archives Portal (ACDA) provides open access to the personal papers of Members of Congress from multiple institutions across the United States. Built on the Samvera Hydra framework with Rails 7 and Fedora 6, the portal aggregates geographically dispersed congressional collections into a single searchable platform, supporting scholarship about American democracy, civic education, and the legislative branch.
 
-# Setup Instructions
+> **Repository Name**: This GitHub repository is named `hydra_acda_portal_public` where "acda" stands for American Congress Digital Archives.
 
-The following will walk you through setting up the new hydra head.  Understand that there will be manual tasks that must be done outside of this before you know if everything worked properly.
+**Production**: https://congressarchives.org  
+**Development**: https://congressarchivesdev.lib.wvu.edu
 
-## Copy and Rename
+### Project Background
 
-Copy and rename this directory from git to your desktop.  Name it `hydra-#{projectname}` for consistancy.
+This site is a prototype created with funding from the National Endowment for the Humanities (2021-2022). Unlike presidential papers which are centralized, congressional collections are geographically dispersed among institutions with varying resources. This portal addresses that challenge by:
 
-## REMOVE GIT
+- Aggregating materials from multiple archival institutions
+- Providing easier, more equitable access to scholars, educators, and the public
+- Supporting computational research and new methods of scholarly inquiry
+- Serving as a resource for civic and history education
 
-This is an important step.  In creating new hydra repos, we don't want to over-ride this current repo.
-- Be sure you are in the root of this github repo and type `sudo rm -rf .git`
-- Alternately if you can see hidden folders you can use your GUI to look up the `.git` directory and delete it manually.
+The project continues to expand partnerships, add archival collections, and improve functionality toward the nation's 250th anniversary in 2026 and beyond.
 
-## SETUP FILE
-Using the terminal change directory to wvu_setup directory.  From this directory you will see a setup.rb file.  Open this file and change the information for your specific repository.
+### Partner Institutions
 
-### BASIC SETUP
+- West Virginia University Libraries (Lead Institution)
+- Robert J. Dole Institute of Politics, The University of Kansas
+- Robert C. Byrd Center for Congressional History and Education
 
- - 'TestModelName' :: Change this to your model name using CamelCase writing.
- - 'tdna' :: Change this to your project abbreviation or name that is often generated from the MFCS export.
- - 'test collection name' :: Change this to whatever name you want your collection to be.
- - **ALL OF THESE ARE CASE SENSITIVE**
+### What's In The Portal?
 
-## Executing the File
+The portal features personal papers of Members of Congress, including:
+- Correspondence and constituent communications
+- Legislative files and policy materials
+- Committee records and hearing documentation
+- Campaign materials and political commercials
+- Photographic and audiovisual collections
 
-- The system requirements for each system may be different.  The file was given executable permissions, make sure this has carried over to your system.  Also make sure that the first line reads as
-`#!/usr/bin/env ruby`.  This ensures the the file will be run as a ruby file and an executable.
-- `cd wvu_setup`
-- `ruby setup.rb`
+Collections span the twentieth and twenty-first centuries and document topics ranging from women's suffrage to foreign policy, civil rights to legislative processes.
 
-## After File Executes
-- Delete wvu-setup directory
-- Verify that Git was Deleted
-- Setup the New Github Link
+### Featured Collections
 
-## Hydra Head Manual Setups
-There isn't any way to script all of this without lots of pre-planning and forcing hydra to adhere to a certain standard.
+- **Women's Suffrage and the 19th Amendment**: Constituent correspondence examining women's suffrage and Congress as a representative body
+- **International Affairs and Foreign Policy**: Materials related to the Panama Canal Treaty, the 1982 Lebanon War, and efforts regarding Armenian genocide recognition
+- **Vietnam War POW/MIA Efforts**: Congressional efforts to bring home American Prisoners of War and Missing in Action
+- **Julian P. Kanter Political Commercial Collection**: The world's largest collection of political commercials, covering all levels of political campaigning from Presidential elections to ballot initiatives
 
-### Models
-There are three really important models in the new hydra setups.
-- [MAIN_MODEL](http://www.rubydoc.info/github/projecthydra/active_fedora/ActiveFedora/Base) :: Contains your metadata.
-- [image_file.rb](http://www.rubydoc.info/github/projecthydra/active_fedora/ActiveFedora/File) :: Used in the main model to insert the file into fedora and collection metadata on the file. (Size, Type, Mime, Etc)
-- search_builder.rb :: Is the file that you'll use to limit the collection to a specific project.  This is important to be sure your project only searches and filters on the one your currently viewing.  Even more important when referencing a project that doesn't need imported and pulls directly from another source as many collections do with the WVCP collection.
+---
 
-MAIN_MODEL which will later be named, the model name you setup in the setup scripts will have to setup with various properties mapped to dublic core, or another standard that has been setup in the hydra community.  Check out the [RDF Vocab and Standards](https://github.com/ruby-rdf/rdf-vocab).
+## Technical Overview
 
-### Helpers
-Application helper has definitions for the keywords, meta-description, and application name.  Some of this needs changed, do this by going to `hydra/helpers/application_helper.rb`
+This application is built on Samvera Hydra 11 and serves as the technical infrastructure for the ACDA Portal (congressarchives.org).
 
-### Catalog Controller
+## Quick Start
 
-The catalog controller is a file that must be setup form specific to your hydra head and your data. The key thing to remember here, is that the catalog is searching solr, not fedora.  The data that your going to get and index needs to be the solr params that were saved during the import.  Your also going to have to correlate these items to the mappings in your model.
+### Prerequisites
 
-Example:
+- Docker and Docker Compose
+- VPN access to WVU network (required for Fedora/Solr connectivity)
 
---- Catalog Controller ---
+### Running the Application
 
-```ruby
-  config.add_search_field('description') do |field|
-    description_field = Solrizer.solr_name("description", :stored_searchable)
-    field.solr_local_parameters = {
-      qf: description_field,
-      pf: description_field
-    }
-  end
+**Development:**
+```bash
+./up.sh
 ```
 
---- Model ---
+The application will be available at `http://localhost:3000`
 
-```ruby
-  property :description, predicate: ::RDF::Vocab::DC.description, multiple: false do |index|
-    index.type :text
-    index.as :stored_searchable
-  end
+**Stopping:**
+```bash
+./down.sh
 ```
 
-# Import and Export Scripts
+### Default Credentials
 
-This is a huge step in the hydra head process. In the github there is a project called mfcs-exports.  These are created from MFCS as a way to import metadata and images for various reasons.  The first step is to setup an export using JSON, some have XML exports, but lets try to make all of them JSON for our uses. The import script will then consist of a json parse and insert into database.
+Development admin access is configured via environment variables in the `env/` directory.
 
-For import create a new directory called import and make the file import.rb. Use existing projects as an example, but understand each one is different based on the items exported from MFCS.  GBE is the most recent.
+## Architecture
 
-To import files use the following commands
-- `bash -c "clear && docker exec -it {container} sh"` to open up a session in the new container
-- `RAILS_ENV=development ruby import/import.rb` to run an import into the fedora and solr dev sections
-- `RAILS_ENV=development ruby import/explode_fcrepo_solr.rb` to clear the development databases **ONLY DO IN DEVELOPMENT NEVER PROD** This should be **primarily used for testing import scripts**.
+### Stack Components
 
-# Bulkrax Imports
-To Access Bulkrax on a dev setup go to 'http:/localhost:3000/importers?locale=en' use the Username and Password that you have setup in the env file.
+- **Rails Application**: Ruby 3.3.5 with Rails 7.0.8
+- **Samvera Hydra**: Hydra-head framework with Active Fedora
+- **Fedora Commons**: 6.5.1 (fcrepo/fcrepo:6.5.1-tomcat9)
+- **Solr**: 9.8.0
+- **PostgreSQL**: 16 (Alpine)
+- **Redis**: Alpine (latest)
+- **Memcached**: 1.6.22 (Alpine)
+- **Sidekiq**: Background job processing with cron scheduling
+- **Bulkrax**: Batch import framework
 
-# Releases
+### Key Dependencies
 
-To release code to the dev server, create a pre-release tag in the WVU Github repo for the application. The dev server will pick up the code in 5 or so minutes and pull, build, deploy it for you. The same can be done on production by editing your release and marking the release latest instead of pre-release.
+- **Blacklight**: Discovery interface framework
+- **Active Fedora**: Object-relational mapping for Fedora repositories
+- **Sidekiq**: Background job processing with cron scheduling
+- **Bulkrax**: Batch metadata and file import capabilities
+- **Blacklight OAI Provider**: OAI-PMH protocol support
+- **Devise**: Authentication framework
+- **MiniMagick**: Image processing for thumbnails
 
-## Development Mode
+### Key Directories
 
+- `hydra/` - Rails application root
+- `fcrepo/` - Fedora repository configuration
+- `solr9-setup/` - Solr core configuration
+- `scripts/` - Utility scripts for deployment and maintenance
+- `env/` - Environment configuration files
 
-## Potential Bugs
+### Docker Services Architecture
 
+The application runs as a multi-container Docker environment:
 
-### Database Issues
-*If* you get an error it might be with the database make sure you change it in your config file to what your database is named thats in your compose file.  Alternatively it could be in your configuration files of the docker-compose file, or in the `hydra/configs`
+- **web** (`acda_portal`): Main Rails application server (port 3000)
+- **workers** (`sidekiq`): Background job processor with Sidekiq
+- **fcrepo**: Fedora Commons repository (port 8080)
+- **solr**: Solr search engine (port 8983)
+- **db**: PostgreSQL database (port 5432)
+- **redis**: Redis cache and job queue (port 6379)
+- **memcached**: Memory caching layer (port 11211)
 
-- `docker exec -it {container} rake db:create`
-- `docker exec -it {container} rake db:migrate`
+All services communicate over a bridged Docker network (`br-hydra-ca`).
 
-### VPN
-You must have VPN access in development to access the fedora and solr storage, it will not load, import, or delete without being on the VPN or being a recongized server that has access to the databases.
+### Data Persistence
 
-### Image viewers
-For each project you will have to configure to the type of data your viewing.  You may also have to-rework this functionality when dealing with peformance and visual aspects.
+Persistent data is stored in the `./data/` directory and mounted as volumes:
 
-### Customization
-For each project a custom background banner needs to be made, also including any custom items that the project is deemed to need.
+- `data/fcrepo/` - Fedora repository storage
+- `data/solr/` - Solr index data
+- `data/postgres/` - PostgreSQL database
+- `data/redis/` - Redis persistence
+- `data/logs/` - Application and service logs
+- `data/imports/` - Import staging area
+- `data/exports/` - Export output
+- `data/thumbnails/` - Generated thumbnails
+- `data/images/` - Processed images
+- `data/pdf/` - PDF processing cache
 
+### Health Checks
 
-# OAI-PMH
-Documentation for setting up OAI-PMH stuff.
+All critical services include health checks:
 
-## DC Terms Mappings and Limits:
+- **Fedora**: HTTP check on port 8080/fcrepo (5s interval, 20 retries)
+- **Solr**: HTTP check on port 8983 (5s interval, 20 retries)
+- **PostgreSQL**: pg_isready check (30s interval, 80s start period)
+- **Redis**: Redis PING command with authentication (30s interval)
+
+## Development
+
+See [DEVELOPMENT.md](DEVELOPMENT.md) for detailed development instructions.
+
+### Database Setup
+
+If you encounter database errors:
+
+```bash
+docker exec -it acda_portal rake db:create
+docker exec -it acda_portal rake db:migrate
+```
+
+### Accessing the Container
+
+```bash
+# Access the main Rails application container
+docker exec -it acda_portal sh
+
+# Access the Sidekiq worker container
+docker exec -it sidekiq sh
+```
+
+### Importing Content
+
+Content import is managed through Bulkrax. Access the importer interface at:
+
+```
+http://localhost:3000/importers?locale=en
+```
+
+Use the credentials configured in your environment files.
+
+### Clearing Development Data
+
+**WARNING: Development only - never run in production**
+
+```bash
+docker exec -it acda_portal sh
+RAILS_ENV=development ruby import/explode_fcrepo_solr.rb
+```
+
+## OAI-PMH
+
+The repository supports OAI-PMH harvesting for metadata aggregation.
+
+### Endpoint
+
+**Production**: `https://congressarchives.org/catalog/oai`  
+**Development**: `https://congressarchivesdev.lib.wvu.edu/catalog/oai`
+
+### Supported Metadata Formats
+
+- Dublin Core (oai_dc)
+
+### DC Terms Mappings
+
 - title
 - creator
 - subject
@@ -155,47 +224,109 @@ Documentation for setting up OAI-PMH stuff.
 - rights
 - format
 
-## Catalog Controller for OAI
-```ruby
-include BlacklightOaiProvider::CatalogControllerBehavior
-```
+### Provider Configuration
 
-`configure_blacklight block`
-```ruby
-    ## OAIPMH
-    config.oai = {
-      provider: {
-        repository_name: 'George Bird Evans Collection',
-        repository_url: 'https://gbe.lib.wvu.edu',
-        record_prefix: 'https://gbe.lib.wvu.edu/catalog/',
-        admin_email: 'djdavis@mail.wvu.edu'
-      },
-      document: {
-        limit: 25
-      }
-    }
-```
+See `hydra/app/controllers/catalog_controller.rb` for OAI provider settings including:
+- Repository name
+- Repository URL
+- Admin contact
+- Record limits
 
-## Solr Document
-`solr_document.rb`
-```ruby
-  include BlacklightOaiProvider::SolrDocumentBehavior
-  use_extension Blacklight::Document::DublinCore
+## Deployment
 
-  field_semantics.merge!(
-    alternative: 'collection_name_tesim',
-    source:      'collection_number_tesim',
-    identifier:  'identifier_tesim',
-    title:       'title_tesim',
-    creator:     'creator_tesim',
-    date:        'date_tesim',
-    subject:    'subject_tesim',
-    coverage:   'geography_tesim',
-    accrualMethod: 'acquisition_method_tesim',
-    dateAccepted: 'date_acquired_tesim',
-    description: 'description_tesim'
-  )
-```
+### Automated Releases
 
-## Adjusting Routes
-`concern :oai_provider, BlacklightOaiProvider::Routes::Provider.new` at the top of the routes.rb file, and `concerns :oai_provider` inside of the resource for the catalog.
+This repository uses GitHub releases for automated deployment:
+
+- **Development**: Create a pre-release tag. The dev server will automatically pull and deploy within ~5 minutes.
+- **Production**: Edit your pre-release and mark it as "latest release" to trigger production deployment.
+
+### Manual Deployment
+
+Docker Compose configurations are provided for different environments:
+- `docker-compose.yml` - Production
+- `docker-compose.dev.yml` - Development
+- `docker-compose.dev.debug.yml` - Development with debugging enabled
+
+## Key Features
+
+- **Multi-Institutional Aggregation**: Brings together congressional archives from geographically dispersed repositories
+- **Advanced Search & Discovery**: Comprehensive search across multiple metadata fields including Creator, Congress, Policy Area, Location Represented, and more
+- **Curated Content**: Featured collections highlighting significant topics in congressional history
+- **Educational Resources**: Materials supporting civic education and scholarly research
+- **OAI-PMH Support**: Metadata harvesting for aggregators and research tools
+- **Flexible Faceting**: Browse by contributing institution, collection, subject, record type, date range, and congressional session
+- **Open Access**: Free public access to archival materials and descriptive metadata
+
+## Project Structure
+
+### Models
+
+Key models in the application:
+
+- **Main Model** (`app/models/`) - Contains collection-specific metadata properties
+- **ImageFile** (`image_file.rb`) - Manages file objects in Fedora
+- **SearchBuilder** (`search_builder.rb`) - Limits search scope to specific collections
+
+### Controllers
+
+- **CatalogController** - Configures search, facets, and OAI-PMH
+- **ApplicationController** - Base controller with authentication and authorization
+
+### Views & Customization
+
+- Custom styling in `hydra/app/assets/stylesheets/`
+- JavaScript customizations in `hydra/app/assets/javascripts/`
+- Collection-specific banner images and branding
+
+## Configuration
+
+### Required Environment Variables
+
+Configuration is managed through files in the `env/` directory. Key variables include:
+- Database credentials
+- Fedora connection details
+- Solr endpoints
+- Admin user credentials
+- Application secrets
+
+## Network Requirements
+
+**VPN Access Required**: Development and production environments require VPN connection to access Fedora and Solr storage. Operations including data loading, importing, and deletion will fail without proper network access.
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Database Connection Errors**: Check database name in `config/database.yml` matches your Docker Compose configuration
+2. **Fedora/Solr Access**: Ensure VPN connection is active
+3. **Import Failures**: Verify file paths and permissions in the import directory
+4. **Image Display Issues**: Check viewer configuration in views and ensure file uploads completed successfully
+
+## Contributing
+
+This repository is for the American Congress Digital Archives Portal (ACDA) project. For information about becoming a partner institution or contributing collections, visit https://congressarchives.org/contribute
+
+## Funding & Support
+
+This project was made possible by:
+- National Endowment for the Humanities (NEH)
+- National Historical Publications and Records Commission (NHPRC)
+- LYRASIS
+
+## Project Documentation
+
+- [White Paper](https://researchrepository.wvu.edu/faculty_publications/3090/)
+- [Project Briefing Video](https://www.cni.org/topics/special-collections/american-congress-digital-archives-portal-project)
+
+## Contact
+
+**Project Director**: Danielle Emerling, West Virginia University  
+**Repository**: https://github.com/wvulibraries/hydra_acda_portal_public  
+**Donate**: https://give.wvu.edu/congress-archives-project
+
+## Acknowledgments
+
+Built with the Samvera Hydra framework and maintained by West Virginia University Libraries in partnership with multiple congressional archival institutions. Special thanks to the project team, advisory board, and all contributing partner institutions.
+
+For a complete list of team members and advisory board, visit: https://congressarchives.org/about
