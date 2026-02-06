@@ -1,3 +1,28 @@
+// Clean horizontal menu formatting for mobile
+@media (max-width: 767px) {
+  #sticky-header-nav-menu {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    background: #fff !important;
+    padding: 0.5rem 0 !important;
+    border-radius: 0 0 8px 8px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
+    z-index: 9999 !important;
+  }
+  #sticky-header-nav-menu > li {
+    width: auto !important;
+    margin: 0 0.5rem !important;
+    padding: 0.5rem 0.5rem !important;
+    font-size: 1.1rem !important;
+    display: inline-block !important;
+    white-space: nowrap !important;
+    border-bottom: none !important;
+  }
+}
 // Force menu links to be clickable and on top for mobile
 @media (max-width: 767px) {
   #sticky-header-nav-menu a {
