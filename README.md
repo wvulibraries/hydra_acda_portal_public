@@ -1,3 +1,10 @@
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/wvulibraries/hydra_acda_portal_public/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/wvulibraries/hydra_acda_portal_public/tree/main)
+
+[![Maintainability](https://qlty.sh/gh/wvulibraries/projects/hydra_acda_portal_public/maintainability.svg)](https://qlty.sh/gh/wvulibraries/projects/hydra_acda_portal_public)
+
+[![Code Coverage](https://qlty.sh/gh/wvulibraries/projects/hydra_acda_portal_public/coverage.svg)](https://qlty.sh/gh/wvulibraries/projects/hydra_acda_portal_public)
+
+
 # American Congress Digital Archives Portal (ACDA)
 
 A collaborative, non-partisan digital repository that makes congressional archives available online, bringing the history of the People's Branch to the people.
@@ -45,6 +52,16 @@ Collections span the twentieth and twenty-first centuries and document topics ra
 - **International Affairs and Foreign Policy**: Materials related to the Panama Canal Treaty, the 1982 Lebanon War, and efforts regarding Armenian genocide recognition
 - **Vietnam War POW/MIA Efforts**: Congressional efforts to bring home American Prisoners of War and Missing in Action
 - **Julian P. Kanter Political Commercial Collection**: The world's largest collection of political commercials, covering all levels of political campaigning from Presidential elections to ballot initiatives
+
+## Documentation
+
+For detailed documentation, see the [`docs/`](./docs/) directory:
+
+- [Development Setup](./docs/development.md) - Detailed development environment setup
+- [Deployment Guide](./docs/deployment.md) - Deployment procedures and configurations  
+- [Architecture Overview](./docs/architecture.md) - Technical architecture and components
+- [Troubleshooting](./docs/troubleshooting.md) - Common issues and solutions
+- [API Reference](./docs/api.md) - API documentation
 
 ---
 
