@@ -1,3 +1,15 @@
+// Force menu to always be visible on mobile, override any hiding
+@media (max-width: 767px) {
+  #sticky-header-nav-menu {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    pointer-events: auto !important;
+    position: static !important;
+    z-index: 1001 !important;
+  }
+}
 // Force menu always visible and vertical on mobile
 @media (max-width: 767px) {
   #sticky-header-nav-menu {
