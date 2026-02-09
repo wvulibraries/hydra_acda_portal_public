@@ -31,7 +31,6 @@
   # JEMalloc is a faster garbage collection for Ruby.
   # -------------------------------------------------------------------------------------------------
   RUN apt-get install -y libjemalloc2 libjemalloc-dev
-  ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so
   
   # Increase ImageMagick's memory limit
   # -------------------------------------------------------------------------------------------------
