@@ -134,7 +134,7 @@
 
 .hero-overlay {
   position: absolute;
-  top: 0;
+        display: none;
   left: 0;
   width: 100%;
   height: 100%;
@@ -144,19 +144,22 @@
   pointer-events: none;
   
   &.fade-out {
-    opacity: 0;
-  }
-}
-
-.hero-inner { 
-  max-width: 1140px; 
-  padding: 6rem 1rem; 
-  text-shadow: 0 2px 6px rgba(0,0,0,.35);
-  position: relative;
-  z-index: 2;
-  transition: opacity 0.5s ease;
-  pointer-events: none;
-  
+      #sticky-header-nav-menu.active {
+        display: flex !important;
+      }
+      #sticky-header-nav-menu > li {
+        width: 100%;
+        margin: 0;
+        padding: 0.5rem 1rem;
+        border-bottom: 1px solid #eee;
+        font-size: 1.1rem;
+      }
+      #sticky-header-nav-menu > li:last-child {
+        border-bottom: none;
+      }
+      #sticky-header-nav-menu .dropdown-menu {
+        position: static;
+      }
   &.fade-out {
     opacity: 0;
   }
@@ -592,7 +595,7 @@
     position: relative;
     
     .dropdown-menu {
-      display: none;
+      display: block !important;
       position: absolute;
       left: 0;
       background: white;
