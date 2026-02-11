@@ -38,6 +38,10 @@ module Hydra
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
 
+    # Following two lines only needed to test direct access by IP, bypassing nginx prosy:
+    require "ipaddr"
+    config.hosts << IPAddr.new("157.182.150.0/24")
+    
     config.hosts << ".lib.wvu.edu"
     config.hosts << "congressarchives.org"
 
