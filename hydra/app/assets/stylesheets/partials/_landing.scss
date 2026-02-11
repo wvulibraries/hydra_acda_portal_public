@@ -70,6 +70,9 @@
 
   // Remove arrow for the About link only (mobile)
   #sticky-header-nav-menu .has-dropdown > a.dropdown-toggle[href="/about"]:after {
+    display: none;
+    border: 0;
+    margin-left: 0;
     content: none;
   }
 }
