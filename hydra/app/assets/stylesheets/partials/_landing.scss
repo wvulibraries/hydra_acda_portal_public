@@ -29,6 +29,14 @@
 }
 // --- Mobile menu improvements ---
 @media (max-width: 767px) {
+  // Make the hamburger (menu) icon match other icon sizes
+  #menu-toggle img,
+  #menu-toggle1,
+  #menu-toggle2 {
+    width: 22px;
+    height: 22px;
+  }
+
   #sticky-header-nav-menu {
     display: flex;
     flex-direction: column;
@@ -70,10 +78,16 @@
 
   // Remove arrow for the About link only (mobile)
   #sticky-header-nav-menu .has-dropdown > a.dropdown-toggle[href="/about"]:after {
-    display: none;
-    border: 0;
-    margin-left: 0;
-    content: none;
+    display: none !important;
+    border: 0 !important;
+    margin-left: 0 !important;
+    content: none !important;
+  }
+
+  // Also hide any embedded caret icon elements inside the About link
+  #sticky-header-nav-menu .has-dropdown > a.dropdown-toggle[href="/about"] .caret,
+  #sticky-header-nav-menu .has-dropdown > a.dropdown-toggle[href="/about"] svg {
+    display: none !important;
   }
 }
 
