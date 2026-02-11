@@ -1,0 +1,16 @@
+data/
+hydra/
+.git/
+.gitignore
+README.md
+DEVELOPMENT.md
+docs/
+scripts/
+env/
+fcrepo/
+solr9-setup/
+*.yml
+*.sh
+bin/
+.circleci/
+.github/

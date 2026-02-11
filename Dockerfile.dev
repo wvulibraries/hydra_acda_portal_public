@@ -15,17 +15,7 @@
   # -------------------------------------------------------------------------------------------------
   RUN gem install bundler
   
-  # Copy the Gemfile and Gemfile.lock into the container
-  # -------------------------------------------------------------------------------------------------
-  COPY ./hydra/Gemfile ./hydra/Gemfile.lock /home/hydra/
-  
-  # Install gems
-  # -------------------------------------------------------------------------------------------------
-  RUN bundle install
-  
-  # Copy the rest of the application code into the container
-  # -------------------------------------------------------------------------------------------------
-  ADD ./hydra /home/hydra
+  # Note: Bundle install happens at runtime with mounted files
   
   # Use JEMALLOC instead
   # JEMalloc is a faster garbage collection for Ruby.

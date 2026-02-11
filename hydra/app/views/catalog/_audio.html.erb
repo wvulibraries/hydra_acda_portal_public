@@ -3,14 +3,14 @@
 <% project = @document[:project_ssi] %>
 <% num_files = @document[:num_files_isi] %>
 <% description = @document[:description_tesim] %>
-<% preview = @document[:preview_ssi] %>
+<% audio_url = @document[:available_by_tesim]&.first %>
 
 <div class="row">
   <div class="col-xs-12">      
       <a class="document-image-full" href="/audio/<%="#{identifier}"%>">
-        <!-- if preview then link to external mp3 else play local file -->
-        <% if preview.present? %>
-          <%= audio_tag("#{preview}", autoplay: false, controls: true) %> <br><br> 
+        <!-- use available_by (mp3) for audio playback -->
+        <% if audio_url.present? %>
+          <%= audio_tag(audio_url, autoplay: false, controls: true) %> <br><br> 
         <% else %>
           <%= audio_tag("/audio/#{identifier}", autoplay: false, controls: true) %> <br><br> 
         <% end %>
