@@ -28,12 +28,16 @@
   }
 
   #sticky-header-nav-menu.tabbarToggle > li a {
-    display: inline-block !important;
+    display: inline-flex !important;
+    align-items: center !important; // vertically center text
+    justify-content: center !important;
     color: #fff !important; // matches blue tab background
     font-weight: 700 !important;
     font-size: 16px !important;
-    padding: 0.6rem 1rem !important;
-    border-radius: 9999px !important; // pill shape
+    line-height: 1.2 !important;
+    padding: 0.5rem 0.875rem !important;
+    min-height: 40px !important; // consistent height for vertical centering
+    border-radius: 8px !important; // slightly rounded corners
     background: rgba(255,255,255,0.15) !important;
     border: 1px solid rgba(255,255,255,0.28) !important;
     text-decoration: none !important;
