@@ -30,14 +30,20 @@
 // --- Mobile menu improvements ---
 @media (max-width: 767px) {
   // Make the hamburger (menu) icon match other icon sizes
+  // Align the menu toggle container like other toolbar anchors
+  #menu-toggle {
+    display: block;
+    height: 35px;
+    margin: 10px 0;
+  }
+
   #menu-toggle img,
   #menu-toggle1,
   #menu-toggle2 {
-    width: 32px;
-    height: 32px;
+    height: 100%;
+    width: auto;
     display: inline-block;
-    position: relative;
-    top: 2px; // nudge down to align with other icons
+    vertical-align: middle;
   }
 
   #sticky-header-nav-menu {
