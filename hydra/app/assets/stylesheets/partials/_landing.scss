@@ -33,8 +33,11 @@
   #menu-toggle img,
   #menu-toggle1,
   #menu-toggle2 {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
+    display: inline-block;
+    position: relative;
+    top: 2px; // nudge down to align with other icons
   }
 
   #sticky-header-nav-menu {
