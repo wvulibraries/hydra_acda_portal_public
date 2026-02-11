@@ -29,6 +29,23 @@
 }
 // --- Mobile menu improvements ---
 @media (max-width: 767px) {
+  // Make the hamburger (menu) icon match other icon sizes
+  // Align the menu toggle container like other toolbar anchors
+  #menu-toggle {
+    display: block;
+    height: 35px;
+    margin: 10px 0;
+  }
+
+  #menu-toggle img,
+  #menu-toggle1,
+  #menu-toggle2 {
+    height: 100%;
+    width: auto;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
   #sticky-header-nav-menu {
     display: flex;
     flex-direction: column;
@@ -63,9 +80,33 @@
     border-radius: 0 0 8px 8px;
   }
 
+  // Remove caret/arrow for dropdowns (About is the only dropdown in mobile)
   #sticky-header-nav-menu .has-dropdown > a.dropdown-toggle:after {
-    content: ' ▼';
-    font-size: 0.8em;
+    content: none !important;
+    display: none !important;
+  }
+
+  // Remove arrow for the About link only (mobile)
+  #sticky-header-nav-menu .has-dropdown > a.dropdown-toggle[href="/about"]:after {
+    display: none !important;
+    border: 0 !important;
+    margin-left: 0 !important;
+    content: none !important;
+  }
+
+  // Also hide any embedded caret icon elements inside the About link
+  #sticky-header-nav-menu .has-dropdown > a.dropdown-toggle[href="/about"] .caret,
+  #sticky-header-nav-menu .has-dropdown > a.dropdown-toggle[href="/about"] svg {
+    display: none !important;
+  }
+
+  // Defensive: remove any Bootstrap caret on dropdown toggles within sticky header
+  .sticky-header-nav a.dropdown-toggle::after,
+  .sticky-header-nav a.dropdown-toggle::before {
+    display: none !important;
+    content: none !important;
+    border: 0 !important;
+    margin: 0 !important;
   }
 }
 
