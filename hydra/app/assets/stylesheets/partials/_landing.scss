@@ -6,25 +6,56 @@
   }
 
   #sticky-header-nav-menu.tabbarToggle {
-    display: inline-block !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
     position: absolute !important; // aligns with existing .tabbarToggle layout
     bottom: 55px !important;
     left: 0 !important;
     width: 100% !important;
     background: #337AB7 !important; // ensure blue tab background
-    padding: 5% !important; // match existing tab spacing
+    padding: 0.75rem 1rem !important; // tighter spacing for buttons
     z-index: 1005 !important; // ensure it overlays content
   }
 
   #sticky-header-nav-menu.tabbarToggle > li {
-    display: block !important;
-    margin: 0 0 0.75rem 0 !important;
+    display: inline-flex !important;
+    margin: 0 !important;
+    border: none !important;
   }
 
-  #sticky-header-nav-menu.tabbarToggle a {
+  #sticky-header-nav-menu.tabbarToggle > li a {
+    display: inline-block !important;
     color: #fff !important; // matches blue tab background
-    font-weight: bold;
-    font-size: 18px;
+    font-weight: 700 !important;
+    font-size: 16px !important;
+    padding: 0.6rem 1rem !important;
+    border-radius: 9999px !important; // pill shape
+    background: rgba(255,255,255,0.15) !important;
+    border: 1px solid rgba(255,255,255,0.28) !important;
+    text-decoration: none !important;
+    white-space: nowrap !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15) !important;
+    transition: background .2s ease, transform .2s ease, box-shadow .2s ease !important;
+  }
+
+  #sticky-header-nav-menu.tabbarToggle > li a:hover {
+    background: rgba(255,255,255,0.25) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.2) !important;
+  }
+
+  #sticky-header-nav-menu.tabbarToggle > li a:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15) !important;
+  }
+
+  // Hide dropdown list in horizontal mode (tap can still navigate)
+  #sticky-header-nav-menu.tabbarToggle .dropdown-menu {
+    display: none !important;
   }
 }
 // --- Mobile menu improvements ---
