@@ -25,6 +25,8 @@ services:
       - ./data/images:/home/hydra/tmp/images
       - ./data/thumbnails:/home/hydra/tmp/thumbnails
       - ./data/pdf:/home/hydra/tmp/pdf
+    command: ["sleep", "infinity"]
+    restart: unless-stopped
     networks:
       - hydra
 
@@ -32,6 +34,7 @@ services:
     extends: app
     container_name: acda_portal
     command: bash -c "bundle install; sh ./scripts/startup.sh"
+    restart: unless-stopped
     ports:
       - "3000:3000"
     depends_on:
@@ -52,6 +55,7 @@ services:
     extends: app
     container_name: sidekiq
     command:  bash -c "bundle install; bundle exec sidekiq -C config/sidekiq.yml"
+    restart: unless-stopped
     deploy:
       resources:
         limits:
@@ -75,6 +79,7 @@ services:
     image: memcached:1.6.22-alpine
     container_name: memcached
     command: ["memcached", "-m", "64"]
+    restart: unless-stopped
     ports:
       - "11211"
     networks:
@@ -102,7 +107,7 @@ services:
   fcrepo:
     image: fcrepo/fcrepo:6.5.1-tomcat9
     container_name: fcrepo
-    restart: always
+    restart: unless-stopped
     ports:
       - "8080:8080"
     env_file:
