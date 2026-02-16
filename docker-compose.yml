@@ -27,6 +27,7 @@ services:
     extends: app
     container_name: acda_portal
     command: bash -c "bundle install; sh ./scripts/startup.sh"
+    restart: always
     ports:
       - "3000:3000"
     depends_on:
