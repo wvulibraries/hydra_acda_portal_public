@@ -20,7 +20,7 @@ services:
       - ./data/imports:/home/hydra/tmp/imports
       - ./data/exports:/home/hydra/tmp/exports
       - ./data/validations:/home/hydra/tmp/validations
-    profiles: ["base-only"]
+    command: ["sleep", "infinity"]
     restart: unless-stopped
     networks:
       - hydra
