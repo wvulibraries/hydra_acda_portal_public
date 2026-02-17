@@ -6,6 +6,7 @@ RSpec.describe ProcessThumbnailJob, type: :job do
 
   before do
     allow(Acda).to receive(:with_thumbnail_lock).and_yield(acda_record)
+    stub_request(:get, 'https://example.com/thumbnail.jpg').to_return(body: 'fake image data')
   end
 
   describe '#perform' do

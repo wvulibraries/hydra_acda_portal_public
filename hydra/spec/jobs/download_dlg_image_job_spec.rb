@@ -6,6 +6,8 @@ RSpec.describe DownloadDlgImageJob, type: :job do
 
   before do
     allow(Acda).to receive(:where).and_return([acda_record])
+    stub_request(:get, "https://dlg.usg.edu/images/iiif/2/dlg%2Fgych%2Frbrl001%2Ftest-identifier%2Ftest-identifier-00001.jp2/full/max/0/default.jpg").to_return(body: 'fake image data')
+    stub_request(:get, 'https://example.com/thumbnail.jpg').to_return(body: 'fake image data')
   end
 
   describe '#perform' do

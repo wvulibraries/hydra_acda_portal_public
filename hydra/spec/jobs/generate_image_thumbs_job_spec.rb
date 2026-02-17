@@ -8,6 +8,13 @@ RSpec.describe GenerateImageThumbsJob, type: :job do
   before do
     allow(File).to receive(:exist?).and_return(true)
     allow(Acda).to receive(:where).and_return([acda_record])
+    allow(File).to receive(:rename).and_return(true)
+    allow(File).to receive(:open).and_return(StringIO.new('fake file content'))
+    allow(acda_record).to receive(:files).and_return(double('files', build: double('file'), present?: false))
+    allow(acda_record).to receive(:build_image_file).and_return(double('file', save!: true, :mime_type= => nil, :content= => nil, :original_name= => nil))
+    allow(acda_record).to receive(:build_thumbnail_file).and_return(double('file', save!: true, :mime_type= => nil, :content= => nil, :original_name= => nil))
+    allow(acda_record).to receive(:save!)
+    stub_request(:get, 'https://example.com/thumbnail.jpg').to_return(body: 'fake image data')
   end
 
   describe '#perform' do

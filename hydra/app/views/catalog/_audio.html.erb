@@ -20,7 +20,7 @@
     <div id="document" class="document <%= render_document_class %>" itemscope  itemtype="<%= @document.itemtype %>">
       <div id="doc_<%= @document.id.to_s.parameterize %>">
         <% # bookmark/folder functions -%>
-        <%= render_document_partials @document, blacklight_config.view_config(:show).partials %>
+        <%= render_document_partials @document, (defined?(blacklight_config) && blacklight_config ? blacklight_config.view_config(:show).partials : []) %>
       </div>
     </div>
   </div>

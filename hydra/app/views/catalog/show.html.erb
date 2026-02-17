@@ -14,16 +14,16 @@
 
 
 
-  <% if @document[:dc_type_ssi] == "Image" || @document[:dc_type_ssi] == "Collection" || @document[:dc_type_ssi] == "StillImage"%>
+  <% if @document[:dc_type_tesim]&.first == "Image" || @document[:dc_type_tesim]&.first == "Collection" || @document[:dc_type_tesim]&.first == "StillImage"%>
     <%= render 'image' %>
-  <% elsif @document[:dc_type_ssi] == "Text" %>
+  <% elsif @document[:dc_type_tesim]&.first == "Text" %>
     <%= render 'pdf' %>
-  <% elsif @document[:dc_type_ssi] == "Sound" %>
+  <% elsif @document[:dc_type_tesim]&.first == "Sound" %>
     <%= render 'audio' %>
-  <% elsif @document[:dc_type_ssi] == "Moving Image" || @document[:dc_type_ssi] == "MovingImage"%>
+  <% elsif @document[:dc_type_tesim]&.first == "Moving Image" || @document[:dc_type_tesim]&.first == "MovingImage"%>
     <%= render 'video' %>
     
-  <% elsif @document[:dc_type_ssi] == "Interactive Resource" || @document[:dc_type_ssi] == "InteractiveResource" %>
+  <% elsif @document[:dc_type_tesim]&.first == "Interactive Resource" || @document[:dc_type_tesim]&.first == "InteractiveResource" %>
   <%= render 'interactive' %>
 
 

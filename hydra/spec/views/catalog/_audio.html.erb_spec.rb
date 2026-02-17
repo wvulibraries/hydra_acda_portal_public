@@ -1,19 +1,22 @@
 require 'rails_helper'
 
 RSpec.describe 'Audio player view', type: :view do
+  include Blacklight::CatalogHelperBehavior
+  include Blacklight::ConfigurationHelperBehavior
   let(:audio_url) { 'https://dolecollections.ku.edu/files/original/57/c031_007/c031_007.mp3' }
   let(:identifier) { 'c031_007' }
   let(:document) do
-    {
+    OpenStruct.new(
       id: identifier,
       available_by_tesim: [audio_url],
-      dc_type_ssi: 'Sound'
-    }
+      dc_type_tesim: ['Sound'],
+      itemtype: 'http://schema.org/AudioObject'
+    )
   end
 
   before do
-    # Stub blacklight_config to prevent errors in partial
-    allow(view).to receive(:blacklight_config).and_return(OpenStruct.new(view_config: OpenStruct.new(show: OpenStruct.new(partials: []))))
+    # Set up Blacklight configuration
+    allow(view).to receive(:render_document_partials).and_return('')
     allow(view).to receive(:render_document_class).and_return('')
   end
 
@@ -26,9 +29,13 @@ RSpec.describe 'Audio player view', type: :view do
   end
 
   it 'renders fallback player if no audio_url' do
-    document.delete(:available_by_tesim)
-    assign(:document, document)
-    render template: 'catalog/_audio', locals: { document: document }
+    document_without_audio = OpenStruct.new(
+      id: identifier,
+      dc_type_tesim: ['Sound'],
+      itemtype: 'http://schema.org/AudioObject'
+    )
+    assign(:document, document_without_audio)
+    render template: 'catalog/_audio', locals: { document: document_without_audio }
     expect(rendered).to include("/audio/#{identifier}")
   end
 end
