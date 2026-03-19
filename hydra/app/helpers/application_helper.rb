@@ -3,6 +3,10 @@ require 'addressable/uri'
 
 module ApplicationHelper
 
+  INACTIVE_URLS = Rails.root.join('app', 'helpers', 'inactive_check_urls.txt')
+  .then { |f| File.readlines(f, chomp: true).reject { |l| l.blank? || l.start_with?('#') } }
+  .freeze
+
   def application_name
     'American Congress Digital Archives Portal'
   end
@@ -68,7 +72,9 @@ module ApplicationHelper
 
   def is_active_url?(url, retries = 3)
     return false if url.blank?
-    return true if url.include?('dlg.usg.edu/thumbnails/')  # Always consider DLG thumbnail URLs active
+    #return true if url.include?('dlg.usg.edu/thumbnails/')  # Always consider DLG thumbnail URLs active
+
+    return true if INACTIVE_URLS.any? { |pattern| url.include?(pattern) }
   
     # Try to get cached result first
     url_check = UrlCheck.find_or_create_by(url: url)
