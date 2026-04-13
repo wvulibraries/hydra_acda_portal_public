@@ -1,4 +1,4 @@
-<%# Ruby Page Variables %>
+]<%# Ruby Page Variables %>
 <% identifier = @document[:id] %>
 <% project = @document[:project_ssi] %>
 <% num_files = @document[:num_files_isi] %>
@@ -10,13 +10,17 @@
 <div class="row">
   <div class="col-md-4">      
     <a class="document-image-full" href="<%= available %>">
+
       <% if is_active_url?(preview) %>
-        <%= image_tag(preview, title:"#{title}", alt:description, class:"full-size-responsive") %>
-      <% elsif @document.image_file? %>  
+        <%= image_tag(preview, title:"#{title}", alt:description, class:"full-size-responsive",
+              onerror: "this.onerror=null; fetch('/url_health/report_down?url=#{CGI.escape(preview)}', {method:'POST'}); this.src='/image/#{identifier}';") %>
+      <% elsif @document.image_file? %>
         <%= image_tag("/image/#{identifier}", title:"#{@document[:title_ssi]}", alt:description, class:"full-size-responsive") %>
       <% else %>
         <span class="fa fa-file-image-o fa-5x" aria-hidden="true"></span>
       <% end %>
+
+
       <br><br>
       <span class="fa fa-file-image-o"> Click on the image to view full size.</span>
     </a>
