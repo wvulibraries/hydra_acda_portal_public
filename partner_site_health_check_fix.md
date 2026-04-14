@@ -1,4 +1,4 @@
-# Partner Site Health Check — Fix Documentation
+# Partner Site Health Check — Fix
 
 ## Problem
 
