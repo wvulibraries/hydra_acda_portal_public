@@ -1,0 +1,6 @@
+# If you see any partner sites go down and we refer to their content in the preview metadata variable
+# add those sites here to fix the issue/ a safeguard for our site not to break down while trying to hit a site that is down
+
+
+
+dlg.usg.edu/thumbnails/

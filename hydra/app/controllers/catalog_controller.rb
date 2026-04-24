@@ -44,8 +44,8 @@ class CatalogController < ApplicationController
     config.oai = {
       provider: {
         repository_name: 'American Congress Digital Archives Portal',
-        repository_url: 'https://congressarchivesdev.lib.wvu.edu/catalog/oai',
-        record_prefix: 'https://congressarchivesdev.lib.wvu.edu/catalog/',
+        repository_url: 'https://congressarchives.org/catalog/oai',
+        record_prefix: 'https://congressarchives.org/catalog/',
         admin_email: 'libdev@mail.wvu.edu'
       },
       document: {

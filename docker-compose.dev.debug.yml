@@ -6,7 +6,6 @@
 # Example:
 #
 # $ docker compose -f docker-compose.dev.yml -f docker-compose.dev.debug.yml up
-version: '3.4'
 services:
   web:
     command: tail -f /dev/null

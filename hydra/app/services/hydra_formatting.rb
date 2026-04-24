@@ -36,7 +36,9 @@ class HydraFormatting
 
   # mime type
   def self.mime_type(filename)
-    MIME::Types.type_for("#{filename}").first.content_type
+    # MIME::Types.type_for("#{filename}").first.content_type
+    type = MIME::Types.type_for(filename).first
+    type ? type.content_type : "application/octet-stream"
   end
 
   # adjust hashes/strings to array
