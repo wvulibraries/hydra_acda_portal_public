@@ -1,4 +1,4 @@
-  // enables the tabs in the importers/exporters pages.
+// enables the tabs in the importers/exporters pages.
   $(document).ready(function() {
     $('.bulkrax-nav-tab-top-margin.nav-tabs a').click(function(e) {
       e.preventDefault();
@@ -33,4 +33,14 @@
       $('#full-mappings-tab, #bulkrax-full-toggle-2').removeClass('active');
       $('#raw-mappings-tab, #bulkrax-raw-toggle-2').addClass('active');
     })
+  });
+
+  // Mobile hamburger menu toggle for navigation
+  $(document).ready(function() {
+    var hamburger = $('#navbar-hamburger-toggle');
+    var menu = $('#sticky-header-nav-menu');
+
+    hamburger.on('click', function() {
+      menu.toggleClass('active');
+    });
   });

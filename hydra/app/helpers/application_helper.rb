@@ -3,9 +3,9 @@ require 'addressable/uri'
 
 module ApplicationHelper
 
-  INACTIVE_URLS = Rails.root.join('app', 'helpers', 'inactive_check_urls.txt')
-  .then { |f| File.readlines(f, chomp: true).reject { |l| l.blank? || l.start_with?('#') } }
-  .freeze
+  # INACTIVE_URLS = Rails.root.join('app', 'helpers', 'inactive_check_urls.txt')
+  # .then { |f| File.readlines(f, chomp: true).reject { |l| l.blank? || l.start_with?('#') } }
+  # .freeze
 
   def application_name
     'American Congress Digital Archives Portal'
@@ -48,7 +48,8 @@ module ApplicationHelper
     elsif document[:dc_type_ssi] == "Sound"
       link_to_document document, render(partial: 'catalog/audio_button'), class: "button audio-button"
     elsif is_active_url?(preview)
-      image_tag(preview, title: title, alt: description, class: "full-size-responsive")
+      image_tag(preview, title: title, alt: description, class: "full-size-responsive",
+                onerror: onerror_handler(preview, "/thumb/#{id}.jpg"))
     elsif document.thumbnail_file?
       image_tag("/thumb/#{id}.jpg", title: title, alt: description, class: "full-size-responsive")
     elsif document[:dc_type_ssi]&.include?("Moving")
@@ -60,6 +61,15 @@ module ApplicationHelper
     end
   end
 
+  # Builds the onerror JS handler — reports domain down then falls back to local thumbnail
+  def onerror_handler(preview_url, fallback_path)
+    report_url = "/url_health/report_down?url=#{CGI.escape(preview_url)}"
+    "this.onerror=null; fetch('#{report_url}', {method:'POST'}); this.src='#{fallback_path}';"
+  end
+
+
+  
+
   def format_url(url)
     return url if url.blank?
   
@@ -70,51 +80,58 @@ module ApplicationHelper
     url.match?(/\Ahttp(s)?:\/\//) ? sanitize_url(url) : "https://#{sanitize_url(url)}"
   end
 
-  def is_active_url?(url, retries = 3)
+
+  # Safe to call in views — only reads Redis, never makes HTTP calls
+  def is_active_url?(url)
     return false if url.blank?
-    # return true if url.include?('dlg.usg.edu/thumbnails/')  # Always consider DLG thumbnail URLs active
-    
-    return true if INACTIVE_URLS.any? { |pattern| url.include?(pattern) }
-  
-    # Try to get cached result first
-    url_check = UrlCheck.find_or_create_by(url: url)
-    
-    # Return cached result if recent and not failed
-    return url_check.active if !url_check.needs_recheck? && url_check.active
-  
-    retries.times do |i|
-      begin
-        resolved_url = resolve_redirect(url)
-        uri = URI.parse(resolved_url)
-        
-        http = Net::HTTP.new(uri.host, uri.port)
-        http.use_ssl = (uri.scheme == 'https')
-        http.read_timeout = 10
-        http.open_timeout = 5
-        
-        response = http.head(uri.request_uri)  # Use HEAD request instead of GET
-        is_active = response.is_a?(Net::HTTPSuccess) || response.is_a?(Net::HTTPRedirection)
-  
-        # Update cache on success
-        url_check.update(
-          active: is_active,
-          last_checked_at: Time.current
-        )
-  
-        return is_active
-      rescue URI::InvalidURIError => e
-        Rails.logger.error "Invalid URL: #{url}. #{e.message}"
-        break  # Don't retry on invalid URLs
-      rescue StandardError => e
-        Rails.logger.error "Attempt #{i + 1}/#{retries} failed for URL #{url}: #{e.message}"
-        sleep(1) unless i == retries - 1  # Sleep between retries
-      end
-    end
-  
-    # If we get here, all retries failed
-    url_check.update(active: false)
-    false
+    DomainHealthService.up?(url)
   end
+
+  # def is_active_url?(url, retries = 3)
+  #   return false if url.blank?
+  #   # return true if url.include?('dlg.usg.edu/thumbnails/')  # Always consider DLG thumbnail URLs active
+    
+  #   return true if INACTIVE_URLS.any? { |pattern| url.include?(pattern) }
+  
+  #   # Try to get cached result first
+  #   url_check = UrlCheck.find_or_create_by(url: url)
+    
+  #   # Return cached result if recent and not failed
+  #   return url_check.active if !url_check.needs_recheck? && url_check.active
+  
+  #   retries.times do |i|
+  #     begin
+  #       resolved_url = resolve_redirect(url)
+  #       uri = URI.parse(resolved_url)
+        
+  #       http = Net::HTTP.new(uri.host, uri.port)
+  #       http.use_ssl = (uri.scheme == 'https')
+  #       http.read_timeout = 10
+  #       http.open_timeout = 5
+        
+  #       response = http.head(uri.request_uri)  # Use HEAD request instead of GET
+  #       is_active = response.is_a?(Net::HTTPSuccess) || response.is_a?(Net::HTTPRedirection)
+  
+  #       # Update cache on success
+  #       url_check.update(
+  #         active: is_active,
+  #         last_checked_at: Time.current
+  #       )
+  
+  #       return is_active
+  #     rescue URI::InvalidURIError => e
+  #       Rails.logger.error "Invalid URL: #{url}. #{e.message}"
+  #       break  # Don't retry on invalid URLs
+  #     rescue StandardError => e
+  #       Rails.logger.error "Attempt #{i + 1}/#{retries} failed for URL #{url}: #{e.message}"
+  #       sleep(1) unless i == retries - 1  # Sleep between retries
+  #     end
+  #   end
+  
+  #   # If we get here, all retries failed
+  #   url_check.update(active: false)
+  #   false
+  # end
 
   # Using this instead of #link_to_facet in the catalog_controller was giving us just strings instead of
   # html safe displays for some reason, so we're using this helper method instead.
