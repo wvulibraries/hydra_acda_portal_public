@@ -6,10 +6,10 @@ Rails.application.configure do
   # In the development environment your application's code is reloaded any time
   # it changes. This slows down response time but is perfect for development
   # since you don't have to restart the web server when you make code changes.
-  config.cache_classes = false
+  config.cache_classes = true
 
   # Do not eager load code on boot.
-  config.eager_load = false
+  config.eager_load = true
 
   # Show full error reports.
   config.consider_all_requests_local = true
@@ -93,6 +93,10 @@ Rails.application.configure do
   config.active_job.queue_adapter = :sidekiq
 
   # developers can add their individual ips to this value. This configuration can also take an array
-  config.web_console.allowed_ips = %w(127.0.0.1 172.0.0.0/8 0.0.0.0/0)
+  config.web_console.allowed_ips = [
+    "127.0.0.1",
+    "10.0.0.0/8",
+    "157.182.0.0/16"
+  ]
   config.web_console.development_only = false
 end
