@@ -25,7 +25,7 @@ Rails.application.configure do
 
     config.cache_store = :redis_cache_store, {
       url: ENV.fetch('REDIS_URL_SIDEKIQ', 'redis://redis:6379/0'),
-      pool_size: ENV.fetch('RAILS_MAX_THREADS', 5),
+      pool_size: ENV.fetch('RAILS_MAX_THREADS', 5).to_i,
       pool_timeout: 5
     }
     config.public_file_server.headers = {
@@ -58,12 +58,12 @@ Rails.application.configure do
   config.active_record.migration_error = :page_load
 
   # Highlight code that triggered database queries in logs.
-  config.active_record.verbose_query_logs = true
+  config.active_record.verbose_query_logs = false
 
   # Debug mode disables concatenation and preprocessing of assets.
   # This option may cause significant delays in view rendering with a large
   # number of complex assets.
-  config.assets.debug = true
+  config.assets.debug = false
 
   # Suppress logger output for asset requests.
   config.assets.quiet = true
@@ -88,7 +88,7 @@ Rails.application.configure do
 
   # Use an evented file watcher to asynchronously detect changes in source code,
   # routes, locales, etc. This feature depends on the listen gem.
-  config.file_watcher = ActiveSupport::EventedFileUpdateChecker
+#  config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
   config.active_job.queue_adapter = :sidekiq
 
