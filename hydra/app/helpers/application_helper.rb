@@ -61,10 +61,10 @@ module ApplicationHelper
     end
   end
 
-  # Builds the onerror JS handler — reports domain down then falls back to local thumbnail
+  
+  
   def onerror_handler(preview_url, fallback_path)
-    report_url = "/url_health/report_down?url=#{CGI.escape(preview_url)}"
-    "this.onerror=null; fetch('#{report_url}', {method:'POST'}); this.src='#{fallback_path}';"
+    "this.onerror=null; this.src='#{fallback_path}';"
   end
 
 
@@ -83,8 +83,7 @@ module ApplicationHelper
 
   # Safe to call in views — only reads Redis, never makes HTTP calls
   def is_active_url?(url)
-    return false if url.blank?
-    DomainHealthService.up?(url)
+    url.present?
   end
 
   # def is_active_url?(url, retries = 3)
