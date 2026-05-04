@@ -30,9 +30,14 @@
   # Use JEMALLOC instead
   # JEMalloc is a faster garbage collection for Ruby.
   # -------------------------------------------------------------------------------------------------
-  RUN apt-get install -y libjemalloc2 libjemalloc-dev
-  ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so
-  
+  RUN apt-get install -y libjemalloc2 && \
+    JEMALLOC_PATH=$(find /usr -name 'libjemalloc.so.2' | head -1) && \
+    echo "Found jemalloc at $JEMALLOC_PATH" && \
+    echo "export LD_PRELOAD=$JEMALLOC_PATH" >> /etc/profile.d/jemalloc.sh && \
+    ln -sf $JEMALLOC_PATH /usr/local/lib/libjemalloc.so.2
+
+  ENV LD_PRELOAD=/usr/local/lib/libjemalloc.so.2    
+
   # increase ImageMagick's memory limit
   # -------------------------------------------------------------------------------------------------
   RUN sed -i -E 's/name="disk" value=".+"/name="disk" value="4GiB"/g' /etc/ImageMagick-6/policy.xml
