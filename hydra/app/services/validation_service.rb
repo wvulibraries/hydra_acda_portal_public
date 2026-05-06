@@ -191,8 +191,10 @@ class ValidationService
       uri = URI(base_url)
       uri.query = URI.encode_www_form(params)
 
-      response = Net::HTTP.get(uri)
-      doc = Nokogiri::XML(response)
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = (uri.scheme == 'https')
+      response = http.get(uri.request_uri)
+      doc = Nokogiri::XML(response.body)
 
       result = doc.xpath('//atom:entry', 'atom' => 'http://www.w3.org/2005/Atom').select do |entry|
         entry.at_xpath('atom:title', 'atom' => 'http://www.w3.org/2005/Atom')&.text == value
@@ -235,7 +237,7 @@ class ValidationService
       response = Net::HTTP.get_response(uri)
 
       unless response.is_a?(Net::HTTPSuccess)
-        add_error(value:, message: "Error: #{response.message}")
+        Rails.logger.warn "Getty AAT SPARQL error: #{response.code} #{response.message}"
         return nil
       end
 
