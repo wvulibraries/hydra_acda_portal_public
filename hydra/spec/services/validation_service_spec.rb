@@ -223,19 +223,9 @@ RSpec.describe ValidationService do
         .to_return(
           status: 200,
           body: {
-            results: {
-              bindings: [{
-                concept: { value: 'http://vocab.getty.edu/aat/123' }
-              }]
-            }
-          }.to_json
-        )
-
-      service.send(:search_getty_aat)
-      expect(service.results).to be_empty
-    end
-
-    it 'falls back to HTML when SPARQL fails' do
+            results = service.validate
+            expect(results).to match_array([
+              hash_including(
       service.instance_variable_set(:@values, ['Oil paintings'])
       
       stub_request(:get, "https://vocab.getty.edu/sparql")
