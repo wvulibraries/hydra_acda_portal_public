@@ -168,15 +168,20 @@ RSpec.describe ValidationService do
         results = service.validate
         expect(results).to match_array([
           hash_including(
-            # General stub for all LCNAF requests (fixes Net::HTTP.get WebMock error)
-            stub_request(:get, %r{https://id\.loc\.gov/search/.*})
-              .to_return(status: 200, body: <<~XML
-                <?xml version="1.0" encoding="UTF-8"?>
-                <feed xmlns="http://www.w3.org/2005/Atom">
-                  <entry><title>Test Creator</title></entry>
-                </feed>
-              XML
-              )
+            header: "dcterms:creator",
+            message: "<strong>Invalid Creator</strong> was not found in LC Linked Data Service (LCNAF)",
+            row: 2
+          ),
+          hash_including(
+            header: "dcterms:created",
+            message: "<strong>not-a-date</strong> is not a valid EDTF",
+            row: 2
+          ),
+          hash_including(
+            header: "dcterms:language",
+            message: "<strong>xyz</strong> is not a valid language code",
+            row: 2
+          ),
           hash_including(
             header: "dcterms:rights",
             message: "<strong>Invalid Rights</strong> is not valid",
