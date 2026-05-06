@@ -288,7 +288,7 @@ RSpec.describe ValidationService do
       expect(service.results).to include(
         hash_including(
           header: 'dcterms:http://purl.org/dc/terms/type',
-          message: 'Invalid Format is not valid'
+          message: '<strong>Invalid Format</strong> was not found in Getty AAT'
         )
       )
     end
