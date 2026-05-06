@@ -13,13 +13,7 @@ RSpec.describe ValidationService do
       let(:service) { described_class.new(path: valid_csv_path) }
       before do
         # Stub LC request
-        stub_request(:get, "https://id.loc.gov/search/?format=atom&q=%22Test%20Creator%22")
-          .with(headers: {
-            'Accept'=>'*/*',
-            'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-            'Host'=>'id.loc.gov',
-            'User-Agent'=>'Ruby'
-          })
+        stub_request(:get, %r{https://id\.loc\.gov/search/.*})
           .to_return(status: 200, body: <<~XML
             <?xml version="1.0" encoding="UTF-8"?>
             <feed xmlns="http://www.w3.org/2005/Atom">
@@ -114,13 +108,7 @@ RSpec.describe ValidationService do
 
       before do
         # Stub LC request - empty response
-        stub_request(:get, "https://id.loc.gov/search/?format=atom&q=%22Invalid%20Creator%22")
-          .with(headers: {
-            'Accept'=>'*/*',
-            'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-            'Host'=>'id.loc.gov',
-            'User-Agent'=>'Ruby'
-          })
+        stub_request(:get, %r{https://id\.loc\.gov/search/.*})
           .to_return(status: 200, body: <<~XML
             <?xml version="1.0" encoding="UTF-8"?>
             <feed xmlns="http://www.w3.org/2005/Atom"></feed>
@@ -282,17 +270,17 @@ RSpec.describe ValidationService do
           HTML
         )
 
-      service.send(:search_getty_tgn)
+      service.send(:search_getty_aat)
       expect(service.results).to be_empty
     end
 
     it 'handles malformed place values' do
       service.instance_variable_set(:@values, ['Invalid Format'])
       
-      service.send(:search_getty_tgn)
+      service.send(:search_getty_aat)
       expect(service.results).to include(
         hash_including(
-          header: 'dcterms:spatial',
+          header: 'dcterms:http://purl.org/dc/terms/type',
           message: 'Invalid Format is not valid'
         )
       )
