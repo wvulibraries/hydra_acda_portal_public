@@ -277,6 +277,13 @@ RSpec.describe ValidationService do
     it 'handles malformed place values' do
       service.instance_variable_set(:@values, ['Invalid Format'])
       
+      stub_request(:get, "https://vocab.getty.edu/sparql")
+        .with(query: hash_including({format: 'json'}))
+        .to_return(status: 200, body: {results: {bindings: []}}.to_json)
+
+      stub_request(:get, %r{https://www\.getty\.edu/vow/AATServlet.*})
+        .to_return(status: 200, body: "<html><body></body></html>")
+      
       service.send(:search_getty_aat)
       expect(service.results).to include(
         hash_including(
