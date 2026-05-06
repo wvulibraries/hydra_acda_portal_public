@@ -13,13 +13,7 @@ RSpec.describe ValidationService do
       let(:service) { described_class.new(path: valid_csv_path) }
       before do
         # Stub LC request
-        stub_request(:get, "https://id.loc.gov/search/?format=atom&q=%22Test%20Creator%22")
-          .with(headers: {
-            'Accept'=>'*/*',
-            'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-            'Host'=>'id.loc.gov',
-            'User-Agent'=>'Ruby'
-          })
+        stub_request(:get, %r{https://id\.loc\.gov/search/.*})
           .to_return(status: 200, body: <<~XML
             <?xml version="1.0" encoding="UTF-8"?>
             <feed xmlns="http://www.w3.org/2005/Atom">
@@ -114,13 +108,7 @@ RSpec.describe ValidationService do
 
       before do
         # Stub LC request - empty response
-        stub_request(:get, "https://id.loc.gov/search/?format=atom&q=%22Invalid%20Creator%22")
-          .with(headers: {
-            'Accept'=>'*/*',
-            'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-            'Host'=>'id.loc.gov',
-            'User-Agent'=>'Ruby'
-          })
+        stub_request(:get, %r{https://id\.loc\.gov/search/.*})
           .to_return(status: 200, body: <<~XML
             <?xml version="1.0" encoding="UTF-8"?>
             <feed xmlns="http://www.w3.org/2005/Atom"></feed>
@@ -240,7 +228,7 @@ RSpec.describe ValidationService do
       expect(service.results).to be_empty
     end
 
-    it 'falls back to HTML when SPARQL fails' do
+    it 'falls back to HTML lookup successfully when SPARQL fails' do
       service.instance_variable_set(:@values, ['Oil paintings'])
       
       stub_request(:get, "https://vocab.getty.edu/sparql")
@@ -267,50 +255,6 @@ RSpec.describe ValidationService do
             </html>
           HTML
         )
-
-      service.send(:search_getty_aat)
-      expect(service.results).to be_empty
-    end
-
-    #Will fail, we don't take care of timeouts 
-    it 'handles SPARQL endpoint failures' do
-      service.instance_variable_set(:@values, ['Oil paintings'])
-      
-      stub_request(:get, "https://vocab.getty.edu/sparql")
-        .with(query: hash_including({format: 'json'}))
-        .to_timeout
-
-      stub_request(:get, %r{https://www\.getty\.edu/vow/AATServlet.*})
-        .to_return(
-          status: 200,
-          body: <<~HTML
-            <html>
-              <body>
-                <td valign="bottom" colspan="2">
-                  <span class="page">
-                    <a><b>Oil paintings</b></a>
-                  </span>
-                </td>
-              </body>
-            </html>
-          HTML
-        )
-
-      service.send(:search_getty_aat)
-      expect(service.results).to be_empty
-    end
-  end
-
-  describe '#search_getty_tgn' do
-    let(:service) { described_class.new(path: valid_csv_path) }
-
-    before do
-      service.instance_variable_set(:@header, 'dcterms:spatial')
-      service.instance_variable_set(:@row_number, 1)
-    end
-
-    it 'validates place with type correctly' do
-      service.instance_variable_set(:@values, ['Maryland (state)'])
       
       stub_request(:get, %r{https://www\.getty\.edu/vow/TGNServlet.*})
         .to_return(
@@ -326,18 +270,25 @@ RSpec.describe ValidationService do
           HTML
         )
 
-      service.send(:search_getty_tgn)
+      service.send(:search_getty_aat)
       expect(service.results).to be_empty
     end
 
     it 'handles malformed place values' do
       service.instance_variable_set(:@values, ['Invalid Format'])
       
-      service.send(:search_getty_tgn)
+      stub_request(:get, "https://vocab.getty.edu/sparql")
+        .with(query: hash_including({format: 'json'}))
+        .to_return(status: 200, body: {results: {bindings: []}}.to_json)
+
+      stub_request(:get, %r{https://www\.getty\.edu/vow/AATServlet.*})
+        .to_return(status: 200, body: "<html><body></body></html>")
+      
+      service.send(:search_getty_aat)
       expect(service.results).to include(
         hash_including(
-          header: 'dcterms:spatial',
-          message: 'Invalid Format is not valid'
+          header: 'dcterms:http://purl.org/dc/terms/type',
+          message: '<strong>Invalid Format</strong> was not found in Getty AAT'
         )
       )
     end

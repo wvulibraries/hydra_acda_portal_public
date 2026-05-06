@@ -23,7 +23,6 @@ Rails.application.routes.draw do
   get '/validate' => 'validations#upload'
   post '/validate' => 'validations#show'
 
-  post '/url_health/report_down', to: 'url_health#report_down'
 
   # Add routes for the HTML pages
   # partner archived pages?
