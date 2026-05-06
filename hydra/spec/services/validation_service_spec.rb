@@ -228,9 +228,19 @@ RSpec.describe ValidationService do
         .to_return(
           status: 200,
           body: {
-            results = service.validate
-            expect(results).to match_array([
-              hash_including(
+            results: {
+              bindings: [{
+                concept: { value: 'http://vocab.getty.edu/aat/123' }
+              }]
+            }
+          }.to_json
+        )
+
+      service.send(:search_getty_aat)
+      expect(service.results).to be_empty
+    end
+
+    it 'falls back to HTML lookup successfully when SPARQL fails' do
       service.instance_variable_set(:@values, ['Oil paintings'])
       
       stub_request(:get, "https://vocab.getty.edu/sparql")
@@ -257,45 +267,6 @@ RSpec.describe ValidationService do
             </html>
           HTML
         )
-
-      service.send(:search_getty_aat)
-            # General stub for all LCNAF requests (fixes Net::HTTP.get WebMock error)
-            stub_request(:get, %r{https://id\.loc\.gov/search/.*})
-              .to_return(status: 200, body: <<~XML
-                <?xml version="1.0" encoding="UTF-8"?>
-                <feed xmlns="http://www.w3.org/2005/Atom"></feed>
-              XML
-              )
-        .to_return(
-          status: 200,
-          body: <<~HTML
-            <html>
-              <body>
-                <td valign="bottom" colspan="2">
-                  <span class="page">
-                    <a><b>Oil paintings</b></a>
-                  </span>
-                </td>
-              </body>
-            </html>
-          HTML
-        )
-
-      service.send(:search_getty_aat)
-      expect(service.results).to be_empty
-    end
-  end
-
-  describe '#search_getty_tgn' do
-    let(:service) { described_class.new(path: valid_csv_path) }
-
-    before do
-      service.instance_variable_set(:@header, 'dcterms:spatial')
-      service.instance_variable_set(:@row_number, 1)
-    end
-
-    it 'validates place with type correctly' do
-      service.instance_variable_set(:@values, ['Maryland (state)'])
       
       stub_request(:get, %r{https://www\.getty\.edu/vow/TGNServlet.*})
         .to_return(
