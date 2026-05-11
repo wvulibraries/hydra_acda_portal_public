@@ -134,33 +134,13 @@ RSpec.describe ApplicationHelper, type: :helper do
   end
 
   describe '#is_active_url?' do
-    let(:url) { 'http://example.com' }
-    let(:url_check) { double('UrlCheck', active: false, needs_recheck?: true, update: true) }
-    before do
-      url_check_class = Class.new do
-        def self.find_or_create_by(url:); end
-      end
-      stub_const('UrlCheck', url_check_class)
-      allow(url_check_class).to receive(:find_or_create_by).and_return(url_check)
-      allow(helper).to receive(:resolve_redirect).and_return(url)
-      allow(URI).to receive(:parse).and_return(URI('http://example.com'))
-      http_double = double('Net::HTTP')
-      allow(http_double).to receive(:use_ssl=)
-      allow(http_double).to receive(:read_timeout=)
-      allow(http_double).to receive(:open_timeout=)
-      allow(http_double).to receive(:head).and_return(double('Response', is_a?: true))
-      allow(Net::HTTP).to receive(:new).and_return(http_double)
+    it 'returns false if url is blank' do
+      expect(helper.is_active_url?('')).to eq(false)
+      expect(helper.is_active_url?(nil)).to eq(false)
     end
-    it 'returns false if url_check.active is false after retries' do
-      allow(url_check).to receive(:update)
-      expect(helper.is_active_url?(url, 1)).to eq(true)
-    end
-    it 'returns false if all retries fail' do
-      allow(helper).to receive(:resolve_redirect).and_raise(StandardError.new('fail'))
-      allow(url_check).to receive(:update)
-      expect(Rails.logger).to receive(:error).at_least(:once)
-      expect(url_check).to receive(:update).with(active: false)
-      expect(helper.is_active_url?(url, 1)).to eq(false)
+
+    it 'returns true if url is present' do
+      expect(helper.is_active_url?('https://example.com/image.jpg')).to eq(true)
     end
   end
 

@@ -665,7 +665,10 @@ RSpec.describe ValidationService do
       service.instance_variable_set(:@values, ['Test'])
       service.instance_variable_set(:@header, 'dcterms:creator')
       service.instance_variable_set(:@row_number, 1)
-      allow(Net::HTTP).to receive(:get).and_return('<bad></xml>')
+
+      stub_request(:get, %r{https://id\.loc\.gov/search/.*})
+        .to_return(status: 200, body: '<bad></xml>')
+
       expect { service.send(:search_lc_linked_data_service, 'http://id.loc.gov/authorities/names', 'LCNAF') }.not_to raise_error
     end
   end
