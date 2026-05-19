@@ -134,16 +134,17 @@ module ApplicationHelper
 
   # Using this instead of #link_to_facet in the catalog_controller was giving us just strings instead of
   # html safe displays for some reason, so we're using this helper method instead.
+  # Fixed: wrap each value in a span and use non-breaking space after comma to prevent line wrapping issues
   def render_html_safe_facet(**kwargs)
     values = kwargs[:value]
     field = kwargs[:field].gsub('_tesim', '_sim')
 
     links = values.map do |value|
       params = { q: '', f: { field => [value], search_field: 'all_fields' } }
-      link_to(value, search_action_path(params))
+      content_tag(:span, link_to(value, search_action_path(params)), class: 'facet-link')
     end
 
-    links.join(', ').html_safe
+    links.join(',&nbsp;'.html_safe).html_safe
   end
 
   # Specifically used for date_ssim in conjunction with the range limit

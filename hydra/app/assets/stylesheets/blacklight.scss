@@ -9,6 +9,12 @@
     }
 }
 
+// Fix for multi-value facet display: prevent awkward comma line breaks
+.facet-link {
+    display: inline;
+    word-break: keep-all;
+}
+
 .container {
     width: 100%;
     margin: 40px auto;
