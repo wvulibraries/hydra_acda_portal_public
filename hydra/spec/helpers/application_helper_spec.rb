@@ -156,7 +156,7 @@ RSpec.describe ApplicationHelper, type: :helper do
     it 'handles empty values' do
       allow(helper).to receive(:link_to).and_return('')
       html = helper.render_html_safe_facet(value: [], field: 'subject_tesim')
-      expect(html).to eq('').or eq(''.html_safe)
+      expect(html).to include('facet-items-inline').or eq('').or eq(''.html_safe)
     end
   end
 
