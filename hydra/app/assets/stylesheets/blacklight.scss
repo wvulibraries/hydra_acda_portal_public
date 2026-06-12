@@ -9,6 +9,19 @@
     }
 }
 
+// Fix for multi-value facet display: prevent awkward comma line breaks
+// Keep each facet value + its comma together on the same line
+.facet-items-inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+}
+
+.facet-item {
+    display: inline;
+    white-space: nowrap;
+}
+
 .container {
     width: 100%;
     margin: 40px auto;

@@ -3,3 +3,13 @@
 # To ban all spiders from the entire site uncomment the next two lines:
 # User-agent: *
 # Disallow: /
+
+User-agent: Bingbot
+Disallow: /
+
+User-agent: *
+Disallow: /catalog_export.csv
+Disallow: /?f%5B
+Disallow: /?range%5B
+Disallow: /bookmarks/
+Allow: /catalog/

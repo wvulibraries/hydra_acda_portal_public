@@ -15,3 +15,4 @@ tmp
 /public/*
 
 hydra/coverage
+hydra/Gemfile.lock

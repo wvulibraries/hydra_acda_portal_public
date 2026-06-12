@@ -31,7 +31,7 @@ gem "sprockets-rails"
 # gem "importmap-rails"
 # gem "turbo-rails"
 # gem "stimulus-rails"
-gem "bootstrap", "\~\>\ 5.1"
+gem "bootstrap", "~> 5.1"
 
 gem 'bootsnap', '>= 1.4.2', require: false
 
@@ -51,7 +51,8 @@ gem 'whenever', require: false
 # =====================================================
 # Switch the comments on these two lines to work on Bulkrax locally
 # gem 'bulkrax', git: 'https://github.com/samvera-labs/bulkrax.git' , ref: 'b689afa'
-gem 'bulkrax', github: 'samvera/bulkrax', branch: 'hydra-rails-7-support'
+# Rails 7 support - pinned to commit (check if released version available)
+gem 'bulkrax', github: 'samvera/bulkrax', ref: '1960bacc48fbb48c5d6f697a9849ddb1a823f867'
 gem 'jquery-datatables'
 
 # Dependices for Thumbnail Creation
@@ -69,7 +70,11 @@ gem 'sidekiq-unique-jobs'
 
 # Hydra Dependencies
 # =====================================================
-gem 'active-fedora', git: 'https://github.com/samvera/active_fedora.git', branch: 'fedora6-cjcolvar-rebase'
+# TEMPORARY: Using wvulibraries fork (Fedora 6 support)
+# TODO: Return to samvera/active_fedora main once upstream compatibility verified
+# See: ../issues.md - Phase 0 for migration plan
+# Fork created to work around deleted fedora6-cjcolvar-rebase branch (was merged to main on Dec 4, 2025)
+gem 'active-fedora', git: 'https://github.com/wvulibraries/active_fedora.git', ref: '9b5352009407a6254b9e3db408d2c9554efeaf55'
 gem 'active-triples'
 gem 'blacklight'
 gem 'blacklight_advanced_search'
@@ -120,6 +125,7 @@ group :test do
   gem 'simplecov', require: false
   gem 'simplecov-lcov', require: false
   gem 'rspec_junit_formatter'  
+  gem 'rails-controller-testing'
 end
 
 group :development do

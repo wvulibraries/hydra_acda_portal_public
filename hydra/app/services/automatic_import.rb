@@ -48,13 +48,18 @@ class AutomaticImport
     # set objects
     @objects.each do |record|
       begin
-        # skip record if EXCLUDE is in title
-        next if record['title'].include?("EXCLUDE")
+        # skip record if title is nil or EXCLUDE is in title
+        title = record['title']
+        next if title.nil? || (title.respond_to?(:include?) && title.include?("EXCLUDE"))
 
-        puts "Processing #{record['identifier']}"
+        identifier = record['identifier']
+        # skip record if identifier is nil
+        next if identifier.nil?
+
+        puts "Processing #{identifier}"
 
         # remove . in identifier
-        id = record['identifier'].gsub('.', '').to_s
+        id = identifier.to_s.gsub('.', '')
         puts "ID: #{id}"
 
         # record exists
@@ -65,18 +70,18 @@ class AutomaticImport
           puts new_record.inspect
 
           if ImportLibrary.import_record(id, new_record)
-            log_text = "#{record['identifier']} record created. \n"
+            log_text = "#{identifier} record created. \n"
             @email_details.concat log_text 
           else
-            error_text = "#{record['identifier']} record failed to create. \n"
+            error_text = "#{identifier} record failed to create. \n"
             @email_details.concat error_text 
           end            
         else                 
           if ImportLibrary.update_record(record_exists, ImportLibrary.modify_record(@export_path, record))
-            log_text = "#{record['identifier']} record updated. \n"
+            log_text = "#{identifier} record updated. \n"
             @email_details.concat log_text 
           else
-            error_text = "#{record['identifier']} record failed to update. \n" 
+            error_text = "#{identifier} record failed to update. \n" 
             @email_details.concat error_text  
           end            
         end
@@ -92,11 +97,11 @@ class AutomaticImport
     # find the json file in the directory
     matched_files = Dir["#{@export_path}/data/*-data.json"]
 
-    if File.exist?(matched_files.first)
+    if matched_files.empty? || !File.exist?(matched_files.first)
+      abort "No data file found"
+    else
       # read and parse the json file
       self.parse_data(File.read matched_files[0])
-    else
-      abort "No data file found"
     end
   end
 
