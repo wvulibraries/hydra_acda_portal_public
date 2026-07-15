@@ -104,7 +104,7 @@ services:
       - hydra
 
   fcrepo:
-    image: fcrepo/fcrepo:6.5.1-tomcat9
+    image: fcrepo/fcrepo:7-tomcat10
     container_name: fcrepo
     restart: unless-stopped
     ports:
