@@ -23,3 +23,5 @@ rm -rf ./data/thumbnails
 rm -rf ./data/downloads
 # remove logs validations directory
 rm -rf ./data/logs/validations
+# remove the hydra/tmp directory
+rm -rf ./hydra/tmp
