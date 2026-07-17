@@ -33,11 +33,14 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - redis
-      - solr
-      - fcrepo
-      - db
-      - workers
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+      fcrepo:
+        condition: service_healthy
+      solr:
+        condition: service_healthy
     networks:
       - hydra
 
@@ -47,11 +50,14 @@ services:
     command: bash -c "bundle install; bundle exec sidekiq -C config/sidekiq.yml"
     restart: unless-stopped
     depends_on:
-      - redis
-      - solr
-      - fcrepo
-      - memcached
-      - db
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+      fcrepo:
+        condition: service_healthy
+      solr:
+        condition: service_healthy
     stdin_open: true
     tty: true
     networks:
@@ -109,7 +115,8 @@ services:
       timeout: 5s
       retries: 20
     depends_on:
-      - db      
+      db:
+        condition: service_healthy
     networks:
       - hydra       
 
@@ -130,10 +137,11 @@ services:
       - ./solr9-setup:/solr9-setup
       - ./scripts/startup-solr.sh:/scripts/startup.sh
     healthcheck:
-      test: "curl -f localhost:8983/solr/#/"
-      interval: 5s
-      timeout: 5s
-      retries: 20
+      test: ["CMD-SHELL", "curl -f http://localhost:8983/solr/ || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 30s
     networks:
       - hydra
 
@@ -149,10 +157,10 @@ services:
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready", "-d", "fcrepo"]
-      interval: 30s
-      timeout: 60s
-      retries: 5
-      start_period: 80s
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
     networks:
       - hydra
 
