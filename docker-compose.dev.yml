@@ -11,7 +11,8 @@ services:
       - ./scripts:/home/hydra/scripts
       # map in various persistent directories in the data folder
       - ./data/logs:/home/hydra/log
-      - ./data/bundle:/usr/local/bundle # cache bundle install
+      # - ./data/bundle:/usr/local/bundle # cache bundle install
+      - bundle_data:/usr/local/bundle
       - ./data/node_modules:/home/hydra/node_modules
       # map in various persistent directories in the tmp folder
       - ./data/imports:/home/hydra/tmp/imports
@@ -32,7 +33,7 @@ services:
   web:
     extends: app
     container_name: acda_portal
-    command: bash -c "bundle install; sh ./scripts/startup.sh"
+    command: bash -c "sh ./scripts/startup.sh"
     restart: unless-stopped
     ports:
       - "3000:3000"
@@ -52,8 +53,8 @@ services:
 
   workers:
     extends: app
-    container_name: sidekiq
-    command:  bash -c "bundle install; bundle exec sidekiq -C config/sidekiq.yml"
+    container_name: goodjob
+    command:  bash -c "bundle exec good_job start"
     restart: unless-stopped
     deploy:
       resources:
@@ -175,6 +176,7 @@ volumes:
   fcrepo:
   redis:
   solr:
+  bundle_data:
 
 networks:
   hydra:
