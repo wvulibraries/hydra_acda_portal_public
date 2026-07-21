@@ -38,8 +38,6 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      redis:
-        condition: service_started
       db:
         condition: service_started
       fcrepo:
@@ -62,8 +60,6 @@ services:
           cpus: '2'
           memory: 2G    
     depends_on:
-      redis:
-        condition: service_started
       db:
         condition: service_started
       fcrepo:
@@ -85,24 +81,6 @@ services:
     networks:
       - hydra
 
-  redis:
-    image: redis:alpine
-    container_name: redis
-    command: redis-server    
-    ports:
-      - "127.0.0.1:6379:6379"
-    env_file:
-      - './env/env.dev.redis'
-    volumes:
-      - redis:/var/lib/redis/data
-    restart: unless-stopped
-    healthcheck:
-      test: redis-cli -h localhost -p 6379 -a $$REDIS_PASSWORD ping
-      interval: 30s
-      timeout: 3s
-      retries: 3
-    networks:
-      - hydra
 
   fcrepo:
     image: fcrepo/fcrepo:7-tomcat10
@@ -174,7 +152,6 @@ services:
 volumes:
   postgres:
   fcrepo:
-  redis:
   solr:
   bundle_data:
 

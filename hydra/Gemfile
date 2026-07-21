@@ -15,8 +15,6 @@ gem 'jquery-rails'
 gem 'jbuilder', '~> 2.5'
 gem 'turbolinks', '~> 5'
 
-# Use Redis adapter to run Action Cable in production
-gem 'redis', '~> 4.0'
 gem 'sdoc', '~> 2.6.1', group: :doc
 
 # removed from standard rails these gems need to be installed separately in the future

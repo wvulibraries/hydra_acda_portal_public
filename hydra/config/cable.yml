@@ -1,11 +1,8 @@
 development:
-  adapter: redis
-  url: <%= ENV.fetch("REDIS_URL_SIDEKIQ") { "redis://redis:6379/12" } %>
+  adapter: async
 
 test:
   adapter: test
 
 production:
-  adapter: redis
-  url: <%= ENV.fetch("REDIS_URL_SIDEKIQ") { "redis://redis:6379/12" } %>
-  channel_prefix: hydra_production
+  adapter: async
