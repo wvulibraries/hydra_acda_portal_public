@@ -7,12 +7,10 @@
 # - Robust HTTP error handling with limited retries for Fedora 500s
 # - Deduplication of jobs for the same record ID
 class ApplicationJob < ActiveJob::Base
-  # Retry on Fedora conflicts with exponential backoff
-  retry_on Ldp::Conflict, 
-    wait: :exponentially_longer, 
-    attempts: 5
-    
-  # Don't retry on Gone errors (resource deleted)
+  retry_on Ldp::Conflict,
+    wait: :exponentially_longer,
+    attempts: 10
+
   discard_on Ldp::Gone do |job, error|
     # Log that we're discarding the job due to Gone error
     Rails.logger.info "Discarding job #{job.class.name} for #{job.arguments.first} - resource no longer exists"
