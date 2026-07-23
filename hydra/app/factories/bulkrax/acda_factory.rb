@@ -104,25 +104,11 @@ module Bulkrax
 
     # This method mimics the User.batch_user method in a Hyrax app.
     # @see https://github.com/samvera/hyrax/blob/76176286b817c869a80b922ccacc6fecea3827e2/app/models/concerns/hyrax/user.rb#L154-L185
-    # def batch_user
-    #   user_key = 'batchuser@example.com'
-
-    #   User.find_by_user_key(user_key) ||
-    #     User.create!(Hydra.config.user_key_field => user_key, password: Devise.friendly_token[0, 20])
-    # end
-
-    # Race condition fix: With higher GoodJob concurrency (multiple import
-    # threads running at once), separate threads can each check for the batch
-    # user, find none, and all try to create it simultaneously - only one
-    # succeeds, the rest raise ActiveRecord::RecordInvalid. Rescue and re-fetch
-    # to handle that safely.
-    # solves bulrax errors - ActiveRecord::RecordInvalid - Validation failed: Email has already been taken
     def batch_user
       user_key = 'batchuser@example.com'
+
       User.find_by_user_key(user_key) ||
         User.create!(Hydra.config.user_key_field => user_key, password: Devise.friendly_token[0, 20])
-    rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid
-      User.find_by_user_key(user_key)
     end
   end
 end
