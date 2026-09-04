@@ -23,11 +23,7 @@ Rails.application.configure do
     config.action_controller.perform_caching = true
     config.action_controller.enable_fragment_cache_logging = true
 
-    config.cache_store = :redis_cache_store, {
-      url: ENV.fetch('REDIS_URL_SIDEKIQ', 'redis://redis:6379/0'),
-      pool_size: ENV.fetch('RAILS_MAX_THREADS', 5).to_i,
-      pool_timeout: 5
-    }
+    config.cache_store = :memory_store
     config.public_file_server.headers = {
       "Cache-Control" => "public, max-age=#{2.days.to_i}"
     }
@@ -90,7 +86,7 @@ Rails.application.configure do
   # routes, locales, etc. This feature depends on the listen gem.
 #  config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
-  config.active_job.queue_adapter = :sidekiq
+  config.active_job.queue_adapter = :good_job
 
   # developers can add their individual ips to this value. This configuration can also take an array
   config.web_console.allowed_ips = [
