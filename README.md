@@ -106,14 +106,14 @@ Development admin access is configured via environment variables in the `env/` d
 - **PostgreSQL**: 16 (Alpine)
 - **Redis**: Alpine (latest)
 - **Memcached**: 1.6.22 (Alpine)
-- **Sidekiq**: Background job processing with cron scheduling
+- **Goodjob**: Background job processing with cron scheduling
 - **Bulkrax**: Batch import framework
 
 ### Key Dependencies
 
 - **Blacklight**: Discovery interface framework
 - **Active Fedora**: Object-relational mapping for Fedora repositories
-- **Sidekiq**: Background job processing with cron scheduling
+- **Goodjob**: Background job processing with cron scheduling
 - **Bulkrax**: Batch metadata and file import capabilities
 - **Blacklight OAI Provider**: OAI-PMH protocol support
 - **Devise**: Authentication framework
@@ -132,7 +132,7 @@ Development admin access is configured via environment variables in the `env/` d
 The application runs as a multi-container Docker environment:
 
 - **web** (`acda_portal`): Main Rails application server (port 3000)
-- **workers** (`sidekiq`): Background job processor with Sidekiq
+- **workers** (`Goodjob`): Background job processor with Goodjob
 - **fcrepo**: Fedora Commons repository (port 8080)
 - **solr**: Solr search engine (port 8983)
 - **db**: PostgreSQL database (port 5432)
@@ -184,8 +184,8 @@ docker exec -it acda_portal rake db:migrate
 # Access the main Rails application container
 docker exec -it acda_portal sh
 
-# Access the Sidekiq worker container
-docker exec -it sidekiq sh
+# Access the Goodjob worker container
+docker exec -it goodjob sh
 ```
 
 ### Importing Content
