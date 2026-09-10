@@ -19,8 +19,8 @@ module Hydra
     # Autoload lib/ folder including all subdirectories
     config.autoload_paths << Rails.root.join('lib')
 
-    # use SideKiq by default
-    config.active_job.queue_adapter = :sidekiq
+    # # Use GoodJob for background job processing
+    config.active_job.queue_adapter = :good_job
 
     config.to_prepare do
       Dir.glob(File.join(File.dirname(__FILE__), "../app/**/*_decorator*.rb")).sort.each do |c|

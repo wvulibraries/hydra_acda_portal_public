@@ -11,7 +11,8 @@ services:
       - ./scripts:/home/hydra/scripts
       # map in various persistent directories in the data folder
       - ./data/logs:/home/hydra/log
-      - ./data/bundle:/usr/local/bundle # cache bundle install
+      # - ./data/bundle:/usr/local/bundle # cache bundle install
+      - bundle_data:/usr/local/bundle
       - ./data/node_modules:/home/hydra/node_modules
       # map in various persistent directories in the tmp folder
       - ./data/imports:/home/hydra/tmp/imports
@@ -32,13 +33,11 @@ services:
   web:
     extends: app
     container_name: acda_portal
-    command: bash -c "bundle install; sh ./scripts/startup.sh"
+    command: bash -c "sh ./scripts/startup.sh"
     restart: unless-stopped
     ports:
       - "3000:3000"
     depends_on:
-      redis:
-        condition: service_started
       db:
         condition: service_started
       fcrepo:
@@ -52,8 +51,8 @@ services:
 
   workers:
     extends: app
-    container_name: sidekiq
-    command:  bash -c "bundle install; bundle exec sidekiq -C config/sidekiq.yml"
+    container_name: goodjob
+    command:  bash -c "bundle exec good_job start"
     restart: unless-stopped
     deploy:
       resources:
@@ -61,8 +60,6 @@ services:
           cpus: '2'
           memory: 2G    
     depends_on:
-      redis:
-        condition: service_started
       db:
         condition: service_started
       fcrepo:
@@ -84,24 +81,6 @@ services:
     networks:
       - hydra
 
-  redis:
-    image: redis:alpine
-    container_name: redis
-    command: redis-server    
-    ports:
-      - "127.0.0.1:6379:6379"
-    env_file:
-      - './env/env.dev.redis'
-    volumes:
-      - redis:/var/lib/redis/data
-    restart: unless-stopped
-    healthcheck:
-      test: redis-cli -h localhost -p 6379 -a $$REDIS_PASSWORD ping
-      interval: 30s
-      timeout: 3s
-      retries: 3
-    networks:
-      - hydra
 
   fcrepo:
     image: fcrepo/fcrepo:7-tomcat10
@@ -173,8 +152,8 @@ services:
 volumes:
   postgres:
   fcrepo:
-  redis:
   solr:
+  bundle_data:
 
 networks:
   hydra:
