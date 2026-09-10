@@ -3,7 +3,7 @@
 class ApplicationJob < ActiveJob::Base
   retry_on Ldp::Conflict,
     wait: :exponentially_longer,
-    attempts: 5
+    attempts: 10
 
   discard_on Ldp::Gone do |job, error|
     Rails.logger.info "Discarding job #{job.class.name} for #{job.arguments.first} - resource no longer exists"

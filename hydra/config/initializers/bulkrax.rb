@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
+
+
 # TODO: investigate why to_prepare is needed
 Rails.application.config.to_prepare do
+  require_relative '../../app/controllers/concerns/bulkrax/datatables_behavior_decorator'
+  
   Bulkrax.setup do |config|
     # Add local parsers
     config.parsers = [

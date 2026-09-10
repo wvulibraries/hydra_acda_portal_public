@@ -307,7 +307,7 @@ RSpec.describe GenerateThumbsJob, type: :job do
       path = '/tmp/image.jpg'
       fake_data = 'FAKE_BINARY_DATA'
 
-      allow(URI).to receive(:open).with(url).and_return(StringIO.new(fake_data))
+      allow(URI).to receive(:open).with(url, open_timeout: 15, read_timeout: 30).and_return(StringIO.new(fake_data))
       expect(File).to receive(:open).with(path, 'wb')
       described_class.new.send(:download_resource, url, path, logger)
     end
@@ -326,7 +326,7 @@ RSpec.describe GenerateThumbsJob, type: :job do
 
     it 'extracts embedded file and downloads it' do
       url = 'https://example.com/page'
-      allow(URI).to receive(:open).with(url).and_return(StringIO.new(html))
+      allow(URI).to receive(:open).with(url, open_timeout: 15, read_timeout: 30).and_return(StringIO.new(html))
       allow_any_instance_of(GenerateThumbsJob).to receive(:download_resource).and_return(true)
       expect_any_instance_of(GenerateThumbsJob).to receive(:download_resource).with('https://example.com/download/file/sample.pdf', anything, logger)
       described_class.new.send(:extract_and_download_embedded_file, url, '/tmp/sample.pdf', logger)
