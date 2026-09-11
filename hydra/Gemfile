@@ -15,6 +15,9 @@ gem 'jquery-rails'
 gem 'jbuilder', '~> 2.5'
 gem 'turbolinks', '~> 5'
 
+# pinning json gem version to resolve circle ci issue - quirks_mode: keyword
+gem 'json', '~> 2.21'
+
 gem 'sdoc', '~> 2.6.1', group: :doc
 
 # removed from standard rails these gems need to be installed separately in the future
