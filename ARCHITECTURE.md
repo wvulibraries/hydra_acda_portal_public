@@ -178,7 +178,7 @@ Migrate ACDA Portal to **Hyrax/Hyku-aligned architecture**:
 - [ ] Solr index rebuilt and verified (search works)
 - [ ] Test suite passes (> 80% coverage, runs 60% faster)
 - [ ] Bulkrax imports still functional
-- [ ] good_job jobs executing reliably
+- [x] good_job jobs executing reliably
 - [ ] Performance equal or better than Fedora
 - [ ] Staging stable for 2+ weeks
 - [ ] Production deployment successful

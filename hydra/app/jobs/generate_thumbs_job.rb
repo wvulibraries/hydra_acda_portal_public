@@ -99,7 +99,8 @@ class GenerateThumbsJob < ApplicationJob
       # replaced any | with %7C
       url = url.gsub('|', '%7C')
       
-      html = URI.open(url).read
+      # html = URI.open(url).read
+      html = URI.open(url, open_timeout: 15, read_timeout: 30).read
       doc = Nokogiri::HTML(html)
 
       # Locate the embedded file download link
@@ -127,7 +128,8 @@ class GenerateThumbsJob < ApplicationJob
   def download_resource(url, download_path, logger)
     begin
       # Open the URL and read the content as binary data
-      data = URI.open(url).read
+      # data = URI.open(url).read
+      data = URI.open(url, open_timeout: 15, read_timeout: 30).read
   
       # Write the binary data to the file
       File.open(download_path, 'wb') do |file|

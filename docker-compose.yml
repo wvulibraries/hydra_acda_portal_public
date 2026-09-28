@@ -33,8 +33,6 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      redis:
-        condition: service_healthy
       db:
         condition: service_healthy
       fcrepo:
@@ -46,12 +44,10 @@ services:
 
   workers:
     extends: app
-    container_name: sidekiq
-    command: bash -c "bundle install; bundle exec sidekiq -C config/sidekiq.yml"
+    container_name: goodjob
+    command: bash -c "bundle install; bundle exec good_job start"
     restart: unless-stopped
     depends_on:
-      redis:
-        condition: service_healthy
       db:
         condition: service_healthy
       fcrepo:
@@ -73,26 +69,6 @@ services:
     networks:
       - hydra
 
-  redis:
-    image: redis:alpine
-    container_name: redis
-    command: redis-server    
-    # command: redis-server /usr/local/etc/redis/redis.conf    
-    ports:
-      - "127.0.0.1:6379:6379"
-    env_file:
-      - './env/env.redis'
-    volumes:
-      - ./data/redis:/var/lib/redis/data
-      # - ./config/redis.conf:/usr/local/etc/redis/redis.conf
-    restart: unless-stopped
-    healthcheck:
-      test: redis-cli -h localhost -p 6379 -a $$REDIS_PASSWORD ping
-      interval: 30s
-      timeout: 3s
-      retries: 3
-    networks:
-      - hydra
 
   fcrepo:
     image: fcrepo/fcrepo:7-tomcat10

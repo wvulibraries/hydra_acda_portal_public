@@ -47,7 +47,7 @@ jobs :
 
       - restore_cache:
           keys:
-            - hydra-bundle-{{ checksum "Gemfile.lock" }}
+            - hydra-bundle-{{ checksum "Gemfile" }}
 
 
       - run:
@@ -64,9 +64,7 @@ jobs :
           name: Force Bundler Version
           command: |
             sudo gem update --system
-            echo 'export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")' >> $BASH_ENV
-            source $BASH_ENV
-            gem install bundler
+            gem install bundler -v 4.0.11
     
       - run:
           name: bundle install gems
@@ -78,7 +76,7 @@ jobs :
 
 
       - type: cache-save
-        key: hyrax-bundle-{{ checksum "Gemfile.lock" }}
+        key: hydra-bundle-{{ checksum "Gemfile" }}
         paths:
           - vendor/bundle
 
