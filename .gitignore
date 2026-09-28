@@ -15,5 +15,3 @@ tmp
 
 hydra/coverage
 hydra/Gemfile.lock
-
-/data
