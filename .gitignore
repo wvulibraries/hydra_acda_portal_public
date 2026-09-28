@@ -1,6 +1,5 @@
 .DS_Store
-/data/
-/data/*
+/data
 /env/
 /env/*
 
@@ -16,3 +15,5 @@ tmp
 
 hydra/coverage
 hydra/Gemfile.lock
+
+/data
