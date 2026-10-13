@@ -138,6 +138,8 @@ CSV (partners) → Bulkrax → PostgreSQL (data) → Solr (search) → Blackligh
 
 #### 1.1: Gem Updates & Dependencies
 
+> **✅ Sidekiq removal done.** `sidekiq`, `sidekiq-cron`, `sidekiq-failures`, and `sidekiq-unique-jobs` are already removed from the Gemfile, `good_job` is in and configured, and `config/sidekiq.yml` is deleted — this shipped via the `feature/goodjob-migration` branch (PRs #95/#96) and is live in `main` and production. Still outstanding: removing `active-fedora` and `fcrepo_wrapper`, which depend on the Phase 3 model migration below.
+
 **Remove:**
 ```ruby
 gem 'active-fedora'           # Replace with AR
@@ -238,6 +240,8 @@ gem 'ransack'                 # If using for search
 ---
 
 #### 1.3: Create good_job Configuration
+
+> **Note:** `config.active_job.queue_adapter = :good_job` is already set in `config/application.rb`/`production.rb`, and job processing runs via a dedicated `workers` container (`bundle exec good_job start`) in both dev and prod Docker Compose files, rather than `execution_mode: :inline` in the web process as originally planned below — a deliberate choice to keep job processing isolated from the web process in all environments. A literal `config/good_job.yml` file was not created: GoodJob doesn't actually support loading config from a YAML file the way Sidekiq did — all settings are configured via `config.good_job.*` in a Rails initializer (`config/initializers/good_job.rb`), which is where future per-environment tuning should go instead.
 
 **Work:**
 1. Add to `Gemfile`
@@ -565,6 +569,8 @@ gem 'ransack'                 # If using for search
 
 #### 4.1: Migrate Sidekiq Jobs to good_job
 
+> **✅ Done.** No `sidekiq_options` remain anywhere in the codebase, `ApplicationJob` already uses `retry_on`/`discard_on` the good_job way, and `config/sidekiq.yml` is deleted. Shipped with the goodjob-migration work.
+
 **Current:** Jobs inherit from `ApplicationJob`, use Sidekiq queues
 
 **Target:** Same structure, but backed by good_job (transparent)
@@ -609,6 +615,8 @@ end
 ---
 
 #### 4.2: Update Whenever Cron
+
+> **✅ Done — confirmed compatible.** `config/schedule.rb` is unchanged and working; `whenever`'s cron output runs fine alongside good_job.
 
 **Work:**
 1. Keep `config/schedule.rb` (whenever works with good_job)
