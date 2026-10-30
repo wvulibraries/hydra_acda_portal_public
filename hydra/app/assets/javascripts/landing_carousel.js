@@ -1,48 +1,30 @@
 document.addEventListener('DOMContentLoaded', function () {
-  // Vimeo player for hero video - wait for API to load
-  function initVimeoPlayer() {
-    var iframe = document.getElementById('hero-vimeo-player');
-    if (iframe && typeof Vimeo !== 'undefined') {
-      var player = new Vimeo.Player(iframe);
+  // YouTube player for hero video
+  if (document.getElementById('hero-youtube-player')) {
+    var ytTag = document.createElement('script');
+    ytTag.src = 'https://www.youtube.com/iframe_api';
+    document.head.appendChild(ytTag);
+ 
+    window.onYouTubeIframeAPIReady = function () {
       var heroContent = document.getElementById('hero-content');
       var heroOverlay = document.querySelector('.hero-overlay');
-      
-      console.log('Vimeo player initialized');
-      
-      player.on('play', function() {
-        console.log('Video playing');
-        if (heroContent) heroContent.classList.add('fade-out');
-        if (heroOverlay) heroOverlay.classList.add('fade-out');
+ 
+      new YT.Player('hero-youtube-player', {
+        events: {
+          onStateChange: function (event) {
+            if (event.data === YT.PlayerState.PLAYING) {
+              if (heroContent) heroContent.classList.add('fade-out');
+              if (heroOverlay) heroOverlay.classList.add('fade-out');
+            } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
+              if (heroContent) heroContent.classList.remove('fade-out');
+              if (heroOverlay) heroOverlay.classList.remove('fade-out');
+            }
+          }
+        }
       });
-      
-      player.on('pause', function() {
-        console.log('Video paused');
-        if (heroContent) heroContent.classList.remove('fade-out');
-        if (heroOverlay) heroOverlay.classList.remove('fade-out');
-      });
-      
-      player.on('ended', function() {
-        console.log('Video ended');
-        if (heroContent) heroContent.classList.remove('fade-out');
-        if (heroOverlay) heroOverlay.classList.remove('fade-out');
-      });
-    } else {
-      console.log('Vimeo API not ready, retrying...');
-      setTimeout(initVimeoPlayer, 100);
-    }
+    };
   }
-  
-  // Check if Vimeo script exists and initialize
-  if (document.getElementById('hero-vimeo-player')) {
-    if (typeof Vimeo !== 'undefined') {
-      initVimeoPlayer();
-    } else {
-      // Wait for Vimeo API to load
-      window.addEventListener('load', function() {
-        setTimeout(initVimeoPlayer, 500);
-      });
-    }
-  }
+
   
   // Carousel functionality
   const track = document.querySelector('.carousel-track');
