@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#!/bin/bash
-
 # Set up logging
 LOGFILE="clear_data.log"
 exec > >(tee -i $LOGFILE)
@@ -18,16 +16,8 @@ else
   exit 1
 fi
 
-# Clear Sidekiq jobs and related data
-echo "Clearing Sidekiq jobs and data..."
-if docker exec acda_portal bin/rails r import/clear-sidekiq-jobs.rb; then
-  echo "Sidekiq jobs and data cleared successfully."
-else
-  echo "Error clearing Sidekiq jobs and data!" >&2
-  exit 1
-fi
-
 # Drop, create, and migrate the Postgres database
+# (this also clears all GoodJob job records, since they live in Postgres)
 echo "Dropping, creating, and migrating Postgres database..."
 if docker exec acda_portal bin/rails db:drop:_unsafe db:create db:migrate; then
   echo "Postgres database recreated and migrated successfully."
@@ -37,4 +27,3 @@ else
 fi
 
 echo "Data clearing process completed: $(date)"
-
