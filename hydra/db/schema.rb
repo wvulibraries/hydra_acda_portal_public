@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_11_09_120002) do
+ActiveRecord::Schema[7.0].define(version: 2026_11_09_120003) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -23,6 +23,8 @@ ActiveRecord::Schema[7.0].define(version: 2026_11_09_120002) do
     t.datetime "updated_at", null: false
     t.index ["congressional_record_id", "agent_type", "agent_name", "access_level"], name: "index_access_controls_uniqueness", unique: true
     t.index ["congressional_record_id"], name: "index_access_controls_on_congressional_record_id"
+    t.check_constraint "access_level::text = ANY (ARRAY['discover'::character varying, 'read'::character varying, 'edit'::character varying]::text[])", name: "access_controls_access_level_check"
+    t.check_constraint "agent_type::text = ANY (ARRAY['person'::character varying, 'group'::character varying]::text[])", name: "access_controls_agent_type_check"
   end
 
   create_table "active_storage_attachments", force: :cascade do |t|
