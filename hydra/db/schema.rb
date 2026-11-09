@@ -10,9 +10,48 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_07_20_163538) do
+ActiveRecord::Schema[7.0].define(version: 2026_11_09_120002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "access_controls", force: :cascade do |t|
+    t.string "congressional_record_id", null: false
+    t.string "agent_type", null: false
+    t.string "agent_name", null: false
+    t.string "access_level", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["congressional_record_id", "agent_type", "agent_name", "access_level"], name: "index_access_controls_uniqueness", unique: true
+    t.index ["congressional_record_id"], name: "index_access_controls_on_congressional_record_id"
+  end
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
 
   create_table "bookmarks", id: :serial, force: :cascade do |t|
     t.integer "user_id", null: false
@@ -155,6 +194,44 @@ ActiveRecord::Schema[7.0].define(version: 2026_07_20_163538) do
     t.index ["statusable_id", "statusable_type"], name: "bulkrax_statuses_statusable_idx"
   end
 
+  create_table "congressional_records", id: :string, force: :cascade do |t|
+    t.string "bulkrax_identifier"
+    t.string "identifier"
+    t.string "title"
+    t.text "description"
+    t.string "creator", default: [], array: true
+    t.string "names", default: [], array: true
+    t.string "publisher", default: [], array: true
+    t.string "contributing_institution"
+    t.string "rights"
+    t.string "extent"
+    t.string "dc_type"
+    t.string "record_type", default: [], array: true
+    t.string "date", default: [], array: true
+    t.string "edtf"
+    t.string "language", default: [], array: true
+    t.string "congress", default: [], array: true
+    t.string "policy_area", default: [], array: true
+    t.string "topic", default: [], array: true
+    t.string "location_represented", default: [], array: true
+    t.string "collection_title"
+    t.string "physical_location"
+    t.string "collection_finding_aid"
+    t.string "preview"
+    t.string "available_at"
+    t.string "available_by"
+    t.string "project", default: [], array: true
+    t.string "queued_job"
+    t.string "state", default: "draft"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["bulkrax_identifier"], name: "index_congressional_records_on_bulkrax_identifier", unique: true
+    t.index ["identifier"], name: "index_congressional_records_on_identifier"
+    t.index ["project"], name: "index_congressional_records_on_project", using: :gin
+    t.index ["state"], name: "index_congressional_records_on_state"
+    t.index ["title"], name: "index_congressional_records_on_title"
+  end
+
   create_table "good_job_batches", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -295,6 +372,9 @@ ActiveRecord::Schema[7.0].define(version: 2026_07_20_163538) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "access_controls", "congressional_records"
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "bulkrax_exporter_runs", "bulkrax_exporters", column: "exporter_id"
   add_foreign_key "bulkrax_importer_runs", "bulkrax_importers", column: "importer_id"
   add_foreign_key "bulkrax_pending_relationships", "bulkrax_importer_runs", column: "importer_run_id"
