@@ -1,9 +1,9 @@
 # ActiveRecord replacement for the ActiveFedora-backed Acda model.
 # File attachments, the access_controls association, the permission
-# getters/setters + computed visibility, and blank-value cleanup on save.
+# getters/setters + computed visibility, blank-value cleanup on save, and
+# ID minting for new records that don't already have one set.
 #
-# Deliberately NOT included yet (separate, later steps):
-#   - assign_id (Fedora-style ID minting from `identifier`)
+# Deliberately NOT included yet (separate, later step):
 #   - handle_thumbnail_generation / queue_pending_thumbnails / with_thumbnail_lock
 #     (depend on ProcessThumbnailJob/DownloadAndSetThumbsJob, which are
 #     still Fedora-specific and need their own adaptation pass)
@@ -16,6 +16,7 @@ class CongressionalRecord < ApplicationRecord
 
   has_many :access_controls, dependent: :destroy
 
+  before_create :assign_id, unless: :id?
   before_save :clear_empty_fields
 
   PERMISSION_TEXT_VALUE_PUBLIC = 'public'.freeze
@@ -82,5 +83,27 @@ class CongressionalRecord < ApplicationRecord
 
       self[column.name] = value.map { |v| v.is_a?(String) ? v.strip : v }.reject(&:blank?)
     end
+  end
+
+  # Mints an ID from `identifier` when one isn't already set - ported
+  # verbatim from Acda#assign_id (strip protocol+domain, replace
+  # URL-unsafe characters with underscores, drop periods). Only runs via
+  # before_create when id is blank, so it never overwrites an explicitly
+  # provided id (e.g. a migrated Fedora ID). Note: if `identifier` itself
+  # is blank, this (faithfully, matching the original) produces an empty
+  # string - not a usable primary key - so callers minting brand-new
+  # records still need to ensure `identifier` is set first.
+  def assign_id
+    self.id = generate_id_from_identifier
+  end
+
+  def generate_id_from_identifier
+    return '' if identifier.nil?
+
+    cleaned = identifier.gsub(%r{https?://[^/]+/}, '')
+    cleaned = cleaned.gsub(%r{[/:?%&=#+_]}, '_')
+    cleaned = cleaned.delete('.')
+
+    cleaned.delete('_').empty? ? '' : cleaned
   end
 end
