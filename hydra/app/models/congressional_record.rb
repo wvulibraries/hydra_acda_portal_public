@@ -1,11 +1,9 @@
 # ActiveRecord replacement for the ActiveFedora-backed Acda model.
-# This is the mechanical/structural port only: file attachments, the
-# access_controls association, and the permission getters/setters +
-# computed visibility, all backed by Postgres instead of Fedora triples.
+# File attachments, the access_controls association, the permission
+# getters/setters + computed visibility, and blank-value cleanup on save.
 #
 # Deliberately NOT included yet (separate, later steps):
 #   - assign_id (Fedora-style ID minting from `identifier`)
-#   - clear_empty_fields (blank-value cleanup, needs a Postgres-array version)
 #   - handle_thumbnail_generation / queue_pending_thumbnails / with_thumbnail_lock
 #     (depend on ProcessThumbnailJob/DownloadAndSetThumbsJob, which are
 #     still Fedora-specific and need their own adaptation pass)
@@ -17,6 +15,8 @@ class CongressionalRecord < ApplicationRecord
   has_one_attached :video_file
 
   has_many :access_controls, dependent: :destroy
+
+  before_save :clear_empty_fields
 
   PERMISSION_TEXT_VALUE_PUBLIC = 'public'.freeze
   PERMISSION_TEXT_VALUE_AUTHENTICATED = 'registered'.freeze
@@ -64,6 +64,23 @@ class CongressionalRecord < ApplicationRecord
                    .where.not(agent_name: names).destroy_all
     names.each do |name|
       access_controls.find_or_create_by!(agent_type: agent_type, access_level: access_level.to_s, agent_name: name)
+    end
+  end
+
+  # Strips blank entries out of every array column automatically (no
+  # hardcoded field list - works for creator/names/publisher/record_type/
+  # date/language/congress/policy_area/topic/location_represented/project,
+  # and keeps working if more array columns get added later). Mirrors
+  # Acda#clear_empty_fields, adapted from ActiveTriples::Relation values to
+  # plain Postgres arrays.
+  def clear_empty_fields
+    self.class.columns.each do |column|
+      next unless column.respond_to?(:array?) && column.array?
+
+      value = self[column.name]
+      next unless value.is_a?(Array)
+
+      self[column.name] = value.map { |v| v.is_a?(String) ? v.strip : v }.reject(&:blank?)
     end
   end
 end
