@@ -94,4 +94,75 @@ namespace :congressional_records do
     puts "Errors: #{errors.count}"
     errors.each { |e| puts "  #{e}" }
   end
+
+  desc "Migrate file attachments (image/thumbnail/pdf/audio/video) from Acda (Fedora) into the matching CongressionalRecord via ActiveStorage. Dry-run by default - pass DRY_RUN=false to actually write. LIMIT=n to cap how many Acda records are processed."
+  task migrate_files: :environment do
+    dry_run = ActiveModel::Type::Boolean.new.cast(ENV.fetch('DRY_RUN', 'true'))
+    limit = ENV['LIMIT']&.to_i
+
+    file_associations = %i[image_file thumbnail_file pdf_file audio_file video_file]
+
+    scope = Acda.all
+    total = scope.count
+    puts "Found #{total} Acda records#{limit ? " (processing first #{limit})" : ''}"
+    puts dry_run ? "DRY RUN - no writes will happen" : "LIVE RUN - attaching files to congressional_records via ActiveStorage"
+    puts "---"
+
+    processed = 0
+    attached = 0
+    skipped_already_attached = 0
+    skipped_no_record = 0
+    errors = []
+
+    scope.each do |acda|
+      break if limit && processed >= limit
+      processed += 1
+
+      record = CongressionalRecord.find_by(id: acda.id)
+      unless record
+        skipped_no_record += 1
+        puts "SKIP #{acda.id}: no matching CongressionalRecord (run congressional_records:migrate first)"
+        next
+      end
+
+      file_associations.each do |assoc|
+        begin
+          acda_file = acda.send(assoc)
+          next unless acda_file.present?
+
+          content = acda_file.content
+          next if content.blank?
+
+          target = record.send(assoc)
+
+          if target.attached?
+            skipped_already_attached += 1
+            next
+          end
+
+          filename = acda_file.original_name.presence || "#{acda.id}_#{assoc}"
+          content_type = acda_file.mime_type.presence || 'application/octet-stream'
+
+          if dry_run
+            puts "ATTACH #{acda.id}.#{assoc} - #{filename} (#{content_type}, #{content.bytesize} bytes)"
+          else
+            target.attach(io: StringIO.new(content), filename: filename, content_type: content_type)
+          end
+
+          attached += 1
+        rescue StandardError => e
+          errors << "#{acda.id}.#{assoc}: #{e.class} - #{e.message}"
+          puts "ERROR on #{acda.id}.#{assoc}: #{e.message}"
+        end
+      end
+    end
+
+    puts "---"
+    puts "Acda records processed: #{processed}"
+    puts "#{dry_run ? 'Would attach' : 'Attached'}: #{attached}"
+    puts "Skipped (already attached): #{skipped_already_attached}"
+    puts "Skipped (no matching CongressionalRecord): #{skipped_no_record}"
+    puts "Errors: #{errors.count}"
+    errors.each { |e| puts "  #{e}" }
+  end
 end
