@@ -192,9 +192,12 @@ module ApplicationHelper
     Addressable::URI.parse(url).normalize.to_s
   end
 
+
   def record_has_thumbnail?(id)
-    record = Acda.find(id)
-    record.thumbnail_file.present?
+    record = CongressionalRecord.find_by(id: id)
+    return record.thumbnail_file.attached? if record
+
+    Acda.find(id).thumbnail_file.present?
   end
 
 end
