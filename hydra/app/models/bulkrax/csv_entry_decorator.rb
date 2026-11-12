@@ -26,4 +26,4 @@ Bulkrax::CsvEntry.prepend(Bulkrax::CsvEntryDecorator)
 # This is a workaround, the bulkrax initializer is wrapped in a to_prepare and Bulkrax.default_work_type
 # is not set by the time it is called so it is nil.  For now we can set it here.  The bigger issue we'd
 # need to look at is why we need to wrap the bulkrax initializer in a to_prepare.
-Bulkrax::CsvEntry.class_attribute :default_work_type, default: 'Acda'
+Bulkrax::CsvEntry.class_attribute :default_work_type, default: 'CongressionalRecord'

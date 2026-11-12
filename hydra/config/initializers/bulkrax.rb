@@ -14,16 +14,16 @@ Rails.application.config.to_prepare do
 
     # WorkType to use as the default if none is specified in the import
     # Default is the first returned by Hyrax.config.curation_concerns
-    config.default_work_type = 'Acda'
+    config.default_work_type = 'CongressionalRecord'
 
     # Factory Class to use when generating and saving objects
-    config.object_factory = Bulkrax::AcdaFactory
+    config.object_factory = Bulkrax::CongressionalRecordFactory
 
     # File model for file class
     config.file_model_class = AcdaFile
 
     # curation_concerns, Default =  Hyrax.config.curation_concerns
-    config.curation_concerns = [Acda]
+    config.curation_concerns = [CongressionalRecord]
 
     config.qa_controlled_properties = []
 
