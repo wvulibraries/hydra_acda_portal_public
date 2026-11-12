@@ -108,13 +108,17 @@ RSpec.describe ApplicationHelper, type: :helper do
 
   describe '#record_has_thumbnail?' do
     it 'returns true if record has thumbnail' do
-      record = double('Acda', thumbnail_file: double('Thumb'))
-      allow(Acda).to receive(:find).and_return(record)
+      record = double('CongressionalRecord', thumbnail_file: double('Thumb', attached?: true))
+      allow(CongressionalRecord).to receive(:find_by).and_return(record)
       expect(helper.record_has_thumbnail?('id')).to eq(true)
     end
     it 'returns false if record has no thumbnail' do
-      record = double('Acda', thumbnail_file: nil)
-      allow(Acda).to receive(:find).and_return(record)
+      record = double('CongressionalRecord', thumbnail_file: double('Thumb', attached?: false))
+      allow(CongressionalRecord).to receive(:find_by).and_return(record)
+      expect(helper.record_has_thumbnail?('id')).to eq(false)
+    end
+    it 'returns false if no record found' do
+      allow(CongressionalRecord).to receive(:find_by).and_return(nil)
       expect(helper.record_has_thumbnail?('id')).to eq(false)
     end
   end

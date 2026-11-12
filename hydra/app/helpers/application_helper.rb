@@ -195,9 +195,7 @@ module ApplicationHelper
 
   def record_has_thumbnail?(id)
     record = CongressionalRecord.find_by(id: id)
-    return record.thumbnail_file.attached? if record
-
-    Acda.find(id).thumbnail_file.present?
+    record.present? && record.thumbnail_file.attached?
   end
 
 end

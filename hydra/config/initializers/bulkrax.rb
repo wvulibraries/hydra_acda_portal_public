@@ -19,9 +19,6 @@ Rails.application.config.to_prepare do
     # Factory Class to use when generating and saving objects
     config.object_factory = Bulkrax::CongressionalRecordFactory
 
-    # File model for file class
-    config.file_model_class = AcdaFile
-
     # curation_concerns, Default =  Hyrax.config.curation_concerns
     config.curation_concerns = [CongressionalRecord]
 
