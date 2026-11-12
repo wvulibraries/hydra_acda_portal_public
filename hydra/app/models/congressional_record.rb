@@ -61,6 +61,26 @@ class CongressionalRecord < ApplicationRecord
     end
   end
 
+
+  # Setter counterpart to the getter above - mirrors
+  # Hydra::AccessControls::Visibility#visibility= exactly (same three
+  # cases, same resulting read_groups state). Needed because Bulkrax's
+  # default permitted attributes include :visibility.
+  def visibility=(value)
+    return if value.nil?
+
+    case value
+    when VISIBILITY_TEXT_VALUE_PUBLIC
+      self.read_groups = [PERMISSION_TEXT_VALUE_PUBLIC]
+    when VISIBILITY_TEXT_VALUE_AUTHENTICATED
+      self.read_groups = [PERMISSION_TEXT_VALUE_AUTHENTICATED]
+    when VISIBILITY_TEXT_VALUE_PRIVATE
+      self.read_groups = []
+    else
+      raise ArgumentError, "Invalid visibility: #{value.inspect}"
+    end
+  end
+
   # discover_groups / discover_users / read_groups / read_users /
   # edit_groups / edit_users - getters and setters, backed by access_controls
   # rows instead of Fedora Permission objects. Mirrors
