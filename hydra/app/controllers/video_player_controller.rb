@@ -2,9 +2,9 @@
 class VideoPlayerController < ApplicationController
   def index
     id = File.basename(params[:id], File.extname(params[:id]))
-    image_model = Acda.where(id: id).first
-    @mime = image_model.video_file.mime_type
-    @video = image_model.video_file.content
+    record = CongressionalRecord.find_by(id: id)
+    @mime = record.video_file.content_type
+    @video = record.video_file.download
     send_data @video, filename: id, type: @mime, disposition: 'inline'
   end
 end
