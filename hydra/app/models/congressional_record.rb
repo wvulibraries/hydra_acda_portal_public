@@ -16,6 +16,30 @@ class CongressionalRecord < ApplicationRecord
 
   has_many :access_controls, dependent: :destroy
 
+
+  # Direct port of Acda.with_thumbnail_lock, simplified: no Ldp::Conflict
+  # retry since Postgres has no equivalent failure mode - a plain save!
+  # is enough.
+  def self.with_thumbnail_lock(id)
+    record = find(id)
+    return false if record.queued_job == 'true'
+
+    record.queued_job = 'true'
+    record.save!(validate: false)
+
+    begin
+      yield record
+      record.queued_job = 'completed'
+      record.save!(validate: false)
+      true
+    rescue => e
+      record.queued_job = 'completed'
+      record.save!(validate: false)
+      Rails.logger.error "Error in thumbnail processing: #{e.message}"
+      false
+    end
+  end
+
   before_create :assign_id, unless: :id?
   before_save :clear_empty_fields
 
