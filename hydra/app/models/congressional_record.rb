@@ -140,6 +140,21 @@ class CongressionalRecord < ApplicationRecord
     doc
   end
 
+
+  # Port of Acda.queue_pending_thumbnails, but queues the already-built
+  # ProcessCongressionalThumbnailJob (video/image/PDF/preview/placeholder
+  # dispatch, verified above) rather than re-implementing a second,
+  # parallel DownloadAndSetThumbsJob/GenerateThumbsJob/... chain. That
+  # original chain is never auto-triggered - only this method calls it -
+  # so there's no live behavior to match beyond "queue the job that
+  # generates thumbnails for records missing them."
+  def self.queue_pending_thumbnails
+    where(queued_job: nil).find_each(batch_size: 1) do |record|
+      next if record.image_file.attached? && record.thumbnail_file.attached?
+      ProcessCongressionalThumbnailJob.set(wait: 2.seconds).perform_once(record.id)
+    end
+  end
+
   private
 
   def index_text_field(doc, field, sortable:, facetable:)
