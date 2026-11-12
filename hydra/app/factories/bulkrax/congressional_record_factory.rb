@@ -128,7 +128,7 @@ module Bulkrax
     def batch_user
       user_key = 'batchuser@example.com'
       User.find_by_user_key(user_key) ||
-        User.create!(Hydra.config.user_key_field => user_key, password: Devise.friendly_token[0, 20])
+        User.create!(email: user_key, password: Devise.friendly_token[0, 20])
     rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid
       User.find_by_user_key(user_key)
     end
