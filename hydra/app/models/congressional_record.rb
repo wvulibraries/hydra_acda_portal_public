@@ -48,7 +48,64 @@ class CongressionalRecord < ApplicationRecord
     define_method("#{level}_users=") { |names| set_agents('person', level, names) }
   end
 
+
+  SOLR_SEARCHABLE_SORTABLE_FACETABLE_FIELDS = %i[
+    contributing_institution title date edtf creator rights language congress
+    collection_title physical_location collection_finding_aid identifier
+    preview available_at available_by record_type policy_area topic names
+    location_represented extent description dc_type publisher
+  ].freeze
+
+  SOLR_SEARCHABLE_FACETABLE_FIELDS = %i[project].freeze
+  SOLR_SEARCHABLE_ONLY_FIELDS = %i[bulkrax_identifier].freeze
+
+  # Builds the same Solr document shape that Acda#to_solr (via
+  # ActiveFedora::IndexingService + ::Indexer) produces today, so search,
+  # facets, sorting, and show pages keep working unchanged once a
+  # record's Solr document is built from this table instead of Fedora.
+  # See the class comment above for the two deliberate differences
+  # (has_model_ssim, accessControl_ssim).
+  def to_solr
+    doc = {
+      'id' => id,
+      'system_create_dtsi' => created_at&.utc&.strftime('%Y-%m-%dT%H:%M:%SZ'),
+      'system_modified_dtsi' => updated_at&.utc&.strftime('%Y-%m-%dT%H:%M:%SZ'),
+      'has_model_ssim' => ['Acda'],
+      'has_image_file_bsi' => image_file.attached?,
+      'has_thumbnail_file_bsi' => thumbnail_file.attached?
+    }
+
+    SOLR_SEARCHABLE_SORTABLE_FACETABLE_FIELDS.each { |f| index_text_field(doc, f, sortable: true, facetable: true) }
+    SOLR_SEARCHABLE_FACETABLE_FIELDS.each { |f| index_text_field(doc, f, sortable: false, facetable: true) }
+    SOLR_SEARCHABLE_ONLY_FIELDS.each { |f| index_text_field(doc, f, sortable: false, facetable: false) }
+
+    if edtf.present? && EDTF.parse(edtf)
+      parsed_date = Date.edtf!(edtf.downcase)
+      doc['date_ssim'] = parsed_date.is_a?(EDTF::Interval) ? parsed_date.map(&:year).uniq : parsed_date.year
+    end
+
+    {
+      'read_access_group_ssim' => read_groups,
+      'read_access_person_ssim' => read_users,
+      'discover_access_group_ssim' => discover_groups,
+      'discover_access_person_ssim' => discover_users,
+      'edit_access_group_ssim' => edit_groups,
+      'edit_access_person_ssim' => edit_users
+    }.each { |key, values| doc[key] = values if values.present? }
+
+    doc
+  end
+
   private
+
+  def index_text_field(doc, field, sortable:, facetable:)
+    values = Array(send(field)).map(&:to_s)
+    return if values.empty?
+
+    doc["#{field}_tesim"] = values
+    doc["#{field}_ssi"] = values.first if sortable
+    doc["#{field}_sim"] = values if facetable
+  end
 
   def agent_names(agent_type, access_level)
     access_controls.where(agent_type: agent_type, access_level: access_level.to_s).pluck(:agent_name)
