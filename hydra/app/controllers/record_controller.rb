@@ -2,7 +2,7 @@
 class RecordController < ApplicationController
   def index
     id = params[:id]
-    data = Acda.where(id: id).first
+    data = CongressionalRecord.where(id: id).first
 
     if id.nil? || id.empty? || data.nil?
       flash[:error] = "No Record idno has been found please try again."
