@@ -10,31 +10,31 @@ describe RecordController, type: :controller do
     end
   end
   describe 'GET #index' do
-    let(:acda) { double('Acda', id: '123') }
+    let(:record) { double('CongressionalRecord', id: '123') }
 
     it 'redirects to /catalog with error if id is nil' do
-      allow(Acda).to receive_message_chain(:where, :first).and_return(nil)
+      allow(CongressionalRecord).to receive_message_chain(:where, :first).and_return(nil)
       get :index, params: {}   # no id at all
       expect(flash[:error]).to be_present
       expect(response).to redirect_to('/catalog')
     end
 
     it 'redirects to /catalog with error if id is empty' do
-      allow(Acda).to receive_message_chain(:where, :first).and_return(nil)
+      allow(CongressionalRecord).to receive_message_chain(:where, :first).and_return(nil)
       get :index, params: { id: '' }
       expect(flash[:error]).to be_present
       expect(response).to redirect_to('/catalog')
     end
 
     it 'redirects to /catalog with error if no record found' do
-      allow(Acda).to receive(:where).and_return([])
+      allow(CongressionalRecord).to receive(:where).and_return([])
       get :index, params: { id: 'notfound' }
       expect(flash[:error]).to be_present
       expect(response).to redirect_to('/catalog')
     end
 
     it 'redirects to /catalog/:id if record found' do
-      allow(Acda).to receive(:where).and_return([acda])
+      allow(CongressionalRecord).to receive(:where).and_return([record])
       get :index, params: { id: '123' }
       expect(response).to redirect_to('/catalog/123')
     end

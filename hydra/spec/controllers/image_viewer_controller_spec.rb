@@ -2,10 +2,10 @@ require 'rails_helper'
 
 RSpec.describe ImageViewerController, type: :controller do
   describe 'GET #index' do
-    let(:acda) { double('Acda', image_file: double('ImageFile', content: 'IMAGEDATA')) }
+    let(:image_file) { double('ImageFileAttachment', attached?: true, download: 'IMAGEDATA') }
+    let(:record) { double('CongressionalRecord', image_file: image_file) }
     before do
-      allow(Acda).to receive(:where).and_return([acda])
-      allow(acda).to receive(:image_file).and_return(double('ImageFile', content: 'IMAGEDATA'))
+      allow(CongressionalRecord).to receive(:find_by).and_return(record)
       get :index, params: { id: '123.jpg' }
     end
     it 'responds with success' do
@@ -17,10 +17,10 @@ RSpec.describe ImageViewerController, type: :controller do
   end
 
   describe 'GET #thumb' do
-    let(:acda) { double('Acda', thumbnail_file: double('ThumbFile', content: 'THUMBDATA')) }
+    let(:thumbnail_file) { double('ThumbFileAttachment', attached?: true, download: 'THUMBDATA') }
+    let(:record) { double('CongressionalRecord', thumbnail_file: thumbnail_file) }
     before do
-      allow(Acda).to receive(:where).and_return([acda])
-      allow(acda).to receive(:thumbnail_file).and_return(double('ThumbFile', content: 'THUMBDATA'))
+      allow(CongressionalRecord).to receive(:find_by).and_return(record)
       get :thumb, params: { id: '123.jpg' }
     end
     it 'responds with success' do

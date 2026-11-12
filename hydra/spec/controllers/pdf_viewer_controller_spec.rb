@@ -2,10 +2,10 @@ require 'rails_helper'
 
 RSpec.describe PdfViewerController, type: :controller do
   describe 'GET #index' do
-    let(:acda) { double('Acda', pdf_file: double('PdfFile', content: 'PDFDATA')) }
+    let(:pdf_file) { double('PdfFileAttachment', download: 'PDFDATA') }
+    let(:record) { double('CongressionalRecord', pdf_file: pdf_file) }
     before do
-      allow(Acda).to receive(:where).and_return([acda])
-      allow(acda).to receive(:pdf_file).and_return(double('PdfFile', content: 'PDFDATA'))
+      allow(CongressionalRecord).to receive(:find_by).and_return(record)
       get :index, params: { id: '123.pdf' }
     end
     it 'responds with success' do
