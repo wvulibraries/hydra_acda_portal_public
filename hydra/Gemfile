@@ -74,6 +74,10 @@ gem 'blacklight_range_limit', '~> 8.0'
 gem 'nokogiri'
 gem 'solrizer'
 
+# Used directly by app/models/ability.rb and ApplicationController
+# (was previously pulled in transitively by hydra-access-controls)
+gem 'cancancan', '~> 3.6'
+
 gem 'rsolr'
 gem 'devise'
 gem 'devise-guests', '~> 0.5'
