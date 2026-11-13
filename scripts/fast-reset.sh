@@ -7,14 +7,6 @@ exec 2>&1
 
 echo "Starting data clearing process: $(date)"
 
-# Clear the project data from Fedora
-echo "Clearing Fedora project data..."
-if docker exec acda_portal bin/rails r import/delete_project.rb; then
-  echo "Fedora project data cleared successfully."
-else
-  echo "Error clearing Fedora project data!" >&2
-  exit 1
-fi
 
 # Drop, create, and migrate the Postgres database
 # (this also clears all GoodJob job records, since they live in Postgres)
