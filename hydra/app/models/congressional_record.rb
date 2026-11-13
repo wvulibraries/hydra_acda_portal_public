@@ -42,6 +42,8 @@ class CongressionalRecord < ApplicationRecord
 
   before_create :assign_id, unless: :id?
   before_save :clear_empty_fields
+  after_commit :enqueue_solr_index, on: [:create, :update]
+  after_commit :enqueue_solr_delete, on: :destroy
 
   PERMISSION_TEXT_VALUE_PUBLIC = 'public'.freeze
   PERMISSION_TEXT_VALUE_AUTHENTICATED = 'registered'.freeze
@@ -138,6 +140,14 @@ class CongressionalRecord < ApplicationRecord
     }.each { |key, values| doc[key] = values if values.present? }
 
     doc
+  end
+
+  def enqueue_solr_index
+    SolrIndexJob.perform_later(id)
+  end
+
+  def enqueue_solr_delete
+    SolrIndexJob.perform_later(id)
   end
 
 
