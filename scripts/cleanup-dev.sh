@@ -7,8 +7,6 @@ rm -rf ./data/logs/*
 rm -rf ./data/solr
 # remove postgres data directory
 rm -rf ./data/postgres
-# remove fcrepo data directory
-rm -rf ./data/fcrepo
 # remove exports directory
 rm -rf ./data/exports
 # remove images directory

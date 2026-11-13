@@ -108,7 +108,24 @@ module Bulkrax
 
     def find
       return find_by_id if attributes[:id].present?
-      return search_by_identifier if attributes[work_identifier].present?
+      match = search_by_identifier if attributes[work_identifier].present?
+      return match if match
+      find_by_computed_id
+    end
+
+    # Bulkrax's own work_identifier (bulkrax_identifier, per config/
+    # initializers/bulkrax.rb) is scoped to a single importer run - a fresh
+    # importer against the same CSV always gets new bulkrax_identifier
+    # values, so search_by_identifier never matches existing records, even
+    # though the real primary key (derived from the `identifier` field via
+    # CongressionalRecord#generate_id_from_identifier) is identical. Without
+    # this fallback, re-importing already-imported data tries to INSERT a
+    # duplicate id instead of updating the existing record.
+    def find_by_computed_id
+      return unless attributes[:identifier].present?
+      computed_id = klass.new(identifier: attributes[:identifier]).send(:generate_id_from_identifier)
+      return if computed_id.blank?
+      klass.find_by(id: computed_id)
     end
 
     def find_by_id
