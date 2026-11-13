@@ -35,8 +35,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      fcrepo:
-        condition: service_healthy
       solr:
         condition: service_healthy
     networks:
@@ -49,8 +47,6 @@ services:
     restart: unless-stopped
     depends_on:
       db:
-        condition: service_healthy
-      fcrepo:
         condition: service_healthy
       solr:
         condition: service_healthy
@@ -69,32 +65,6 @@ services:
     networks:
       - hydra
 
-
-  fcrepo:
-    image: fcrepo/fcrepo:7-tomcat10
-    container_name: fcrepo
-    command: bash -c "/usr/local/tomcat/bin/catalina.sh run"  
-    restart: unless-stopped
-    ports:
-      - "8080:8080"
-    env_file:
-      - './env/env.fedora' 
-    volumes:
-      - ./data/logs/fcrepo:/usr/local/tomcat/log   
-      - ./data/fcrepo:/usr/local/tomcat/fcrepo-home  
-    logging:
-      options:
-        max-size: 50m
-    healthcheck:
-      test: "curl -f http://localhost:8080/fcrepo"
-      interval: 5s
-      timeout: 5s
-      retries: 20
-    depends_on:
-      db:
-        condition: service_healthy
-    networks:
-      - hydra       
 
   solr:
     container_name: solr
