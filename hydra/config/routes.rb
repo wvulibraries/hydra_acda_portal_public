@@ -60,6 +60,10 @@ Rails.application.routes.draw do
     concerns :exportable
   end
 
+  resources :congressional_records, only: [:show], path: '/catalog', controller: 'catalog' do
+    concerns :exportable
+  end
+
   resources :bookmarks do
     concerns :exportable
 
