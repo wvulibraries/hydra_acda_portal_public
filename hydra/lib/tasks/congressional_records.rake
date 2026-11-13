@@ -179,6 +179,8 @@ namespace :congressional_records do
     puts dry_run ? "DRY RUN - no writes to Solr will happen" : "LIVE RUN - pushing documents to Solr"
     puts "---"
 
+    solr_connection = CatalogController.blacklight_config.repository_class.new(CatalogController.blacklight_config).connection
+
     processed = 0
     errors = []
 
@@ -189,7 +191,8 @@ namespace :congressional_records do
         if dry_run
           puts "WOULD INDEX #{record.id} (#{doc.keys.size} fields)"
         else
-          ActiveFedora::SolrService.add(doc, params: { commit: true })
+          solr_connection.add(doc)
+          solr_connection.commit
         end
       rescue StandardError => e
         errors << "#{record.id}: #{e.class} - #{e.message}"

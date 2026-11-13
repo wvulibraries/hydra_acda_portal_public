@@ -86,10 +86,10 @@ class CatalogController < ApplicationController
     # remove the default facets
     config.facet_fields.clear
     # Add desired facets
-    config.add_facet_field solr_name('collection_title', :facetable), label: 'Collection', link_to_search: :collection_title_ssi, limit: true, show: true, component: true
-    config.add_facet_field solr_name('congress', :facetable), label: 'Congress', link_to_search: :coverage_congress_ssi, limit: true, show: true, component: true
-    config.add_facet_field solr_name('contributing_institution', :facetable), label: 'Contributing Institution', link_to_search: :contributing_institution_ssi, limit: true, show: true, component: true
-    config.add_facet_field solr_name('creator', :facetable), label: 'Creator', limit: true, show: true, component: true
+    config.add_facet_field Solrizer.solr_name('collection_title', :facetable), label: 'Collection', link_to_search: :collection_title_ssi, limit: true, show: true, component: true
+    config.add_facet_field Solrizer.solr_name('congress', :facetable), label: 'Congress', link_to_search: :coverage_congress_ssi, limit: true, show: true, component: true
+    config.add_facet_field Solrizer.solr_name('contributing_institution', :facetable), label: 'Contributing Institution', link_to_search: :contributing_institution_ssi, limit: true, show: true, component: true
+    config.add_facet_field Solrizer.solr_name('creator', :facetable), label: 'Creator', limit: true, show: true, component: true
     config.add_facet_field 'date_ssim', label: 'Date', limit: true, show: true, range: {
       num_segments: 10,
       assumed_boundaries: [1100, Time.now.year + 2],
@@ -97,13 +97,13 @@ class CatalogController < ApplicationController
       slider_js: false,
       maxlength: 4
     }
-    config.add_facet_field solr_name('language', :facetable), label: 'Language', limit: true, show: true, component: true
-    config.add_facet_field solr_name('location_represented', :facetable), label: 'Location Represented', link_to_search: :coverage_spatial_ssi, limit: true, show: true, component: true
-    config.add_facet_field solr_name('names', :facetable), label: 'Names', link_to_search: :names_ssi, limit: true, show: true, component: true
-    config.add_facet_field solr_name('policy_area', :facetable), label: 'Policy Area', link_to_search: :policy_area_ssi, limit: true, show: true, component: true
-    config.add_facet_field solr_name('publisher', :facetable), label: 'Publisher', link_to_search: :publisher_ssi, limit: true, show: true, component: true
-    config.add_facet_field solr_name('record_type', :facetable), label: 'Record Type', limit: true, show: true, component: true
-    config.add_facet_field solr_name('topic', :facetable), label: 'Topic', link_to_search: :topic_ssi, limit: true, show: true, component: true
+    config.add_facet_field Solrizer.solr_name('language', :facetable), label: 'Language', limit: true, show: true, component: true
+    config.add_facet_field Solrizer.solr_name('location_represented', :facetable), label: 'Location Represented', link_to_search: :coverage_spatial_ssi, limit: true, show: true, component: true
+    config.add_facet_field Solrizer.solr_name('names', :facetable), label: 'Names', link_to_search: :names_ssi, limit: true, show: true, component: true
+    config.add_facet_field Solrizer.solr_name('policy_area', :facetable), label: 'Policy Area', link_to_search: :policy_area_ssi, limit: true, show: true, component: true
+    config.add_facet_field Solrizer.solr_name('publisher', :facetable), label: 'Publisher', link_to_search: :publisher_ssi, limit: true, show: true, component: true
+    config.add_facet_field Solrizer.solr_name('record_type', :facetable), label: 'Record Type', limit: true, show: true, component: true
+    config.add_facet_field Solrizer.solr_name('topic', :facetable), label: 'Topic', link_to_search: :topic_ssi, limit: true, show: true, component: true
 
     # uses the above facets in blacklight
     #config.default_solr_params['facet.field'] = config.facet_fields.keys
@@ -111,43 +111,43 @@ class CatalogController < ApplicationController
 
     # Index ---------------------------------------------
     # The ordering of the field names is the order of the display
-    config.add_index_field solr_name('identifier', :stored_searchable), label: 'Identifier'
-    config.add_index_field solr_name('contributing_institution', :stored_searchable, type: :string), label: 'Contributing Institution', helper_method: :render_html_safe_facet
-    config.add_index_field solr_name('collection_title', :stored_searchable), label: 'Collection', helper_method: :render_html_safe_facet
-    config.add_index_field solr_name('title', :stored_searchable, type: :string), label: 'Title'
-    config.add_index_field solr_name('date', :stored_searchable, type: :string), label: 'Date', helper_method: :render_date_facet
-    config.add_index_field solr_name('creator', :stored_searchable, type: :string), label: 'Creator', helper_method: :render_html_safe_facet
-    config.add_index_field solr_name('publisher', :stored_searchable, type: :string), label: 'Publisher', helper_method: :render_html_safe_facet
-    config.add_index_field solr_name('policy_area', :stored_searchable, type: :string), label: 'Policy Area', helper_method: :render_html_safe_facet
-    config.add_index_field solr_name('names', :stored_searchable), label: 'Names', helper_method: :render_html_safe_facet
-    config.add_index_field solr_name('topic', :stored_searchable, type: :string), label: 'Topic', helper_method: :render_html_safe_facet
-    config.add_index_field solr_name('congress', :stored_searchable, type: :string), label: 'Congress', helper_method: :render_html_safe_facet
-    config.add_index_field solr_name('location_respresented', :stored_searchable, type: :string), label: 'Location Respresented', helper_method: :render_html_safe_facet
+    config.add_index_field Solrizer.solr_name('identifier', :stored_searchable), label: 'Identifier'
+    config.add_index_field Solrizer.solr_name('contributing_institution', :stored_searchable, type: :string), label: 'Contributing Institution', helper_method: :render_html_safe_facet
+    config.add_index_field Solrizer.solr_name('collection_title', :stored_searchable), label: 'Collection', helper_method: :render_html_safe_facet
+    config.add_index_field Solrizer.solr_name('title', :stored_searchable, type: :string), label: 'Title'
+    config.add_index_field Solrizer.solr_name('date', :stored_searchable, type: :string), label: 'Date', helper_method: :render_date_facet
+    config.add_index_field Solrizer.solr_name('creator', :stored_searchable, type: :string), label: 'Creator', helper_method: :render_html_safe_facet
+    config.add_index_field Solrizer.solr_name('publisher', :stored_searchable, type: :string), label: 'Publisher', helper_method: :render_html_safe_facet
+    config.add_index_field Solrizer.solr_name('policy_area', :stored_searchable, type: :string), label: 'Policy Area', helper_method: :render_html_safe_facet
+    config.add_index_field Solrizer.solr_name('names', :stored_searchable), label: 'Names', helper_method: :render_html_safe_facet
+    config.add_index_field Solrizer.solr_name('topic', :stored_searchable, type: :string), label: 'Topic', helper_method: :render_html_safe_facet
+    config.add_index_field Solrizer.solr_name('congress', :stored_searchable, type: :string), label: 'Congress', helper_method: :render_html_safe_facet
+    config.add_index_field Solrizer.solr_name('location_respresented', :stored_searchable, type: :string), label: 'Location Respresented', helper_method: :render_html_safe_facet
 
     # Show ---------------------------------------------
     # show fields in the objects
     # order is by the order you put them in
-    config.add_show_field solr_name('identifier', :stored_searchable, type: :string), label: 'Identifier'
-    config.add_show_field solr_name('contributing_institution', :stored_searchable, type: :string), label: 'Contributing Institution', helper_method: :render_html_safe_facet
-    config.add_show_field solr_name('title', :stored_searchable, type: :string), label: 'Title'
-    config.add_show_field solr_name('date', :stored_searchable, type: :string), label: 'Date Created', helper_method: :render_date_facet
-    config.add_show_field solr_name('edtf', :stored_searchable, type: :string), label: 'EDTF'
-    config.add_show_field solr_name('creator', :stored_searchable, type: :string), label: 'Creator', helper_method: :render_html_safe_facet
-    config.add_show_field solr_name('rights', :stored_searchable, type: :string), label: 'Rights', helper_method: :render_html_safe_url
-    config.add_show_field solr_name('language', :stored_searchable, type: :string), label: 'Language'
-    config.add_show_field solr_name('record_type', :stored_searchable, type: :string), label: 'Record Type'
-    config.add_show_field solr_name('collection_title', :stored_searchable, type: :string), label: 'Collection', helper_method: :render_html_safe_facet
-    config.add_show_field solr_name('collection_finding_aid', type: :string), label: 'Collection Finding Aid', helper_method: :render_html_safe_url
-    config.add_show_field solr_name('description', :stored_searchable, type: :string), label: 'Description'
-    config.add_show_field solr_name('policy_area', :stored_searchable, type: :string), label: 'Policy Area', helper_method: :render_html_safe_facet
-    config.add_show_field solr_name('names', :stored_searchable, type: :string), label: 'Names', helper_method: :render_html_safe_facet
-    config.add_show_field solr_name('topic', :stored_searchable, type: :string), label: 'Topic', helper_method: :render_html_safe_facet
-    config.add_show_field solr_name('congress', :stored_searchable, type: :string), label: 'Congress', helper_method: :render_html_safe_facet
-    config.add_show_field solr_name('physical_location', :stored_searchable, type: :string), label: 'Physical Location'
-    config.add_show_field solr_name('location_represented', :stored_searchable, type: :string), label: 'Location Represented', helper_method: :render_html_safe_facet
-    config.add_show_field solr_name('dc_type', :stored_searchable, type: :string), label: 'Type'
-    config.add_show_field solr_name('extent', :stored_searchable, type: :string), label: 'Extent'
-    config.add_show_field solr_name('publisher', :stored_searchable, type: :string), label: 'Publisher', helper_method: :render_html_safe_facet
+    config.add_show_field Solrizer.solr_name('identifier', :stored_searchable, type: :string), label: 'Identifier'
+    config.add_show_field Solrizer.solr_name('contributing_institution', :stored_searchable, type: :string), label: 'Contributing Institution', helper_method: :render_html_safe_facet
+    config.add_show_field Solrizer.solr_name('title', :stored_searchable, type: :string), label: 'Title'
+    config.add_show_field Solrizer.solr_name('date', :stored_searchable, type: :string), label: 'Date Created', helper_method: :render_date_facet
+    config.add_show_field Solrizer.solr_name('edtf', :stored_searchable, type: :string), label: 'EDTF'
+    config.add_show_field Solrizer.solr_name('creator', :stored_searchable, type: :string), label: 'Creator', helper_method: :render_html_safe_facet
+    config.add_show_field Solrizer.solr_name('rights', :stored_searchable, type: :string), label: 'Rights', helper_method: :render_html_safe_url
+    config.add_show_field Solrizer.solr_name('language', :stored_searchable, type: :string), label: 'Language'
+    config.add_show_field Solrizer.solr_name('record_type', :stored_searchable, type: :string), label: 'Record Type'
+    config.add_show_field Solrizer.solr_name('collection_title', :stored_searchable, type: :string), label: 'Collection', helper_method: :render_html_safe_facet
+    config.add_show_field Solrizer.solr_name('collection_finding_aid', type: :string), label: 'Collection Finding Aid', helper_method: :render_html_safe_url
+    config.add_show_field Solrizer.solr_name('description', :stored_searchable, type: :string), label: 'Description'
+    config.add_show_field Solrizer.solr_name('policy_area', :stored_searchable, type: :string), label: 'Policy Area', helper_method: :render_html_safe_facet
+    config.add_show_field Solrizer.solr_name('names', :stored_searchable, type: :string), label: 'Names', helper_method: :render_html_safe_facet
+    config.add_show_field Solrizer.solr_name('topic', :stored_searchable, type: :string), label: 'Topic', helper_method: :render_html_safe_facet
+    config.add_show_field Solrizer.solr_name('congress', :stored_searchable, type: :string), label: 'Congress', helper_method: :render_html_safe_facet
+    config.add_show_field Solrizer.solr_name('physical_location', :stored_searchable, type: :string), label: 'Physical Location'
+    config.add_show_field Solrizer.solr_name('location_represented', :stored_searchable, type: :string), label: 'Location Represented', helper_method: :render_html_safe_facet
+    config.add_show_field Solrizer.solr_name('dc_type', :stored_searchable, type: :string), label: 'Type'
+    config.add_show_field Solrizer.solr_name('extent', :stored_searchable, type: :string), label: 'Extent'
+    config.add_show_field Solrizer.solr_name('publisher', :stored_searchable, type: :string), label: 'Publisher', helper_method: :render_html_safe_facet
 
     # search fields
     config.add_search_field('all_fields', label: 'All Fields') do |field|
@@ -183,8 +183,8 @@ class CatalogController < ApplicationController
     default_search_fields.map! { |f|
       config.add_search_field(f.to_s) do |field|
           field.solr_parameters = {
-           qf: solr_name(f.to_s, :stored_searchable, type: :string),
-           pf: solr_name(f.to_s, :stored_searchable, type: :string)
+           qf: Solrizer.solr_name(f.to_s, :stored_searchable, type: :string),
+           pf: Solrizer.solr_name(f.to_s, :stored_searchable, type: :string)
           }
        end
     }
