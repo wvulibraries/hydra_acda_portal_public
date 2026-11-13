@@ -58,6 +58,15 @@ RSpec.describe ApplicationJob, type: :job do
 
         expect(job_class.already_queued?(record_id)).to eq(false)
       end
+
+      it 'returns false if job_class mismatches even if ID matches' do
+        fake_relation = double('relation')
+        allow(GoodJob::Job).to receive(:where).and_return(fake_relation)
+        allow(fake_relation).to receive(:where).and_return(fake_relation)
+        allow(fake_relation).to receive(:exists?).and_return(false)
+
+        expect(job_class.already_queued?(record_id)).to eq(false)
+      end
     end
   end
 
@@ -74,73 +83,4 @@ RSpec.describe ApplicationJob, type: :job do
       job_class.perform_once(record_id)
     end
   end
-
-  describe 'discard_on Ldp::Gone' do
-  it 'logs and deletes duplicate GoodJob jobs for same record' do
-    fake_relation = double('relation')
-    allow(GoodJob::Job).to receive(:where).and_return(fake_relation)
-    allow(fake_relation).to receive(:where).and_return(fake_relation)
-    allow(fake_relation).to receive(:destroy_all)
-
-    expect(Rails.logger).to receive(:info).at_least(:once)
-    expect(fake_relation).to receive(:destroy_all)
-
-    # Test the cleanup logic directly
-    record_id_str = record_id.to_s
-    Rails.logger.info "Cleaning up other GoodJob jobs for #{record_id_str}"
-    GoodJob::Job.where("serialized_params->>'job_class' = ?", 'TestJob')
-                .where("serialized_params->'arguments'->>0 = ?", record_id_str)
-                .where(finished_at: nil)
-                .destroy_all
-  end
-
-  it 'does not attempt cleanup if job.arguments.first is not present' do
-    expect(GoodJob::Job).not_to receive(:where)
-    # Empty arguments — no cleanup should happen
-    arguments = []
-    if arguments.first.present?
-      GoodJob::Job.where("serialized_params->>'job_class' = ?", 'TestJob').destroy_all
-    end
-  end
-end
-
-  describe 'rescue_from Ldp::HttpError' do
-    it 'retries on Fedora 500 error' do
-      job = job_class.new
-      allow(job).to receive(:executions).and_return(0)
-      expect(job).to receive(:retry_job).with(wait: 30.seconds)
-
-      # Simulate the rescue_from block
-      exception = Ldp::HttpError.new('STATUS: 500')
-      attempt = 0
-      if exception.message.include?('STATUS: 500') && attempt < 3
-        job.retry_job(wait: (attempt + 1) * 30.seconds)
-      end
-    end
-
-    it 'gives up after max retries on Fedora 500 error' do
-      exception = Ldp::HttpError.new('STATUS: 500')
-      expect(Rails.logger).to receive(:error).at_least(:once)
-      Rails.logger.error "Max retries reached for Fedora 500 error, giving up"
-      expect { raise exception }.to raise_error(Ldp::HttpError)
-    end
-
-    it 'raises immediately for non-500 Fedora errors' do
-      exception = Ldp::HttpError.new('STATUS: 404')
-      expect { raise exception }.to raise_error(Ldp::HttpError)
-    end
-
-    it 'returns false if job_class mismatches even if ID matches' do
-      fake_relation = double('relation')
-      allow(GoodJob::Job).to receive(:where).and_return(fake_relation)
-      allow(fake_relation).to receive(:where).and_return(fake_relation)
-      allow(fake_relation).to receive(:exists?).and_return(false)
-
-      expect(job_class.already_queued?(record_id)).to eq(false)
-    end
-  end
-
-  
-
-  
 end
