@@ -114,7 +114,7 @@ class CongressionalRecord < ApplicationRecord
       'id' => id,
       'system_create_dtsi' => created_at&.utc&.strftime('%Y-%m-%dT%H:%M:%SZ'),
       'system_modified_dtsi' => updated_at&.utc&.strftime('%Y-%m-%dT%H:%M:%SZ'),
-      'has_model_ssim' => ['Acda'],
+      'has_model_ssim' => ['CongressionalRecord'],
       'has_image_file_bsi' => image_file.attached?,
       'has_thumbnail_file_bsi' => thumbnail_file.attached?
     }
