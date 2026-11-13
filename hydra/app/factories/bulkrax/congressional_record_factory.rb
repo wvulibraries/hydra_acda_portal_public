@@ -9,7 +9,7 @@ module Bulkrax
   # batch_user below are ported verbatim from the old AcdaFactory so
   # behavior doesn't change.
   #
-  # Two real incompatibilities with naively using Bulkrax's defaults, both
+  # Three real incompatibilities with naively using Bulkrax's defaults, all
   # handled here:
   #   1. permitted_attributes (inherited from Bulkrax's base factory code)
   #      calls klass.properties.keys, which is ActiveFedora-only.
@@ -22,12 +22,37 @@ module Bulkrax
   #      doesn't exist until the record is first saved - they raise
   #      RecordNotSaved on an unsaved record. #create below splits
   #      permission attributes out and applies them after the initial save.
+  #   3. Bulkrax::ObjectFactory.field_supported?/.field_multi_value? (class
+  #      methods, called by Bulkrax::HasMatchers#add_metadata during every
+  #      import) also assume ActiveFedora's klass.properties - they crash
+  #      with NoMethodError on a plain ActiveRecord model. Overridden below
+  #      to check real AR columns instead (multi-value = a Postgres array
+  #      column, matching this table's actual schema).
+  #
+  #      NOTE: field_supported? must check model.column_names, not
+  #      model.method_defined?(field). Rails generates attribute getter/
+  #      setter methods lazily on first use of the class, so in a fresh
+  #      process (e.g. a GoodJob worker that hasn't touched
+  #      CongressionalRecord yet) method_defined? can wrongly return false
+  #      for a real column, silently skipping every field during import
+  #      with no error raised.
   class CongressionalRecordFactory < ObjectFactory
     PERMISSION_ATTRIBUTE_NAMES = %i[
       visibility read_groups read_users edit_groups edit_users discover_groups discover_users
     ].freeze
 
     INTERNAL_COLUMNS = %i[created_at updated_at queued_job].freeze
+
+    # OVERRIDE: see incompatibility #3 above.
+    def self.field_supported?(field:, model:)
+      model.column_names.include?(field.to_s)
+    end
+
+    def self.field_multi_value?(field:, model:)
+      return false unless field_supported?(field: field, model: model)
+      column = model.columns_hash[field.to_s]
+      column.present? && column.respond_to?(:array) && column.array
+    end
 
     def initialize(**kwargs)
       @user = user || batch_user
