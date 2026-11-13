@@ -28,8 +28,6 @@ jobs :
           SOLR_LOGS: /opt/solr/logs
           SOLR_PID: /opt/solr/solr.pid
           SOLR_PORT: 8983
-      - image: fcrepo/fcrepo:6.5.1-tomcat9
-      
 
     steps:
       - checkout:
