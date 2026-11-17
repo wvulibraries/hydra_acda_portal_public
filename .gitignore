@@ -3,6 +3,9 @@
 /env/
 /env/*
 
+# Local IDE settings
+.vscode/
+
 # ignore local version of bulkrax
 hydra/vendor/engines
 
