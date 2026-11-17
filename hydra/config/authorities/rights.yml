@@ -38,3 +38,6 @@ terms:
 - id: http://rightsstatements.org/vocab/NoC-OKLR/1.0/
   term: "Public Domain"
   active: true
+- id: https://creativecommons.org/publicdomain/mark/1.0/
+  term: "Public Domain CC"
+  active: true

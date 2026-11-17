@@ -12,6 +12,67 @@
 
 ---
 
+## ⚠️ URGENT: Fedora 6 → Fedora 7 Upgrade Required (Immediate Action)
+
+### Security Issue: Tomcat Vulnerability in Fedora 6
+**Fedora 6 uses Tomcat 9**, which has a reported security bug requiring upgrade to **Fedora 7 (Tomcat 10)**. This is an operational necessity that must be addressed before proceeding with the modernization plan.
+
+### Current Testing Status
+- ✅ **Local testing complete:** Simple replacement, minimal code changes required
+- ✅ **Gem cleanup identified:** `speedyAF` gem removed during testing — unsupported and had no effect on application functionality
+- 🔄 **Pending:** Staging environment validation before production deployment
+
+### Action Required: IMMEDIATE (Before Modernization)
+
+```markdown
+PHASE 0 - URGENT FEDORA UPGRADE (1 week):
+├── Upgrade Fedora 6 → Fedora 7 (Tomcat 9 → Tomcat 10)
+├── Remove unsupported gem: speedyAF (already tested, safe to remove)
+├── Test in staging environment
+└── Deploy to production
+
+↓ [Security vulnerability resolved]
+
+THEN PROCEED WITH MODERNIZATION.md:
+Follow this document to migrate from Fedora → PostgreSQL + ActiveRecord
+```
+
+### What Changes for the Modernization Plan?
+
+**Minimal impact — modernization steps remain identical:**
+
+1. **Gemfile update (now):** Remove `speedyAF` gem immediately
+   ```ruby
+   # REMOVE THIS LINE from hydra/Gemfile:
+   # gem 'speedyAF'  # Unsupported, no longer needed
+   
+   # This has already been tested locally and on test VM with zero impact
+   ```
+
+2. **Fedora upgrade (now):** Update docker-compose to use Fedora 7 image
+   - Change `fcrepo:6.5.0` → `fcrepo:7.x.x` in docker-compose files
+   - Test Tomcat 10 compatibility
+
+3. **Modernization plan:** Unchanged — still migrates away from Fedora entirely (whether v6 or v7) to PostgreSQL
+
+### Why This Doesn't Affect the Modernization Timeline
+
+- The modernization removes Fedora completely, so upgrading from 6→7 is just a stepping stone
+- All migration steps in this document work identically for both Fedora versions
+- Removing `speedyAF` now actually simplifies the codebase before modernization begins
+- **No timeline impact** — you're doing necessary maintenance that would happen anyway
+
+### Immediate Next Steps (This Week)
+
+1. ✅ Remove `gem 'speedyAF'` from `hydra/Gemfile` (already tested, safe)
+2. Run `bundle install` to update dependencies
+3. Update Fedora Docker image version in docker-compose files
+4. Test upgraded stack locally and on staging VM
+5. Deploy Fedora 7 upgrade to production
+6. **Then** begin Phase 1 of this modernization plan
+
+---
+
 ## Executive Summary
 
 The ACDA Portal currently uses **Fedora 6 + ActiveFedora + RDF/PCDM** — a preservation-grade architecture. But ACDA is actually a **harvested-data discovery aggregator**:
@@ -917,6 +978,65 @@ services:
 - **Developer onboarding:** 8 hours per new dev
 
 **Estimated savings:** 50-60 hours/year + faster hiring + lower operational risk
+
+---
+
+## Future Consideration: Rails 8 Upgrade
+
+### Why Not Include in This Migration?
+
+**This modernization focuses on one major architectural shift:** removing Fedora/ActiveFedora and simplifying to PostgreSQL + ActiveRecord. Adding a Rails version upgrade simultaneously would:
+
+1. **Double the complexity** — Two breaking changes at once
+2. **Increase rollback risk** — Harder to isolate what caused issues
+3. **Extend timeline by 4-5 weeks** — Additional gem compatibility work needed
+4. **Make testing harder** — More variables to validate
+
+### Recommended Approach: Phased Modernization
+
+```markdown
+## PHASE A: PostgreSQL Migration (This Document)
+Duration: 8-12 weeks  
+Goal: Remove Fedora, simplify to ActiveRecord + good_job  
+Rails Version: Stay on Rails 7.0.x → upgrade to 7.1.x for stability  
+
+### Success Criteria Before Moving On:
+✅ All records migrated and verified in PostgreSQL  
+✅ Application stable in production for 4+ weeks  
+✅ Team comfortable with new stack (no Fedora knowledge needed)  
+✅ Performance equal or better than previous Fedora setup
+
+## PHASE B: Rails 8 Upgrade (Separate Project, TBD)
+Duration: 4-6 weeks (after Phase A stabilizes)  
+Goal: Modernize to latest Rails LTS  
+
+### Pre-check Before Starting Phase B:
+1. Verify all critical gems support Rails 8:
+   - `blacklight` — Check Samvera/Blacklight compatibility
+   - `hydra-head` — Confirm Hydra stack supports Rails 8
+   - `bulkrax` — Ensure Bulkrax has Rails 8 release
+   
+2. Assess asset pipeline modernization needs:
+   - Keep Sprockets (low risk) OR migrate to Importmap/Turbo (higher effort)
+   
+3. Plan for deprecation removals in Rails 8:
+   - Turbolinks → Turbo (Hotwire)
+   - CoffeeScript → JavaScript/ES6 (optional but recommended)
+
+### When to Do Phase B:
+- **Option 1:** Wait 6-12 months after Phase A, when Samvera ecosystem fully supports Rails 8
+- **Option 2:** Upgrade immediately after Phase A if all gems are compatible and team has capacity
+
+**Decision Point:** Re-evaluate Rails 8 upgrade only AFTER PostgreSQL migration is stable in production.
+```
+
+### If You Do Want to Add Rails 8 Later...
+
+See the separate analysis document: `RAILS_8_UPGRADE.md` (to be created after Phase A completion) which covers:
+- Gem compatibility checklist for Rails 8
+- Asset pipeline modernization options
+- Additional timeline impact (+4-5 weeks)
+- Risk assessment specific to Rails version upgrades
 
 ---
 
