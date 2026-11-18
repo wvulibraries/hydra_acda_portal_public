@@ -1,6 +1,6 @@
 # Fedora → PostgreSQL Migration
 
-**Status: Complete.** This document what changed, why, and the handful of non-obvious things.
+**Status: Complete.** This document explains about what changed, why, and the handful of non-obvious things.
 
 The original plan is in `MODERNIZATION.md` which was written as a proposal before any work started, and the real migration didn't follow its phase numbers exactly — this document describes what was actually built. 
 
