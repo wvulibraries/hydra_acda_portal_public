@@ -4,7 +4,7 @@
 
 [![Code Coverage](https://qlty.sh/gh/wvulibraries/projects/hydra_acda_portal_public/coverage.svg)](https://qlty.sh/gh/wvulibraries/projects/hydra_acda_portal_public)
 
-=======
+---
 
 # American Congress Digital Archives Portal (ACDA)
 
@@ -12,67 +12,51 @@ A collaborative, non-partisan digital repository that makes congressional archiv
 
 ## About
 
-The American Congress Digital Archives Portal (ACDA) provides open access to the personal papers of Members of Congress from multiple institutions across the United States. Built on the Samvera Hydra framework with Rails 7 and Fedora 6, the portal aggregates geographically dispersed congressional collections into a single searchable platform, supporting scholarship about American democracy, civic education, and the legislative branch.
-
-> **Repository Name**: This GitHub repository is named `hydra_acda_portal_public` where "acda" stands for American Congress Digital Archives.
+The American Congress Digital Archives Portal (ACDA) provides open access to the personal papers of Members of Congress from multiple institutions across the United States. Built on the Samvera Hydra framework with Rails 7, the portal aggregates geographically dispersed congressional collections into a single searchable platform.
 
 **Production**: https://congressarchives.org  
-**Development**: https://congressarchivesdev.lib.wvu.edu
+**Development**: https://congressarchivesdev.lib.wvu.edu  
+**GitHub**: https://github.com/wvulibraries/hydra_acda_portal_public
 
-### Project Background
+## Quick Links
 
-This site is a prototype created with funding from the National Endowment for the Humanities (2021-2022). Unlike presidential papers which are centralized, congressional collections are geographically dispersed among institutions with varying resources. This portal addresses that challenge by:
+📚 **[Full Documentation](./docs/wiki/README.md)** - Start here for setup, development, and operations guides
 
-- Aggregating materials from multiple archival institutions
-- Providing easier, more equitable access to scholars, educators, and the public
-- Supporting computational research and new methods of scholarly inquiry
-- Serving as a resource for civic and history education
-
-The project continues to expand partnerships, add archival collections, and improve functionality toward the nation's 250th anniversary in 2026 and beyond.
-
-### Partner Institutions
+## Partner Institutions
 
 - West Virginia University Libraries (Lead Institution)
 - Robert J. Dole Institute of Politics, The University of Kansas
 - Robert C. Byrd Center for Congressional History and Education
 
-### What's In The Portal?
+## Technical Stack
 
-The portal features personal papers of Members of Congress, including:
-- Correspondence and constituent communications
-- Legislative files and policy materials
-- Committee records and hearing documentation
-- Campaign materials and political commercials
-- Photographic and audiovisual collections
+- **Framework**: Samvera Hydra with Rails 7
+- **Database**: PostgreSQL
+- **Search**: Solr
+- **File Storage**: Fedora Commons
+- **Bulk Import**: Bulkrax
 
-Collections span the twentieth and twenty-first centuries and document topics ranging from women's suffrage to foreign policy, civil rights to legislative processes.
+## Development
 
-### Featured Collections
-
-- **Women's Suffrage and the 19th Amendment**: Constituent correspondence examining women's suffrage and Congress as a representative body
-- **International Affairs and Foreign Policy**: Materials related to the Panama Canal Treaty, the 1982 Lebanon War, and efforts regarding Armenian genocide recognition
-- **Vietnam War POW/MIA Efforts**: Congressional efforts to bring home American Prisoners of War and Missing in Action
-- **Julian P. Kanter Political Commercial Collection**: The world's largest collection of political commercials, covering all levels of political campaigning from Presidential elections to ballot initiatives
+See [docs/wiki/developer/Development-Guide.md](./docs/wiki/developer/Development-Guide.md) for local setup.
 
 ## Documentation
 
-For detailed documentation, see the [`docs/`](./docs/) directory:
+All project documentation is located in [docs/wiki/](./docs/wiki/):
 
-- [Development Setup](./docs/development.md) - Detailed development environment setup
-- [Deployment Guide](./docs/deployment.md) - Deployment procedures and configurations  
-- [Architecture Overview](./docs/architecture.md) - Technical architecture and components
-- [Troubleshooting](./docs/troubleshooting.md) - Common issues and solutions
-- [API Reference](./docs/api.md) - API documentation
+- **Quick Reference** - Configuration guides and how-tos
+- **[Architecture](./docs/wiki/architecture/)** - System design and decisions  
+- **[Developer](./docs/wiki/developer/)** - Development and contribution guides
+- **[Planning](./docs/wiki/planning/)** - Strategy and roadmaps
+- **[Operations](./docs/wiki/operations/)** - Known issues and maintenance
 
----
+## License
 
-## Technical Overview
+[Add appropriate license]
 
-This application is built on Samvera Hydra 11 and serves as the technical infrastructure for the ACDA Portal (congressarchives.org).
+## Contributing
 
-## Quick Start
-
-### Prerequisites
+[Add contribution guidelines]
 
 - Docker and Docker Compose
 - VPN access to WVU network (required for Fedora/Solr connectivity)
