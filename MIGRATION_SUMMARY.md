@@ -86,3 +86,25 @@ Before calling this migration done, the following was run end-to-end against a f
 - Full `rspec spec/` suite passing.
 - Manual HTTP checks on home page, catalog search, and individual record show pages.
 - A real Bulkrax CSV import, run from scratch, including hitting and fixing all three notes listed above as they occurred for real (not hypothetically) — followed by confirming the imported records were both correctly saved in Postgres *and* visible in Solr search without any manual reindex step.
+
+
+
+## Migrating the dev VM's real Fedora data to Postgres
+
+**Do this before deploying the current `feature/postgres-migration` branch tip.**
+Back up the Postgres database and the Fedora data volume first, take snapshot of VM - standard precaution, not optional, given this writes real data.
+
+1. On the VM, check out commit `bc31eda` from the `feature/postgres-migration` branch (the commit where Acda, active-fedora, the migrate/migrate_files rake tasks, and the fcrepo Docker service all still present and working together).
+2. Bring up the stack with `docker-compose.dev.yml` (Fedora and Postgres both need to be running - this reads from Fedora and writes to Postgres).
+3. `bin/rails db:migrate` - adds the congressional_records/access_controls/ActiveStorage tables. Does not touch or drop anything existing.
+4. Dry-run the metadata migration first: `rake congressional_records:migrate` (DRY_RUN defaults to true). Check the printed counts look right (compare `created` + `updated` to your known Acda record count).
+5. Run it for real: `rake congressional_records:migrate DRY_RUN=false`.
+6. Verify: `Acda.count` should equal `CongressionalRecord.count`.
+7. Dry-run the file migration: `rake congressional_records:migrate_files` (also DRY_RUN=true by default). This step depends on step 5 already being done - it skips any record it can't find in `congressional_records` yet.
+8. Run it for real: `rake congressional_records:migrate_files DRY_RUN=false`.
+9. Spot-check a handful of real records in the app - metadata, permissions/visibility, and that images/PDFs/audio/video actually load. Counts matching isn't enough on its own.
+10. Dry-run the reindex: `rake congressional_records:reindex`.
+11. Run it for real: `rake congressional_records:reindex DRY_RUN=false`.
+12. Confirm search actually works in the UI for records you just migrated - not just that the task reported 0 errors.
+13. Only after 6, 9, and 12 are all confirmed clean: deploy the current `feature/postgres-migration` branch tip (Fedora fully removed) to replace this checkpoint.
+14. Do not decommission/delete the actual Fedora data on this VM until the app has been running on the final branch for a while and you're confident nothing was missed - keep it as a fallback, don't rely on counts alone.
