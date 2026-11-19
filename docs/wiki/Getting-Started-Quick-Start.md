@@ -23,49 +23,45 @@ cd hydra_acda_portal_public
 
 This will:
 - Build Docker images
-- Start all services (Rails, Fedora, Solr, PostgreSQL, Redis, Memcached)
-- Initialize the database
-- Seed any initial data
+- Start all services (Rails, Fedora, Solr, PostgreSQL, Memcached)
 
-The application will be available at: **http://localhost:3000**
+The application will be available at: **http://localhost:3000** once the database is prepared (next step).
 
-## 3. Access the Application
+## 3. Prepare the Database
+
+```bash
+docker compose exec web bash scripts/setup.sh
+```
+
+This drops/creates the database, loads the schema (or runs migrations), and seeds it.
+
+## 4. Access the Application
 
 **Main Portal**: http://localhost:3000  
-**Admin Dashboard**: http://localhost:3000/admin  
-**Bulkrax Importer**: http://localhost:3000/bulkrax/importers  
+**Bulkrax Importer**: http://localhost:3000/importers  
+**Background Jobs (GoodJob)**: http://localhost:3000/good_job 
 
-## 4. Default Credentials
+## 5. Default Credentials
 
-Development credentials are configured in `env/env.dev.hydra`:
-
-```bash
-# Admin user (create in rails console if needed)
-Email: admin@example.com
-Password: (check env variables)
-
-# Bulkrax importer login
-Username: (check ENV['BULKRAX_USERNAME'])
-Password: (check ENV['BULKRAX_PW'])
-```
-
-To view credentials:
+Bulkrax importer login (from `env/env.dev.hydra`):
 
 ```bash
-docker compose exec web echo "Username: $BULKRAX_USERNAME, Password: $BULKRAX_PW"
+docker compose exec web sh -c 'echo "Username: $BULKRAX_USERNAME, Password: $BULKRAX_PW"'
 ```
 
-## 5. Import Sample Data
+There is no separate admin-user login — the catalog itself has no authenticated admin area.
+
+## 6. Import Sample Data
 
 Navigate to: http://localhost:3000/bulkrax/importers
 
 1. Click "New Importer"
 2. Select: "CSV" as the parser
-3. Upload a sample CSV file (examples in repository)
+3. Upload a CSV file matching the expected field mapping (see [[Bulkrax Configuration]] — no sample file ships with this repo yet)
 4. Configure field mappings
 5. Start import
 
-## 6. Stop the Application
+## 7. Stop the Application
 
 ```bash
 ./down.sh
@@ -99,6 +95,25 @@ Check logs:
 docker compose logs web
 docker compose logs fcrepo
 docker compose logs solr
+```
+
+### Bundler::GitError on `web` / `workers`
+
+If `web` or `workers` keep restarting and `docker compose logs web` shows something like:
+
+```
+The git source https://github.com/wvulibraries/active_fedora.git is not yet checked out.
+Please run `bundle install` before trying to start your application (Bundler::GitError)
+```
+
+this means the `bundle_data` Docker volume has stale gems from before the image was last
+rebuilt (it only gets seeded from the image on its *first* creation — rebuilding the image
+later, e.g. after switching branches or bumping a gem, doesn't refresh it). Fix it without
+touching your Postgres/Solr/Fedora data:
+
+```bash
+docker compose -f docker-compose.dev.yml run --rm app bundle install
+docker compose -f docker-compose.dev.yml up -d
 ```
 
 ## Next Steps
